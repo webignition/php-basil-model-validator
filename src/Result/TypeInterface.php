@@ -9,4 +9,5 @@ interface TypeInterface
     const ACTION = 2;
     const IDENTIFIER = 3;
     const VALUE = 4;
+    const ASSERTION = 5;
 }
