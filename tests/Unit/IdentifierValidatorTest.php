@@ -1,12 +1,12 @@
 <?php
 /** @noinspection PhpDocSignatureInspection */
 
-namespace webignition\BasilModelValidator\Tests\Unit\Identifier;
+namespace webignition\BasilModelValidator\Tests\Unit;
 
 use webignition\BasilModel\Identifier\Identifier;
 use webignition\BasilModel\Identifier\IdentifierInterface;
 use webignition\BasilModel\Identifier\IdentifierTypes;
-use webignition\BasilModelValidator\Identifier\IdentifierValidator;
+use webignition\BasilModelValidator\IdentifierValidator;
 use webignition\BasilModelValidator\Result\InvalidResult;
 use webignition\BasilModelValidator\Result\ResultInterface;
 use webignition\BasilModelValidator\Result\TypeInterface;

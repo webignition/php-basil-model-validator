@@ -8,4 +8,5 @@ interface TypeInterface
     const UNHANDLED = 1;
     const ACTION = 2;
     const IDENTIFIER = 3;
+    const VALUE = 4;
 }
