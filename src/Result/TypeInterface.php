@@ -10,4 +10,5 @@ interface TypeInterface
     const IDENTIFIER = 3;
     const VALUE = 4;
     const ASSERTION = 5;
+    const PAGE = 6;
 }
