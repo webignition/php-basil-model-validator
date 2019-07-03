@@ -7,6 +7,7 @@ use webignition\BasilModel\Identifier\Identifier;
 use webignition\BasilModel\Identifier\IdentifierInterface;
 use webignition\BasilModel\Identifier\IdentifierTypes;
 use webignition\BasilModelValidator\IdentifierValidator;
+use webignition\BasilModelValidator\Result\InvalidIdentifierResult;
 use webignition\BasilModelValidator\Result\InvalidResult;
 use webignition\BasilModelValidator\Result\ResultInterface;
 use webignition\BasilModelValidator\Result\TypeInterface;
@@ -56,30 +57,57 @@ class IdentifierValidatorTest extends \PHPUnit\Framework\TestCase
         $identifierWithInvalidParent = (new Identifier(IdentifierTypes::CSS_SELECTOR, '.selector'))
             ->withParentIdentifier($identifierWithInvalidType);
 
+        $identifierWithInvalidPageObjectProperty = new Identifier(
+            IdentifierTypes::PAGE_OBJECT_PARAMETER,
+            '$page.foo'
+        );
+
+        $expectedInvalidPageObjectPropertyResult = new InvalidIdentifierResult(
+            $identifierWithInvalidPageObjectProperty,
+            IdentifierValidator::CODE_INVALID_PAGE_OBJECT_PROPERTY
+        );
+        $expectedInvalidPageObjectPropertyResult->setPageProperty('foo');
+
+        $identifierWithInvalidBrowserObjectProperty = new Identifier(
+            IdentifierTypes::BROWSER_OBJECT_PARAMETER,
+            '$browser.bar'
+        );
+
+        $expectedInvalidBrowserObjectPropertyResult = new InvalidIdentifierResult(
+            $identifierWithInvalidBrowserObjectProperty,
+            IdentifierValidator::CODE_INVALID_BROWSER_OBJECT_PROPERTY
+        );
+        $expectedInvalidBrowserObjectPropertyResult->setBrowserProperty('bar');
+
         return [
             'invalid type' => [
                 'identifier' => $identifierWithInvalidType,
-                'expectedResult' => new InvalidResult(
+                'expectedResult' => new InvalidIdentifierResult(
                     $identifierWithInvalidType,
-                    TypeInterface::IDENTIFIER,
                     IdentifierValidator::CODE_TYPE_INVALID
                 ),
             ],
             'invalid value' => [
                 'identifier' => $identifierWithInvalidValue,
-                'expectedResult' => new InvalidResult(
+                'expectedResult' => new InvalidIdentifierResult(
                     $identifierWithInvalidValue,
-                    TypeInterface::IDENTIFIER,
                     IdentifierValidator::CODE_VALUE_MISSING
                 ),
             ],
             'invalid parent identifier' => [
                 'identifier' => $identifierWithInvalidParent,
-                'expectedResult' => new InvalidResult(
+                'expectedResult' => new InvalidIdentifierResult(
                     $identifierWithInvalidParent,
-                    TypeInterface::IDENTIFIER,
                     IdentifierValidator::CODE_INVALID_PARENT_IDENTIFIER
                 ),
+            ],
+            'invalid page object property' => [
+                'identifier' => $identifierWithInvalidPageObjectProperty,
+                'expectedResult' => $expectedInvalidPageObjectPropertyResult,
+            ],
+            'invalid browser object property' => [
+                'identifier' => $identifierWithInvalidBrowserObjectProperty,
+                'expectedResult' => $expectedInvalidBrowserObjectPropertyResult,
             ],
         ];
     }

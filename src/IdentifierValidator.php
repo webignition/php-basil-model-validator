@@ -4,9 +4,9 @@ namespace webignition\BasilModelValidator;
 
 use webignition\BasilModel\Identifier\IdentifierInterface;
 use webignition\BasilModel\Identifier\IdentifierTypes;
+use webignition\BasilModelValidator\Result\InvalidIdentifierResult;
 use webignition\BasilModelValidator\Result\InvalidResult;
 use webignition\BasilModelValidator\Result\ResultInterface;
-use webignition\BasilModelValidator\Result\TypeInterface;
 use webignition\BasilModelValidator\Result\ValidResult;
 
 class IdentifierValidator implements ValidatorInterface
@@ -14,6 +14,11 @@ class IdentifierValidator implements ValidatorInterface
     const CODE_TYPE_INVALID = 1;
     const CODE_VALUE_MISSING = 2;
     const CODE_INVALID_PARENT_IDENTIFIER = 3;
+    const CODE_INVALID_PAGE_OBJECT_PROPERTY = 4;
+    const CODE_INVALID_BROWSER_OBJECT_PROPERTY = 5;
+
+    const PAGE_OBJECT_PARAMETER_REGEX = '/^\$page\.+/';
+    const BROWSER_OBJECT_PARAMETER_REGEX = '/^\$browser\.+/';
 
     const VALID_TYPES = [
         IdentifierTypes::CSS_SELECTOR,
@@ -22,6 +27,14 @@ class IdentifierValidator implements ValidatorInterface
         IdentifierTypes::ELEMENT_PARAMETER,
         IdentifierTypes::PAGE_OBJECT_PARAMETER,
         IdentifierTypes::BROWSER_OBJECT_PARAMETER,
+    ];
+
+    const VALID_PAGE_OBJECT_PROPERTY_NAMES = [
+        'url',
+    ];
+
+    const VALID_BROWSER_OBJECT_PROPERTY_NAMES = [
+        'title',
     ];
 
     public function handles(object $model): bool
@@ -53,11 +66,38 @@ class IdentifierValidator implements ValidatorInterface
             }
         }
 
+        if (IdentifierTypes::PAGE_OBJECT_PARAMETER === $model->getType()) {
+            $propertyName = $this->getObjectPropertyName(self::PAGE_OBJECT_PARAMETER_REGEX, $model->getValue());
+
+            if (!in_array($propertyName, self::VALID_PAGE_OBJECT_PROPERTY_NAMES)) {
+                $result = $this->createInvalidResult($model, self::CODE_INVALID_PAGE_OBJECT_PROPERTY);
+                $result->setPageProperty($propertyName);
+
+                return $result;
+            }
+        }
+
+        if (IdentifierTypes::BROWSER_OBJECT_PARAMETER === $model->getType()) {
+            $propertyName = $this->getObjectPropertyName(self::BROWSER_OBJECT_PARAMETER_REGEX, $model->getValue());
+
+            if (!in_array($propertyName, self::VALID_BROWSER_OBJECT_PROPERTY_NAMES)) {
+                $result = $this->createInvalidResult($model, self::CODE_INVALID_BROWSER_OBJECT_PROPERTY);
+                $result->setBrowserProperty($propertyName);
+
+                return $result;
+            }
+        }
+
         return new ValidResult($model);
     }
 
-    private function createInvalidResult(object $model, int $code): ResultInterface
+    private function createInvalidResult(object $model, int $code): InvalidIdentifierResult
     {
-        return new InvalidResult($model, TypeInterface::IDENTIFIER, $code);
+        return new InvalidIdentifierResult($model, $code);
+    }
+
+    private function getObjectPropertyName(string $pattern, string $subject): string
+    {
+        return (string) preg_replace($pattern, '', $subject);
     }
 }
