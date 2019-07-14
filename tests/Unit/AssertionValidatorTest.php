@@ -68,11 +68,6 @@ class AssertionValidatorTest extends \PHPUnit\Framework\TestCase
         $isComparisonMissingValue = $assertionFactory->createFromAssertionString('".selector" is');
         $isNotComparisonMissingValue = $assertionFactory->createFromAssertionString('".selector" is-not');
 
-//        $this->assertEquals(
-//            $isNotComparisonMissingValue,
-//            $assertionFactory->createFromAssertionString('".selector" is-not')
-//        );
-//
         $includesComparisonMissingValue = $assertionFactory->createFromAssertionString('".selector" includes');
         $excludesComparisonMissingValue = $assertionFactory->createFromAssertionString('".selector" excludes');
         $matchesComparisonMissingValue = $assertionFactory->createFromAssertionString('".selector" matches');
