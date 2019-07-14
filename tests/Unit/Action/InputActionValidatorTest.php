@@ -9,10 +9,9 @@ use webignition\BasilModel\Action\InteractionAction;
 use webignition\BasilModel\Action\NoArgumentsAction;
 use webignition\BasilModel\Action\UnrecognisedAction;
 use webignition\BasilModel\Action\WaitAction;
-use webignition\BasilModel\Identifier\Identifier;
-use webignition\BasilModel\Identifier\IdentifierTypes;
 use webignition\BasilModel\Value\Value;
 use webignition\BasilModel\Value\ValueTypes;
+use webignition\BasilModelFactory\Action\ActionFactory;
 use webignition\BasilModelValidator\Action\InputActionValidator;
 use webignition\BasilModelValidator\Action\InvalidResultCode;
 use webignition\BasilModelValidator\Result\InvalidResult;
@@ -46,26 +45,36 @@ class InputActionValidatorTest extends \PHPUnit\Framework\TestCase
     {
         return [
             'input action' => [
-                'action' => new InputAction(null, null, ''),
+                'action' => new InputAction('set', null, null, ''),
                 'expectedHandles' => true,
             ],
             'interaction action' => [
-                'action' => new InteractionAction('', null, ''),
+                'action' => new InteractionAction('click', '', null, ''),
                 'expectedHandles' => false,
             ],
             'no arguments action' => [
-                'action' => new NoArgumentsAction('', ''),
+                'action' => new NoArgumentsAction('reload', '', ''),
                 'expectedHandles' => false,
             ],
             'unrecognised action' => [
-                'action' => new UnrecognisedAction('', ''),
+                'action' => new UnrecognisedAction('foo', '', ''),
                 'expectedHandles' => false,
             ],
             'wait action' => [
-                'action' => new WaitAction(''),
+                'action' => new WaitAction('wait 20', ''),
                 'expectedHandles' => false,
             ],
         ];
+    }
+
+    public function testValidateNotValidWrongObjectType()
+    {
+        $object = new \stdClass();
+
+        $this->assertEquals(
+            InvalidResult::createUnhandledModelResult($object),
+            $this->inputActionValidator->validate($object)
+        );
     }
 
     /**
@@ -78,7 +87,10 @@ class InputActionValidatorTest extends \PHPUnit\Framework\TestCase
 
     public function validateNotValidDataProvider(): array
     {
+        $actionFactory = ActionFactory::createFactory();
+
         $inputActionMissingIdentifier = new InputAction(
+            'set to "foo"',
             null,
             new Value(
                 ValueTypes::STRING,
@@ -87,50 +99,13 @@ class InputActionValidatorTest extends \PHPUnit\Framework\TestCase
             ' to "foo"'
         );
 
-        $inputActionMissingValue = new InputAction(
-            new Identifier(
-                IdentifierTypes::CSS_SELECTOR,
-                '.selector'
-            ),
-            null,
-            '".selector" to'
-        );
+        $inputActionMissingValue = $actionFactory->createFromActionString('set ".selector" to');
+        $inputActionMissingToKeyword = $actionFactory->createFromActionString('set ".selector" "foo"');
+        $inputActionWithIdentifierContainingToKeywordMissingToKeyword =
+            $actionFactory->createFromActionString('set ".selector to value" "foo"');
 
-        $inputActionMissingToKeyword = new InputAction(
-            new Identifier(
-                IdentifierTypes::CSS_SELECTOR,
-                '.selector'
-            ),
-            new Value(
-                ValueTypes::STRING,
-                'foo'
-            ),
-            '".selector" "foo"'
-        );
-
-        $inputActionWithIdentifierContainingToKeywordMissingToKeyword = new InputAction(
-            new Identifier(
-                IdentifierTypes::CSS_SELECTOR,
-                '.selector to value'
-            ),
-            new Value(
-                ValueTypes::STRING,
-                'foo'
-            ),
-            '".selector to value" "foo"'
-        );
-
-        $inputActionWithValueContainingToKeywordMissingToKeyword = new InputAction(
-            new Identifier(
-                IdentifierTypes::CSS_SELECTOR,
-                '.selector'
-            ),
-            new Value(
-                ValueTypes::STRING,
-                'foo to value'
-            ),
-            '".selector" "foo to value"'
-        );
+        $inputActionWithValueContainingToKeywordMissingToKeyword =
+            $actionFactory->createFromActionString('set ".selector" "foo to value"');
 
         return [
             'input action missing identifier' => [
@@ -178,17 +153,7 @@ class InputActionValidatorTest extends \PHPUnit\Framework\TestCase
 
     public function testValidateIsValid()
     {
-        $action = new InputAction(
-            new Identifier(
-                IdentifierTypes::CSS_SELECTOR,
-                '.selector'
-            ),
-            new Value(
-                ValueTypes::STRING,
-                'foo'
-            ),
-            '".selector" to "foo"'
-        );
+        $action = ActionFactory::createFactory()->createFromActionString('set ".selector" to "foo"');
 
         $expectedResult = new ValidResult($action);
 

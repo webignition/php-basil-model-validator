@@ -1,4 +1,5 @@
 <?php
+/** @noinspection PhpUnhandledExceptionInspection */
 /** @noinspection PhpDocSignatureInspection */
 
 namespace webignition\BasilModelValidator\Tests\Unit;
@@ -6,6 +7,9 @@ namespace webignition\BasilModelValidator\Tests\Unit;
 use webignition\BasilModel\Identifier\Identifier;
 use webignition\BasilModel\Identifier\IdentifierInterface;
 use webignition\BasilModel\Identifier\IdentifierTypes;
+use webignition\BasilModel\Value\Value;
+use webignition\BasilModel\Value\ValueTypes;
+use webignition\BasilModelFactory\IdentifierFactory;
 use webignition\BasilModelValidator\IdentifierValidator;
 use webignition\BasilModelValidator\Result\InvalidIdentifierResult;
 use webignition\BasilModelValidator\Result\InvalidResult;
@@ -52,15 +56,17 @@ class IdentifierValidatorTest extends \PHPUnit\Framework\TestCase
 
     public function validateNotValidDataProvider(): array
     {
-        $identifierWithInvalidType = new Identifier('foo', 'value');
-        $identifierWithInvalidValue = new Identifier(IdentifierTypes::CSS_SELECTOR, '');
-        $identifierWithInvalidParent = (new Identifier(IdentifierTypes::CSS_SELECTOR, '.selector'))
+        $identifierFactory = IdentifierFactory::createFactory();
+
+        $identifierWithInvalidType = new Identifier('foo', new Value(ValueTypes::STRING, 'value'));
+        $identifierWithInvalidValue = new Identifier(IdentifierTypes::CSS_SELECTOR, new Value(ValueTypes::STRING, ''));
+        $identifierWithInvalidParent = (new Identifier(
+            IdentifierTypes::CSS_SELECTOR,
+            new Value(ValueTypes::STRING, '.selector')
+        ))
             ->withParentIdentifier($identifierWithInvalidType);
 
-        $identifierWithInvalidPageObjectProperty = new Identifier(
-            IdentifierTypes::PAGE_OBJECT_PARAMETER,
-            '$page.foo'
-        );
+        $identifierWithInvalidPageObjectProperty = $identifierFactory->create('$page.foo');
 
         $expectedInvalidPageObjectPropertyResult = new InvalidIdentifierResult(
             $identifierWithInvalidPageObjectProperty,
@@ -68,10 +74,7 @@ class IdentifierValidatorTest extends \PHPUnit\Framework\TestCase
         );
         $expectedInvalidPageObjectPropertyResult->setPageProperty('foo');
 
-        $identifierWithInvalidBrowserObjectProperty = new Identifier(
-            IdentifierTypes::BROWSER_OBJECT_PARAMETER,
-            '$browser.bar'
-        );
+        $identifierWithInvalidBrowserObjectProperty = $identifierFactory->create('$browser.bar');
 
         $expectedInvalidBrowserObjectPropertyResult = new InvalidIdentifierResult(
             $identifierWithInvalidBrowserObjectProperty,
@@ -124,33 +127,31 @@ class IdentifierValidatorTest extends \PHPUnit\Framework\TestCase
 
     public function validateIsValidDataProvider(): array
     {
-        $parentIdentifier = new Identifier(IdentifierTypes::CSS_SELECTOR, '.parent');
+        $identifierFactory = IdentifierFactory::createFactory();
+        $parentIdentifier = $identifierFactory->create('".parent"');
 
         return [
             'type: css selector' => [
-                'identifier' => new Identifier(IdentifierTypes::CSS_SELECTOR, '.selector'),
+                'identifier' => $identifierFactory->create('".selector"'),
             ],
             'type: css selector with parent' => [
-                'identifier' => (new Identifier(IdentifierTypes::CSS_SELECTOR, '.selector'))
+                'identifier' => $identifierFactory->create('".selector"')
                     ->withParentIdentifier($parentIdentifier),
             ],
             'type: xpath expression' => [
-                'identifier' => new Identifier(IdentifierTypes::XPATH_EXPRESSION, '//h1'),
+                'identifier' => $identifierFactory->create('"//h1"'),
             ],
             'type: page model element reference' => [
-                'identifier' => new Identifier(
-                    IdentifierTypes::PAGE_MODEL_ELEMENT_REFERENCE,
-                    'page_import_name.elements.element_name'
-                ),
+                'identifier' => $identifierFactory->create('page_import_name.elements.element_name'),
             ],
             'type: element parameter' => [
-                'identifier' => new Identifier(IdentifierTypes::ELEMENT_PARAMETER, '$elements.element_name'),
+                'identifier' => $identifierFactory->create('$elements.element_name'),
             ],
             'type: page object parameter' => [
-                'identifier' => new Identifier(IdentifierTypes::PAGE_OBJECT_PARAMETER, '$page.url'),
+                'identifier' => $identifierFactory->create('$page.url'),
             ],
             'type: browser object parameter' => [
-                'identifier' => new Identifier(IdentifierTypes::BROWSER_OBJECT_PARAMETER, '$browser.title'),
+                'identifier' => $identifierFactory->create('$browser.title'),
             ],
         ];
     }

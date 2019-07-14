@@ -10,8 +10,7 @@ use webignition\BasilModel\Action\InteractionAction;
 use webignition\BasilModel\Action\NoArgumentsAction;
 use webignition\BasilModel\Action\UnrecognisedAction;
 use webignition\BasilModel\Action\WaitAction;
-use webignition\BasilModel\Identifier\Identifier;
-use webignition\BasilModel\Identifier\IdentifierTypes;
+use webignition\BasilModelFactory\Action\ActionFactory;
 use webignition\BasilModelValidator\Action\InteractionActionValidator;
 use webignition\BasilModelValidator\Action\InvalidResultCode;
 use webignition\BasilModelValidator\Result\InvalidResult;
@@ -45,34 +44,44 @@ class InteractionActionValidatorTest extends \PHPUnit\Framework\TestCase
     {
         return [
             'input action' => [
-                'action' => new InputAction(null, null, ''),
+                'action' => new InputAction('set', null, null, ''),
                 'expectedHandles' => false,
             ],
             'interaction action: click' => [
-                'action' => new InteractionAction(ActionTypes::CLICK, null, ''),
+                'action' => new InteractionAction('click', ActionTypes::CLICK, null, ''),
                 'expectedHandles' => true,
             ],
             'interaction action: submit' => [
-                'action' => new InteractionAction(ActionTypes::SUBMIT, null, ''),
+                'action' => new InteractionAction('submit', ActionTypes::SUBMIT, null, ''),
                 'expectedHandles' => true,
             ],
             'interaction action: wait-for' => [
-                'action' => new InteractionAction(ActionTypes::WAIT_FOR, null, ''),
+                'action' => new InteractionAction('wait-for', ActionTypes::WAIT_FOR, null, ''),
                 'expectedHandles' => true,
             ],
             'no arguments action' => [
-                'action' => new NoArgumentsAction('', ''),
+                'action' => new NoArgumentsAction('reload', '', ''),
                 'expectedHandles' => false,
             ],
             'unrecognised action' => [
-                'action' => new UnrecognisedAction('', ''),
+                'action' => new UnrecognisedAction('foo', '', ''),
                 'expectedHandles' => false,
             ],
             'wait action' => [
-                'action' => new WaitAction(''),
+                'action' => new WaitAction('wait 20', ''),
                 'expectedHandles' => false,
             ],
         ];
+    }
+
+    public function testValidateNotValidWrongObjectType()
+    {
+        $object = new \stdClass();
+
+        $this->assertEquals(
+            InvalidResult::createUnhandledModelResult($object),
+            $this->interactionActionValidator->validate($object)
+        );
     }
 
     /**
@@ -85,10 +94,8 @@ class InteractionActionValidatorTest extends \PHPUnit\Framework\TestCase
 
     public function validateNotValidDataProvider(): array
     {
-        $interactionActionWithoutIdentifier = new InteractionAction(
-            ActionTypes::CLICK,
-            null,
-            ''
+        $interactionActionWithoutIdentifier = ActionFactory::createFactory()->createFromActionString(
+            'click'
         );
 
         return [
@@ -105,14 +112,7 @@ class InteractionActionValidatorTest extends \PHPUnit\Framework\TestCase
 
     public function testValidateIsValid()
     {
-        $action = new InteractionAction(
-            ActionTypes::CLICK,
-            new Identifier(
-                IdentifierTypes::CSS_SELECTOR,
-                '.selector'
-            ),
-            '".selector"'
-        );
+        $action = ActionFactory::createFactory()->createFromActionString('click ".selector"');
 
         $expectedResult = new ValidResult($action);
 

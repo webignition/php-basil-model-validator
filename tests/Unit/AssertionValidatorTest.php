@@ -1,4 +1,5 @@
 <?php
+/** @noinspection PhpUnhandledExceptionInspection */
 /** @noinspection PhpDocSignatureInspection */
 
 namespace webignition\BasilModelValidator\Tests\Unit;
@@ -10,6 +11,7 @@ use webignition\BasilModel\Identifier\Identifier;
 use webignition\BasilModel\Identifier\IdentifierTypes;
 use webignition\BasilModel\Value\Value;
 use webignition\BasilModel\Value\ValueTypes;
+use webignition\BasilModelFactory\AssertionFactory;
 use webignition\BasilModelValidator\AssertionValidator;
 use webignition\BasilModelValidator\IdentifierValidator;
 use webignition\BasilModelValidator\Result\InvalidResult;
@@ -59,49 +61,18 @@ class AssertionValidatorTest extends \PHPUnit\Framework\TestCase
 
     public function validateNotValidDataProvider(): array
     {
-        $assertionMissingIdentifier = new Assertion(
-            '',
-            null,
-            null
-        );
+        $assertionFactory = AssertionFactory::createFactory();
 
-        $assertionWithInvalidComparison = new Assertion(
-            '".selector" foo',
-            new Identifier(IdentifierTypes::CSS_SELECTOR, '.selector'),
-            'foo'
-        );
+        $assertionMissingIdentifier = $assertionFactory->createFromAssertionString('');
+        $assertionWithInvalidComparison = $assertionFactory->createFromAssertionString('".selector" foo');
+        $isComparisonMissingValue = $assertionFactory->createFromAssertionString('".selector" is');
+        $isNotComparisonMissingValue = $assertionFactory->createFromAssertionString('".selector" is-not');
 
-        $isComparisonMissingValue = new Assertion(
-            '".selector" is',
-            new Identifier(IdentifierTypes::CSS_SELECTOR, '.selector'),
-            AssertionComparisons::IS
-        );
+        $includesComparisonMissingValue = $assertionFactory->createFromAssertionString('".selector" includes');
+        $excludesComparisonMissingValue = $assertionFactory->createFromAssertionString('".selector" excludes');
+        $matchesComparisonMissingValue = $assertionFactory->createFromAssertionString('".selector" matches');
 
-        $isNotComparisonMissingValue = new Assertion(
-            '".selector" is-not',
-            new Identifier(IdentifierTypes::CSS_SELECTOR, '.selector'),
-            AssertionComparisons::IS_NOT
-        );
-
-        $includesComparisonMissingValue = new Assertion(
-            '".selector" includes',
-            new Identifier(IdentifierTypes::CSS_SELECTOR, '.selector'),
-            AssertionComparisons::INCLUDES
-        );
-
-        $excludesComparisonMissingValue = new Assertion(
-            '".selector" excludes',
-            new Identifier(IdentifierTypes::CSS_SELECTOR, '.selector'),
-            AssertionComparisons::EXCLUDES
-        );
-
-        $matchesComparisonMissingValue = new Assertion(
-            '".selector" matches',
-            new Identifier(IdentifierTypes::CSS_SELECTOR, '.selector'),
-            AssertionComparisons::MATCHES
-        );
-
-        $invalidIdentifier = new Identifier('foo', '');
+        $invalidIdentifier = new Identifier('foo', new Value(ValueTypes::STRING, ''));
         $assertionWithInvalidIdentifier = new Assertion(
             'foo',
             $invalidIdentifier,
@@ -111,7 +82,7 @@ class AssertionValidatorTest extends \PHPUnit\Framework\TestCase
         $invalidValue = new Value('foo', '');
         $assertionWithInvalidValue = new Assertion(
             '".selector" is "value"',
-            new Identifier(IdentifierTypes::CSS_SELECTOR, '.selector'),
+            new Identifier(IdentifierTypes::CSS_SELECTOR, new Value(ValueTypes::STRING, '.selector')),
             AssertionComparisons::IS,
             $invalidValue
         );
@@ -204,96 +175,29 @@ class AssertionValidatorTest extends \PHPUnit\Framework\TestCase
 
     public function validateIsValidDataProvider(): array
     {
+        $assertionFactory = AssertionFactory::createFactory();
+
         return [
             'is comparison' => [
-                'assertion' => new Assertion(
-                    '".selector" is "value"',
-                    new Identifier(
-                        IdentifierTypes::CSS_SELECTOR,
-                        '.selector'
-                    ),
-                    AssertionComparisons::IS,
-                    new Value(
-                        ValueTypes::STRING,
-                        'value'
-                    )
-                ),
+                'assertion' => $assertionFactory->createFromAssertionString('".selector" is "value"'),
             ],
             'is-not comparison' => [
-                'assertion' => new Assertion(
-                    '".selector" is-not "value"',
-                    new Identifier(
-                        IdentifierTypes::CSS_SELECTOR,
-                        '.selector'
-                    ),
-                    AssertionComparisons::IS_NOT,
-                    new Value(
-                        ValueTypes::STRING,
-                        'value'
-                    )
-                ),
+                'assertion' => $assertionFactory->createFromAssertionString('".selector" is-not "value"'),
             ],
             'exists comparison' => [
-                'assertion' => new Assertion(
-                    '".selector" exists',
-                    new Identifier(
-                        IdentifierTypes::CSS_SELECTOR,
-                        '.selector'
-                    ),
-                    AssertionComparisons::EXISTS
-                ),
+                'assertion' => $assertionFactory->createFromAssertionString('".selector" exists'),
             ],
             'not-exists comparison' => [
-                'assertion' => new Assertion(
-                    '".selector" not-exists',
-                    new Identifier(
-                        IdentifierTypes::CSS_SELECTOR,
-                        '.selector'
-                    ),
-                    AssertionComparisons::NOT_EXISTS
-                ),
+                'assertion' => $assertionFactory->createFromAssertionString('".selector" not-exists'),
             ],
             'includes comparison' => [
-                'assertion' => new Assertion(
-                    '".selector" includes "value"',
-                    new Identifier(
-                        IdentifierTypes::CSS_SELECTOR,
-                        '.selector'
-                    ),
-                    AssertionComparisons::INCLUDES,
-                    new Value(
-                        ValueTypes::STRING,
-                        'value'
-                    )
-                ),
+                'assertion' => $assertionFactory->createFromAssertionString('".selector" includes "value"'),
             ],
             'excludes comparison' => [
-                'assertion' => new Assertion(
-                    '".selector" excludes "value"',
-                    new Identifier(
-                        IdentifierTypes::CSS_SELECTOR,
-                        '.selector'
-                    ),
-                    AssertionComparisons::EXCLUDES,
-                    new Value(
-                        ValueTypes::STRING,
-                        'value'
-                    )
-                ),
+                'assertion' => $assertionFactory->createFromAssertionString('".selector" excludes "value"'),
             ],
             'matches comparison' => [
-                'assertion' => new Assertion(
-                    '".selector" matches "value"',
-                    new Identifier(
-                        IdentifierTypes::CSS_SELECTOR,
-                        '.selector'
-                    ),
-                    AssertionComparisons::MATCHES,
-                    new Value(
-                        ValueTypes::STRING,
-                        'value'
-                    )
-                ),
+                'assertion' => $assertionFactory->createFromAssertionString('".selector" matches "value"'),
             ],
         ];
     }
