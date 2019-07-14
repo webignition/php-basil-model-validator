@@ -24,6 +24,12 @@ class ActionValidatorTest extends \PHPUnit\Framework\TestCase
         $this->actionValidator = Factory::create();
     }
 
+    public function testHandles()
+    {
+        $this->assertTrue($this->actionValidator->handles(\Mockery::mock(ActionInterface::class)));
+        $this->assertFalse($this->actionValidator->handles(new \stdClass()));
+    }
+
     public function testValidateSuccess()
     {
         $action = \Mockery::mock(ActionInterface::class);
@@ -51,14 +57,22 @@ class ActionValidatorTest extends \PHPUnit\Framework\TestCase
         $this->assertSame($result, $returnedResult);
     }
 
+    public function testValidateWrongObjectType()
+    {
+        $expectedResult = InvalidResult::createUnhandledModelResult(new \stdClass());
+        $returnedResult = $this->actionValidator->validate(new \stdClass());
+
+        $this->assertEquals($expectedResult, $returnedResult);
+    }
+
     public function testValidateNoActionTypeValidator()
     {
         $action = \Mockery::mock(ActionInterface::class);
+        $action
+            ->shouldReceive('getType')
+            ->andReturn('foo');
         $expectedResult = InvalidResult::createUnhandledModelResult($action);
-
-        $actionValidator = new ActionValidator();
-
-        $returnedResult = $actionValidator->validate($action);
+        $returnedResult = $this->actionValidator->validate($action);
 
         $this->assertEquals($expectedResult, $returnedResult);
     }
