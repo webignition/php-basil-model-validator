@@ -42,23 +42,23 @@ class WaitActionValidatorTest extends \PHPUnit\Framework\TestCase
     {
         return [
             'input action' => [
-                'action' => new InputAction(null, null, ''),
+                'action' => new InputAction('set', null, null, ''),
                 'expectedHandles' => false,
             ],
             'interaction action' => [
-                'action' => new InteractionAction('', null, ''),
+                'action' => new InteractionAction('click', '', null, ''),
                 'expectedHandles' => false,
             ],
             'no arguments action' => [
-                'action' => new NoArgumentsAction('', ''),
+                'action' => new NoArgumentsAction('reload', '', ''),
                 'expectedHandles' => false,
             ],
             'unrecognised action' => [
-                'action' => new UnrecognisedAction('', ''),
+                'action' => new UnrecognisedAction('foo', '', ''),
                 'expectedHandles' => false,
             ],
             'wait action' => [
-                'action' => new WaitAction(''),
+                'action' => new WaitAction('wait 1', ''),
                 'expectedHandles' => true,
             ],
         ];
@@ -74,7 +74,7 @@ class WaitActionValidatorTest extends \PHPUnit\Framework\TestCase
 
     public function validateNotValidDataProvider(): array
     {
-        $waitActionNoDuration = new WaitAction('');
+        $waitActionNoDuration = new WaitAction('wait', '');
 
         return [
             'no arguments action wrong type' => [
@@ -90,7 +90,7 @@ class WaitActionValidatorTest extends \PHPUnit\Framework\TestCase
 
     public function testValidateIsValid()
     {
-        $action = new WaitAction('5');
+        $action = new WaitAction('wait 5', '5');
 
         $expectedResult = new ValidResult($action);
 

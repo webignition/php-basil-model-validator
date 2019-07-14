@@ -10,6 +10,7 @@ use webignition\BasilModel\Action\InteractionAction;
 use webignition\BasilModel\Action\NoArgumentsAction;
 use webignition\BasilModel\Action\UnrecognisedAction;
 use webignition\BasilModel\Action\WaitAction;
+use webignition\BasilModelFactory\Action\ActionFactory;
 use webignition\BasilModelValidator\Action\NoArgumentsActionValidator;
 use webignition\BasilModelValidator\Result\InvalidResult;
 use webignition\BasilModelValidator\Result\ResultInterface;
@@ -42,31 +43,31 @@ class NoArgumentsActionValidatorTest extends \PHPUnit\Framework\TestCase
     {
         return [
             'input action' => [
-                'action' => new InputAction(null, null, ''),
+                'action' => new InputAction('set', null, null, ''),
                 'expectedHandles' => false,
             ],
             'interaction action' => [
-                'action' => new InteractionAction('', null, ''),
+                'action' => new InteractionAction('click', '', null, ''),
                 'expectedHandles' => false,
             ],
             'no arguments action: reload' => [
-                'action' => new NoArgumentsAction(ActionTypes::RELOAD, ''),
+                'action' => new NoArgumentsAction('reload', ActionTypes::RELOAD, ''),
                 'expectedHandles' => true,
             ],
             'no arguments action: back' => [
-                'action' => new NoArgumentsAction(ActionTypes::BACK, ''),
+                'action' => new NoArgumentsAction('back', ActionTypes::BACK, ''),
                 'expectedHandles' => true,
             ],
             'no arguments action: forward' => [
-                'action' => new NoArgumentsAction(ActionTypes::FORWARD, ''),
+                'action' => new NoArgumentsAction('forward', ActionTypes::FORWARD, ''),
                 'expectedHandles' => true,
             ],
             'unrecognised action' => [
-                'action' => new UnrecognisedAction('', ''),
+                'action' => new UnrecognisedAction('foo', '', ''),
                 'expectedHandles' => false,
             ],
             'wait action' => [
-                'action' => new WaitAction(''),
+                'action' => new WaitAction('wait 20', ''),
                 'expectedHandles' => false,
             ],
         ];
@@ -82,7 +83,7 @@ class NoArgumentsActionValidatorTest extends \PHPUnit\Framework\TestCase
 
     public function validateNotValidDataProvider(): array
     {
-        $noArgumentsActionWrongType = new NoArgumentsAction('Foo', '');
+        $noArgumentsActionWrongType = new NoArgumentsAction('foo', 'Foo', '');
 
         return [
             'no arguments action wrong type' => [
@@ -98,9 +99,9 @@ class NoArgumentsActionValidatorTest extends \PHPUnit\Framework\TestCase
     /**
      * @dataProvider validateIsValidDataProvider
      */
-    public function testValidateIsValid(string $type, string $arguments)
+    public function testValidateIsValid(string $actionString)
     {
-        $action = new NoArgumentsAction($type, $arguments);
+        $action = ActionFactory::createFactory()->createFromActionString($actionString);
 
         $expectedResult = new ValidResult($action);
 
@@ -111,28 +112,22 @@ class NoArgumentsActionValidatorTest extends \PHPUnit\Framework\TestCase
     {
         return [
             'reload, no arguments' => [
-                'type' => ActionTypes::RELOAD,
-                'arguments' => '',
+                'actionString' => 'reload',
             ],
             'back, no arguments' => [
-                'type' => ActionTypes::BACK,
-                'arguments' => '',
+                'actionString' => 'back',
             ],
             'forward, no arguments' => [
-                'type' => ActionTypes::FORWARD,
-                'arguments' => '',
+                'actionString' => 'forward',
             ],
             'reload, has arguments' => [
-                'type' => ActionTypes::RELOAD,
-                'arguments' => 'args',
+                'actionString' => 'reload args',
             ],
             'back, has arguments' => [
-                'type' => ActionTypes::BACK,
-                'arguments' => 'args',
+                'actionString' => 'back args',
             ],
             'forward, has arguments' => [
-                'type' => ActionTypes::FORWARD,
-                'arguments' => 'args',
+                'actionString' => 'forward args',
             ],
         ];
     }

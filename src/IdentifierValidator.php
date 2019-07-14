@@ -52,7 +52,7 @@ class IdentifierValidator implements ValidatorInterface
             return $this->createInvalidResult($model, self::CODE_TYPE_INVALID);
         }
 
-        if ('' === $model->getValue()) {
+        if ($model->getValue()->isEmpty()) {
             return $this->createInvalidResult($model, self::CODE_VALUE_MISSING);
         }
 
