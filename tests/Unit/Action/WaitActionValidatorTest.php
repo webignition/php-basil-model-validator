@@ -64,6 +64,16 @@ class WaitActionValidatorTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
+    public function testValidateNotValidWrongObjectType()
+    {
+        $object = new \stdClass();
+
+        $this->assertEquals(
+            InvalidResult::createUnhandledModelResult($object),
+            $this->waitActionValidator->validate($object)
+        );
+    }
+
     /**
      * @dataProvider validateNotValidDataProvider
      */
@@ -77,7 +87,7 @@ class WaitActionValidatorTest extends \PHPUnit\Framework\TestCase
         $waitActionNoDuration = new WaitAction('wait', '');
 
         return [
-            'no arguments action wrong type' => [
+            'wait action duration missing' => [
                 'action' => $waitActionNoDuration,
                 'expectedResult' => new InvalidResult(
                     $waitActionNoDuration,

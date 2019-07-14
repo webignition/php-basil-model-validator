@@ -74,6 +74,16 @@ class InteractionActionValidatorTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
+    public function testValidateNotValidWrongObjectType()
+    {
+        $object = new \stdClass();
+
+        $this->assertEquals(
+            InvalidResult::createUnhandledModelResult($object),
+            $this->interactionActionValidator->validate($object)
+        );
+    }
+
     /**
      * @dataProvider validateNotValidDataProvider
      */
