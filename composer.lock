@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "9d121b75dd506ba616c7474f55e425b1",
+    "content-hash": "dc607e82120ff6397f56d61d064ba787",
     "packages": [
         {
             "name": "psr/http-message",
@@ -57,23 +57,66 @@
             "time": "2016-08-06T14:39:51+00:00"
         },
         {
-            "name": "webignition/php-basil-models",
-            "version": "0.2",
+            "name": "webignition/php-basil-context-aware-exception",
+            "version": "0.1",
             "source": {
                 "type": "git",
-                "url": "https://github.com/webignition/php-basil-models.git",
-                "reference": "1a4b3d9682203fc6e18ff311658e62c44070aacd"
+                "url": "https://github.com/webignition/php-basil-context-aware-exception.git",
+                "reference": "c1435f31a79191748f90e091775dbb278510ee41"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/webignition/php-basil-models/zipball/1a4b3d9682203fc6e18ff311658e62c44070aacd",
-                "reference": "1a4b3d9682203fc6e18ff311658e62c44070aacd",
+                "url": "https://api.github.com/repos/webignition/php-basil-context-aware-exception/zipball/c1435f31a79191748f90e091775dbb278510ee41",
+                "reference": "c1435f31a79191748f90e091775dbb278510ee41",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.2"
+            },
+            "require-dev": {
+                "phpstan/phpstan": "^0.11.5",
+                "phpunit/phpunit": "~8.0",
+                "squizlabs/php_codesniffer": "3.*"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "webignition\\BasilContextAwareException\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Jon Cram",
+                    "email": "webignition@gmail.com"
+                }
+            ],
+            "description": "Models for basil language objects",
+            "homepage": "https://github.com/webignition/php-basil-context-aware-exception",
+            "time": "2019-07-13T14:46:44+00:00"
+        },
+        {
+            "name": "webignition/php-basil-models",
+            "version": "0.15",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/webignition/php-basil-models.git",
+                "reference": "76697f66a6bf021ec5a6e5510212a3672c548d09"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/webignition/php-basil-models/zipball/76697f66a6bf021ec5a6e5510212a3672c548d09",
+                "reference": "76697f66a6bf021ec5a6e5510212a3672c548d09",
                 "shasum": ""
             },
             "require": {
                 "ext-mbstring": "*",
                 "php": ">=7.2",
-                "psr/http-message": "^1.0"
+                "psr/http-message": "^1.0",
+                "webignition/php-basil-context-aware-exception": "^0.1.0"
             },
             "require-dev": {
                 "nyholm/psr7": "^1.1",
@@ -99,7 +142,7 @@
             ],
             "description": "Models for basil language objects",
             "homepage": "https://github.com/webignition/php-basil-models",
-            "time": "2019-06-27T14:31:15+00:00"
+            "time": "2019-07-13T14:53:37+00:00"
         }
     ],
     "packages-dev": [
@@ -3188,6 +3231,95 @@
             ],
             "description": "A small library for converting tokenized PHP source code into XML and potentially other formats",
             "time": "2019-06-13T22:48:21+00:00"
+        },
+        {
+            "name": "webignition/php-basil-data-structures",
+            "version": "0.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/webignition/php-basil-data-structures.git",
+                "reference": "dd54868165237dc24f6f5c58abbad5677c6e097d"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/webignition/php-basil-data-structures/zipball/dd54868165237dc24f6f5c58abbad5677c6e097d",
+                "reference": "dd54868165237dc24f6f5c58abbad5677c6e097d",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.2"
+            },
+            "require-dev": {
+                "phpstan/phpstan": "^0.11.5",
+                "phpunit/phpunit": "~8.0",
+                "squizlabs/php_codesniffer": "3.*"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "webignition\\BasilDataStructure\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Jon Cram",
+                    "email": "webignition@gmail.com"
+                }
+            ],
+            "description": "Data structures for basil language",
+            "homepage": "https://github.com/webignition/php-basil-data-structures",
+            "time": "2019-07-13T11:59:09+00:00"
+        },
+        {
+            "name": "webignition/php-basil-model-factory",
+            "version": "0.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/webignition/php-basil-model-factory.git",
+                "reference": "d9771d95d3146610ac6485edd11570ab8d377818"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/webignition/php-basil-model-factory/zipball/d9771d95d3146610ac6485edd11570ab8d377818",
+                "reference": "d9771d95d3146610ac6485edd11570ab8d377818",
+                "shasum": ""
+            },
+            "require": {
+                "ext-mbstring": "*",
+                "nyholm/psr7": "^1.1",
+                "php": ">=7.2",
+                "webignition/php-basil-context-aware-exception": "^0.1.0",
+                "webignition/php-basil-data-structures": "^0.1.0",
+                "webignition/php-basil-models": "^0.15.0"
+            },
+            "require-dev": {
+                "phpstan/phpstan": "^0.11.5",
+                "phpunit/phpunit": "~8.0",
+                "squizlabs/php_codesniffer": "3.*"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "webignition\\BasilModelFactory\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Jon Cram",
+                    "email": "webignition@gmail.com"
+                }
+            ],
+            "description": "Factories to create basil models",
+            "homepage": "https://github.com/webignition/php-basil-model-factory",
+            "time": "2019-07-13T15:45:02+00:00"
         },
         {
             "name": "webmozart/assert",
