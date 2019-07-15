@@ -9,7 +9,7 @@ use webignition\BasilModel\Action\InteractionAction;
 use webignition\BasilModel\Action\NoArgumentsAction;
 use webignition\BasilModel\Action\UnrecognisedAction;
 use webignition\BasilModel\Action\WaitAction;
-use webignition\BasilModelValidator\Action\InvalidResultCode;
+use webignition\BasilModelValidator\Action\ActionValidator;
 use webignition\BasilModelValidator\Action\WaitActionValidator;
 use webignition\BasilModelValidator\Result\InvalidResult;
 use webignition\BasilModelValidator\Result\ResultInterface;
@@ -92,7 +92,7 @@ class WaitActionValidatorTest extends \PHPUnit\Framework\TestCase
                 'expectedResult' => new InvalidResult(
                     $waitActionNoDuration,
                     TypeInterface::ACTION,
-                    InvalidResultCode::CODE_WAIT_ACTION_DURATION_MISSING
+                    ActionValidator::CODE_WAIT_ACTION_DURATION_MISSING
                 ),
             ],
         ];

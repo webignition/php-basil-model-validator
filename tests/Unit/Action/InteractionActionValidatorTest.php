@@ -11,8 +11,8 @@ use webignition\BasilModel\Action\NoArgumentsAction;
 use webignition\BasilModel\Action\UnrecognisedAction;
 use webignition\BasilModel\Action\WaitAction;
 use webignition\BasilModelFactory\Action\ActionFactory;
+use webignition\BasilModelValidator\Action\ActionValidator;
 use webignition\BasilModelValidator\Action\InteractionActionValidator;
-use webignition\BasilModelValidator\Action\InvalidResultCode;
 use webignition\BasilModelValidator\Result\InvalidResult;
 use webignition\BasilModelValidator\Result\ResultInterface;
 use webignition\BasilModelValidator\Result\TypeInterface;
@@ -104,7 +104,7 @@ class InteractionActionValidatorTest extends \PHPUnit\Framework\TestCase
                 'expectedResult' => new InvalidResult(
                     $interactionActionWithoutIdentifier,
                     TypeInterface::ACTION,
-                    InvalidResultCode::CODE_INTERACTION_ACTION_IDENTIFIER_MISSING
+                    ActionValidator::CODE_INTERACTION_ACTION_IDENTIFIER_MISSING
                 ),
             ],
         ];
