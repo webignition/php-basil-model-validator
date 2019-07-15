@@ -31,9 +31,11 @@ class AssertionValidatorTest extends \PHPUnit\Framework\TestCase
     {
         parent::setUp();
 
+        $valueValidator = new ValueValidator();
+
         $this->assertionValidator = new AssertionValidator(
-            new IdentifierValidator(),
-            new ValueValidator()
+            new IdentifierValidator($valueValidator),
+            $valueValidator
         );
     }
 
