@@ -5,7 +5,6 @@ namespace webignition\BasilModelValidator\Tests\Unit\Result;
 
 use webignition\BasilModel\Identifier\Identifier;
 use webignition\BasilModel\Identifier\IdentifierTypes;
-use webignition\BasilModel\Value\ObjectValue;
 use webignition\BasilModel\Value\Value;
 use webignition\BasilModel\Value\ValueTypes;
 use webignition\BasilModelFactory\ValueFactory;
@@ -66,7 +65,7 @@ class InvalidResultTest extends \PHPUnit\Framework\TestCase
         $identifierValidationInvalidResult = new InvalidResult(
             $invalidIdentifier,
             TypeInterface::IDENTIFIER,
-            IdentifierValidator::CODE_INVALID_PAGE_OBJECT_PROPERTY,
+            IdentifierValidator::CODE_VALUE_INVALID,
             $valueValidationInvalidResult
         );
 
