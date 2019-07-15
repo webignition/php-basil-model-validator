@@ -147,11 +147,14 @@ class IdentifierValidatorTest extends \PHPUnit\Framework\TestCase
             'type: element parameter' => [
                 'identifier' => $identifierFactory->create('$elements.element_name'),
             ],
-            'type: page object parameter' => [
+            'type: page object parameter, url' => [
                 'identifier' => $identifierFactory->create('$page.url'),
             ],
-            'type: browser object parameter' => [
-                'identifier' => $identifierFactory->create('$browser.title'),
+            'type: page object parameter, title' => [
+                'identifier' => $identifierFactory->create('$page.title'),
+            ],
+            'type: browser object parameter, size' => [
+                'identifier' => $identifierFactory->create('$browser.size'),
             ],
         ];
     }
