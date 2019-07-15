@@ -33,4 +33,16 @@ class InvalidResultTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($type, $result->getType());
         $this->assertEquals($code, $result->getCode());
     }
+
+    public function testCreateUnhandledModelResult()
+    {
+        $model = new \stdClass();
+
+        $result = InvalidResult::createUnhandledModelResult($model);
+
+        $this->assertFalse($result->getIsValid());
+        $this->assertSame($model, $result->getModel());
+        $this->assertSame(TypeInterface::UNHANDLED, $result->getType());
+        $this->assertSame(0, $result->getCode());
+    }
 }
