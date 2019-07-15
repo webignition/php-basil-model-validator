@@ -17,6 +17,7 @@ use webignition\BasilModelValidator\Result\InvalidResult;
 use webignition\BasilModelValidator\Result\ResultInterface;
 use webignition\BasilModelValidator\Result\TypeInterface;
 use webignition\BasilModelValidator\Result\ValidResult;
+use webignition\BasilModelValidator\ValueValidator;
 
 class AssertionValidatorTest extends \PHPUnit\Framework\TestCase
 {
@@ -152,7 +153,12 @@ class AssertionValidatorTest extends \PHPUnit\Framework\TestCase
                 'expectedResult' => new InvalidResult(
                     $assertionWithInvalidValue,
                     TypeInterface::ASSERTION,
-                    AssertionValidator::CODE_VALUE_INVALID
+                    AssertionValidator::CODE_VALUE_INVALID,
+                    new InvalidResult(
+                        $invalidValue,
+                        TypeInterface::VALUE,
+                        ValueValidator::CODE_TYPE_INVALID
+                    )
                 ),
             ],
         ];

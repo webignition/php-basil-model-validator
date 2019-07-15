@@ -5,6 +5,7 @@ namespace webignition\BasilModelValidator;
 use webignition\BasilModel\Assertion\AssertionComparisons;
 use webignition\BasilModel\Assertion\AssertionInterface;
 use webignition\BasilModelValidator\Result\InvalidResult;
+use webignition\BasilModelValidator\Result\InvalidResultInterface;
 use webignition\BasilModelValidator\Result\ResultInterface;
 use webignition\BasilModelValidator\Result\TypeInterface;
 use webignition\BasilModelValidator\Result\ValidResult;
@@ -77,16 +78,19 @@ class AssertionValidator implements ValidatorInterface
 
             $valueValidationResult = $this->valueValidator->validate($model->getValue());
 
-            if (false === $valueValidationResult->getIsValid()) {
-                return $this->createInvalidResult($model, self::CODE_VALUE_INVALID);
+            if ($valueValidationResult instanceof InvalidResultInterface) {
+                return $this->createInvalidResult($model, self::CODE_VALUE_INVALID, $valueValidationResult);
             }
         }
 
         return new ValidResult($model);
     }
 
-    private function createInvalidResult(object $model, int $code): ResultInterface
-    {
-        return new InvalidResult($model, TypeInterface::ASSERTION, $code);
+    private function createInvalidResult(
+        object $model,
+        int $code,
+        ?InvalidResultInterface $invalidResult = null
+    ): ResultInterface {
+        return new InvalidResult($model, TypeInterface::ASSERTION, $code, $invalidResult);
     }
 }
