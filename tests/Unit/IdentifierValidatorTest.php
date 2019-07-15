@@ -12,7 +12,6 @@ use webignition\BasilModel\Value\ValueTypes;
 use webignition\BasilModelFactory\IdentifierFactory;
 use webignition\BasilModelFactory\ValueFactory;
 use webignition\BasilModelValidator\IdentifierValidator;
-use webignition\BasilModelValidator\Result\InvalidIdentifierResult;
 use webignition\BasilModelValidator\Result\InvalidResult;
 use webignition\BasilModelValidator\Result\ResultInterface;
 use webignition\BasilModelValidator\Result\TypeInterface;
@@ -75,42 +74,41 @@ class IdentifierValidatorTest extends \PHPUnit\Framework\TestCase
             $invalidPageObjectValue
         );
 
-        $expectedInvalidPageObjectPropertyResult = new InvalidIdentifierResult(
-            $identifierWithInvalidPageObjectProperty,
-            IdentifierValidator::CODE_INVALID_PAGE_OBJECT_PROPERTY
-        );
-        $expectedInvalidPageObjectPropertyResult->setPageProperty('foo');
-
         return [
             'invalid type' => [
                 'identifier' => $identifierWithInvalidType,
-                'expectedResult' => new InvalidIdentifierResult(
+                'expectedResult' => new InvalidResult(
                     $identifierWithInvalidType,
+                    TypeInterface::IDENTIFIER,
                     IdentifierValidator::CODE_TYPE_INVALID
                 ),
             ],
             'invalid value, empty css selector' => [
                 'identifier' => $identifierWithEmptyValue,
-                'expectedResult' => new InvalidIdentifierResult(
+                'expectedResult' => new InvalidResult(
                     $identifierWithEmptyValue,
+                    TypeInterface::IDENTIFIER,
                     IdentifierValidator::CODE_VALUE_MISSING
                 ),
             ],
             'invalid parent identifier' => [
                 'identifier' => $identifierWithInvalidParent,
-                'expectedResult' => new InvalidIdentifierResult(
+                'expectedResult' => new InvalidResult(
                     $identifierWithInvalidParent,
+                    TypeInterface::IDENTIFIER,
                     IdentifierValidator::CODE_INVALID_PARENT_IDENTIFIER,
-                    new InvalidIdentifierResult(
+                    new InvalidResult(
                         $identifierWithInvalidType,
+                        TypeInterface::IDENTIFIER,
                         IdentifierValidator::CODE_TYPE_INVALID
                     )
                 ),
             ],
             'invalid page object property' => [
                 'identifier' => $identifierWithInvalidPageObjectProperty,
-                'expectedResult' => new InvalidIdentifierResult(
+                'expectedResult' => new InvalidResult(
                     $identifierWithInvalidPageObjectProperty,
+                    TypeInterface::IDENTIFIER,
                     IdentifierValidator::CODE_VALUE_INVALID,
                     new InvalidResult(
                         $invalidPageObjectValue,

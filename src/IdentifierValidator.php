@@ -4,10 +4,10 @@ namespace webignition\BasilModelValidator;
 
 use webignition\BasilModel\Identifier\IdentifierInterface;
 use webignition\BasilModel\Identifier\IdentifierTypes;
-use webignition\BasilModelValidator\Result\InvalidIdentifierResult;
 use webignition\BasilModelValidator\Result\InvalidResult;
 use webignition\BasilModelValidator\Result\InvalidResultInterface;
 use webignition\BasilModelValidator\Result\ResultInterface;
+use webignition\BasilModelValidator\Result\TypeInterface;
 use webignition\BasilModelValidator\Result\ValidResult;
 
 class IdentifierValidator implements ValidatorInterface
@@ -15,12 +15,7 @@ class IdentifierValidator implements ValidatorInterface
     const CODE_TYPE_INVALID = 1;
     const CODE_VALUE_MISSING = 2;
     const CODE_INVALID_PARENT_IDENTIFIER = 3;
-    const CODE_INVALID_PAGE_OBJECT_PROPERTY = 4;
-    const CODE_INVALID_BROWSER_OBJECT_PROPERTY = 5;
-    const CODE_VALUE_INVALID = 6;
-
-    const PAGE_OBJECT_PARAMETER_REGEX = '/^\$page\.+/';
-    const BROWSER_OBJECT_PARAMETER_REGEX = '/^\$browser\.+/';
+    const CODE_VALUE_INVALID = 4;
 
     const VALID_TYPES = [
         IdentifierTypes::CSS_SELECTOR,
@@ -29,15 +24,6 @@ class IdentifierValidator implements ValidatorInterface
         IdentifierTypes::ELEMENT_PARAMETER,
         IdentifierTypes::PAGE_OBJECT_PARAMETER,
         IdentifierTypes::BROWSER_OBJECT_PARAMETER,
-    ];
-
-    const VALID_PAGE_OBJECT_PROPERTY_NAMES = [
-        'url',
-        'title',
-    ];
-
-    const VALID_BROWSER_OBJECT_PROPERTY_NAMES = [
-        'size',
     ];
 
     private $valueValidator;
@@ -101,7 +87,7 @@ class IdentifierValidator implements ValidatorInterface
         object $model,
         int $code,
         ?InvalidResultInterface $previous = null
-    ): InvalidIdentifierResult {
-        return new InvalidIdentifierResult($model, $code, $previous);
+    ): InvalidResultInterface {
+        return new InvalidResult($model, TypeInterface::IDENTIFIER, $code, $previous);
     }
 }
