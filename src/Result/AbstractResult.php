@@ -8,20 +8,17 @@ abstract class AbstractResult implements ResultInterface
     private $model;
     private $type;
     private $code;
-    private $message;
 
     public function __construct(
         bool $isValid,
         object $model,
         int $type = TypeInterface::NOT_APPLICABLE,
-        int $code = 0,
-        string $message = ''
+        int $code = 0
     ) {
         $this->isValid = $isValid;
         $this->model = $model;
         $this->type = $type;
         $this->code = $code;
-        $this->message = $message;
     }
 
     public function getIsValid(): bool
@@ -42,10 +39,5 @@ abstract class AbstractResult implements ResultInterface
     public function getCode(): int
     {
         return $this->code;
-    }
-
-    public function getMessage(): string
-    {
-        return $this->message;
     }
 }

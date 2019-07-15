@@ -7,9 +7,9 @@ class InvalidIdentifierResult extends InvalidResult
     private $pageProperty;
     private $browserProperty;
 
-    public function __construct(object $model, int $code = 0, string $message = '')
+    public function __construct(object $model, int $code = 0)
     {
-        parent::__construct($model, TypeInterface::IDENTIFIER, $code, $message);
+        parent::__construct($model, TypeInterface::IDENTIFIER, $code);
     }
 
     public function setPageProperty(string $pageProperty)
