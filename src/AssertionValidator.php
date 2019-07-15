@@ -36,6 +36,14 @@ class AssertionValidator implements ValidatorInterface
         $this->valueValidator = $valueValidator;
     }
 
+    public static function create(): AssertionValidator
+    {
+        return new AssertionValidator(
+            IdentifierValidator::create(),
+            ValueValidator::create()
+        );
+    }
+
     public function handles(object $model): bool
     {
         return $model instanceof AssertionInterface;
