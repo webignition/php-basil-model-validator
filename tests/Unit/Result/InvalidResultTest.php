@@ -5,11 +5,14 @@ namespace webignition\BasilModelValidator\Tests\Unit\Result;
 
 use webignition\BasilModel\Identifier\Identifier;
 use webignition\BasilModel\Identifier\IdentifierTypes;
+use webignition\BasilModel\Value\ObjectValue;
 use webignition\BasilModel\Value\Value;
 use webignition\BasilModel\Value\ValueTypes;
+use webignition\BasilModelFactory\ValueFactory;
 use webignition\BasilModelValidator\IdentifierValidator;
 use webignition\BasilModelValidator\Result\InvalidResult;
 use webignition\BasilModelValidator\Result\TypeInterface;
+use webignition\BasilModelValidator\ValueValidator;
 
 class InvalidResultTest extends \PHPUnit\Framework\TestCase
 {
@@ -44,5 +47,29 @@ class InvalidResultTest extends \PHPUnit\Framework\TestCase
         $this->assertSame($model, $result->getModel());
         $this->assertSame(TypeInterface::UNHANDLED, $result->getType());
         $this->assertSame(0, $result->getCode());
+    }
+
+    public function testGetPrevious()
+    {
+        $valueFactory = ValueFactory::createFactory();
+
+        $invalidValue = $valueFactory->createFromValueString('$page.foo');
+
+        $valueValidationInvalidResult = new InvalidResult(
+            $invalidValue,
+            TypeInterface::VALUE,
+            ValueValidator::CODE_PROPERTY_NAME_INVALID
+        );
+
+        $invalidIdentifier = new Identifier(IdentifierTypes::PAGE_OBJECT_PARAMETER, $invalidValue);
+
+        $identifierValidationInvalidResult = new InvalidResult(
+            $invalidIdentifier,
+            TypeInterface::IDENTIFIER,
+            IdentifierValidator::CODE_INVALID_PAGE_OBJECT_PROPERTY,
+            $valueValidationInvalidResult
+        );
+
+        $this->assertSame($valueValidationInvalidResult, $identifierValidationInvalidResult->getPrevious());
     }
 }
