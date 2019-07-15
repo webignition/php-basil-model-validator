@@ -31,10 +31,11 @@ class IdentifierValidator implements ValidatorInterface
 
     const VALID_PAGE_OBJECT_PROPERTY_NAMES = [
         'url',
+        'title',
     ];
 
     const VALID_BROWSER_OBJECT_PROPERTY_NAMES = [
-        'title',
+        'size',
     ];
 
     public function handles(object $model): bool
