@@ -30,7 +30,7 @@ class IdentifierValidatorTest extends \PHPUnit\Framework\TestCase
     {
         parent::setUp();
 
-        $this->identifierValidator = new IdentifierValidator(new ValueValidator());
+        $this->identifierValidator = IdentifierValidator::create();
     }
 
     public function testHandles()

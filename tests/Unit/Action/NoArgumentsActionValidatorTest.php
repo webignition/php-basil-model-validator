@@ -27,7 +27,7 @@ class NoArgumentsActionValidatorTest extends \PHPUnit\Framework\TestCase
     {
         parent::setUp();
 
-        $this->noArgumentsActionValidator = new NoArgumentsActionValidator();
+        $this->noArgumentsActionValidator = NoArgumentsActionValidator::create();
     }
 
     /**

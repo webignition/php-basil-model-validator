@@ -25,6 +25,11 @@ class ValueValidator implements ValidatorInterface
         ],
     ];
 
+    public static function create(): ValueValidator
+    {
+        return new ValueValidator();
+    }
+
     public function handles(object $model): bool
     {
         return $model instanceof ValueInterface;

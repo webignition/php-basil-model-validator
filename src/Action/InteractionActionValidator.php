@@ -13,6 +13,11 @@ use webignition\BasilModelValidator\ValidatorInterface;
 
 class InteractionActionValidator implements ValidatorInterface
 {
+    public static function create(): InteractionActionValidator
+    {
+        return new InteractionActionValidator();
+    }
+
     public function handles(object $model): bool
     {
         return $model instanceof ActionInterface &&

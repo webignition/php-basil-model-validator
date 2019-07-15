@@ -22,7 +22,7 @@ class ValueValidatorTest extends \PHPUnit\Framework\TestCase
     {
         parent::setUp();
 
-        $this->valueValidator = new ValueValidator();
+        $this->valueValidator = ValueValidator::create();
     }
 
     public function testHandles()

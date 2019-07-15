@@ -12,6 +12,11 @@ class PageValidator implements ValidatorInterface
 {
     const CODE_URL_MISSING = 1;
 
+    public static function create(): PageValidator
+    {
+        return new PageValidator();
+    }
+
     public function handles(object $model): bool
     {
         return $model instanceof PageInterface;

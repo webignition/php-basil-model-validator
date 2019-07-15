@@ -47,6 +47,13 @@ class IdentifierValidator implements ValidatorInterface
         $this->valueValidator = $valueValidator;
     }
 
+    public static function create(): IdentifierValidator
+    {
+        return new IdentifierValidator(
+            ValueValidator::create()
+        );
+    }
+
     public function handles(object $model): bool
     {
         return $model instanceof IdentifierInterface;

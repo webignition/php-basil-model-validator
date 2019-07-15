@@ -13,6 +13,11 @@ use webignition\BasilModelValidator\ValidatorInterface;
 
 class WaitActionValidator implements ValidatorInterface
 {
+    public static function create(): WaitActionValidator
+    {
+        return new WaitActionValidator();
+    }
+
     public function handles(object $model): bool
     {
         return $model instanceof ActionInterface && ActionTypes::WAIT === $model->getType();

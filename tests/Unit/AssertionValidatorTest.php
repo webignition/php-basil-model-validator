@@ -13,12 +13,10 @@ use webignition\BasilModel\Value\Value;
 use webignition\BasilModel\Value\ValueTypes;
 use webignition\BasilModelFactory\AssertionFactory;
 use webignition\BasilModelValidator\AssertionValidator;
-use webignition\BasilModelValidator\IdentifierValidator;
 use webignition\BasilModelValidator\Result\InvalidResult;
 use webignition\BasilModelValidator\Result\ResultInterface;
 use webignition\BasilModelValidator\Result\TypeInterface;
 use webignition\BasilModelValidator\Result\ValidResult;
-use webignition\BasilModelValidator\ValueValidator;
 
 class AssertionValidatorTest extends \PHPUnit\Framework\TestCase
 {
@@ -31,12 +29,7 @@ class AssertionValidatorTest extends \PHPUnit\Framework\TestCase
     {
         parent::setUp();
 
-        $valueValidator = new ValueValidator();
-
-        $this->assertionValidator = new AssertionValidator(
-            new IdentifierValidator($valueValidator),
-            $valueValidator
-        );
+        $this->assertionValidator = AssertionValidator::create();
     }
 
     public function testHandles()

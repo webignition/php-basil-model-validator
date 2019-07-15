@@ -11,6 +11,11 @@ use webignition\BasilModelValidator\ValidatorInterface;
 
 class NoArgumentsActionValidator implements ValidatorInterface
 {
+    public static function create(): NoArgumentsActionValidator
+    {
+        return new NoArgumentsActionValidator();
+    }
+
     public function handles(object $model): bool
     {
         return $model instanceof ActionInterface &&

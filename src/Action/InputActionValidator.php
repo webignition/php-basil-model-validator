@@ -20,6 +20,11 @@ class InputActionValidator implements ValidatorInterface
         return $model instanceof ActionInterface && ActionTypes::SET === $model->getType();
     }
 
+    public static function create(): InputActionValidator
+    {
+        return new InputActionValidator();
+    }
+
     public function validate(object $model): ResultInterface
     {
         if (!$model instanceof InputActionInterface) {
