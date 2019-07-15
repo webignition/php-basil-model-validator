@@ -4,6 +4,8 @@ namespace webignition\BasilModelValidator;
 
 use webignition\BasilModel\Identifier\IdentifierInterface;
 use webignition\BasilModel\Identifier\IdentifierTypes;
+use webignition\BasilModel\Value\ObjectValueInterface;
+use webignition\BasilModel\Value\ValueTypes;
 use webignition\BasilModelValidator\Result\InvalidResult;
 use webignition\BasilModelValidator\Result\InvalidResultInterface;
 use webignition\BasilModelValidator\Result\ResultInterface;
@@ -16,12 +18,21 @@ class IdentifierValidator implements ValidatorInterface
     const CODE_VALUE_MISSING = 2;
     const CODE_INVALID_PARENT_IDENTIFIER = 3;
     const CODE_VALUE_INVALID = 4;
+    const CODE_TYPE_MISMATCH = 5;
 
     const VALID_TYPES = [
         IdentifierTypes::CSS_SELECTOR,
         IdentifierTypes::XPATH_EXPRESSION,
-        IdentifierTypes::PAGE_MODEL_ELEMENT_REFERENCE,
-        IdentifierTypes::ELEMENT_PARAMETER,
+        IdentifierTypes::PAGE_OBJECT_PARAMETER,
+        IdentifierTypes::BROWSER_OBJECT_PARAMETER,
+    ];
+
+    const TYPES_REQUIRING_STRING_VALUE = [
+        IdentifierTypes::CSS_SELECTOR,
+        IdentifierTypes::XPATH_EXPRESSION,
+    ];
+
+    const TYPES_REQUIRING_OBJECT_VALUE = [
         IdentifierTypes::PAGE_OBJECT_PARAMETER,
         IdentifierTypes::BROWSER_OBJECT_PARAMETER,
     ];
@@ -64,6 +75,28 @@ class IdentifierValidator implements ValidatorInterface
         $valueValidationResult = $this->valueValidator->validate($value);
         if ($valueValidationResult instanceof InvalidResultInterface) {
             return $this->createInvalidResult($model, self::CODE_VALUE_INVALID, $valueValidationResult);
+        }
+
+        $type = $model->getType();
+
+        if (in_array($type, self::TYPES_REQUIRING_STRING_VALUE)) {
+            if (ValueTypes::STRING !== $value->getType()) {
+                return $this->createInvalidResult($model, self::CODE_TYPE_MISMATCH);
+            }
+        }
+
+        if (in_array($type, self::TYPES_REQUIRING_OBJECT_VALUE)) {
+            if (!$value instanceof ObjectValueInterface) {
+                return $this->createInvalidResult($model, self::CODE_TYPE_MISMATCH);
+            }
+
+            if ($value->getType() === ValueTypes::PAGE_OBJECT_PROPERTY && $value->getObjectName() !== 'page') {
+                return $this->createInvalidResult($model, self::CODE_TYPE_MISMATCH);
+            }
+
+            if ($value->getType() === ValueTypes::BROWSER_OBJECT_PROPERTY && $value->getObjectName() !== 'browser') {
+                return $this->createInvalidResult($model, self::CODE_TYPE_MISMATCH);
+            }
         }
 
         $parentIdentifier = $model->getParentIdentifier();
