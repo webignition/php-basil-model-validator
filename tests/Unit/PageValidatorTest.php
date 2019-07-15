@@ -22,7 +22,7 @@ class PageValidatorTest extends \PHPUnit\Framework\TestCase
     {
         parent::setUp();
 
-        $this->pageValidator = new PageValidator();
+        $this->pageValidator = PageValidator::create();
     }
 
     public function testHandles()
