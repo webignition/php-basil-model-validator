@@ -29,7 +29,7 @@ class InteractionActionValidator implements ValidatorInterface
             return new InvalidResult(
                 $model,
                 TypeInterface::ACTION,
-                InvalidResultCode::CODE_INTERACTION_ACTION_IDENTIFIER_MISSING
+                ActionValidator::CODE_INTERACTION_ACTION_IDENTIFIER_MISSING
             );
         }
 

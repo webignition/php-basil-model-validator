@@ -27,15 +27,15 @@ class InputActionValidator implements ValidatorInterface
         }
 
         if (null === $model->getIdentifier()) {
-            return $this->createInvalidResult($model, InvalidResultCode::CODE_INPUT_ACTION_IDENTIFIER_MISSING);
+            return $this->createInvalidResult($model, ActionValidator::CODE_INPUT_ACTION_IDENTIFIER_MISSING);
         }
 
         if (null === $model->getValue()) {
-            return $this->createInvalidResult($model, InvalidResultCode::CODE_INPUT_ACTION_VALUE_MISSING);
+            return $this->createInvalidResult($model, ActionValidator::CODE_INPUT_ACTION_VALUE_MISSING);
         }
 
         if (!$this->hasToKeyword($model)) {
-            return $this->createInvalidResult($model, InvalidResultCode::CODE_INPUT_ACTION_TO_KEYWORD_MISSING);
+            return $this->createInvalidResult($model, ActionValidator::CODE_INPUT_ACTION_TO_KEYWORD_MISSING);
         }
 
         return new ValidResult($model);

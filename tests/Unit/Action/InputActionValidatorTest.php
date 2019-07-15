@@ -12,8 +12,8 @@ use webignition\BasilModel\Action\WaitAction;
 use webignition\BasilModel\Value\Value;
 use webignition\BasilModel\Value\ValueTypes;
 use webignition\BasilModelFactory\Action\ActionFactory;
+use webignition\BasilModelValidator\Action\ActionValidator;
 use webignition\BasilModelValidator\Action\InputActionValidator;
-use webignition\BasilModelValidator\Action\InvalidResultCode;
 use webignition\BasilModelValidator\Result\InvalidResult;
 use webignition\BasilModelValidator\Result\ResultInterface;
 use webignition\BasilModelValidator\Result\TypeInterface;
@@ -113,7 +113,7 @@ class InputActionValidatorTest extends \PHPUnit\Framework\TestCase
                 'expectedResult' => new InvalidResult(
                     $inputActionMissingIdentifier,
                     TypeInterface::ACTION,
-                    InvalidResultCode::CODE_INPUT_ACTION_IDENTIFIER_MISSING
+                    ActionValidator::CODE_INPUT_ACTION_IDENTIFIER_MISSING
                 ),
             ],
             'input action missing value' => [
@@ -121,7 +121,7 @@ class InputActionValidatorTest extends \PHPUnit\Framework\TestCase
                 'expectedResult' => new InvalidResult(
                     $inputActionMissingValue,
                     TypeInterface::ACTION,
-                    InvalidResultCode::CODE_INPUT_ACTION_VALUE_MISSING
+                    ActionValidator::CODE_INPUT_ACTION_VALUE_MISSING
                 ),
             ],
             'input action with identifier and value, missing "to" keyword' => [
@@ -129,7 +129,7 @@ class InputActionValidatorTest extends \PHPUnit\Framework\TestCase
                 'expectedResult' => new InvalidResult(
                     $inputActionMissingToKeyword,
                     TypeInterface::ACTION,
-                    InvalidResultCode::CODE_INPUT_ACTION_TO_KEYWORD_MISSING
+                    ActionValidator::CODE_INPUT_ACTION_TO_KEYWORD_MISSING
                 ),
             ],
             'input action with identifier containing "to" keyword and value, missing "to" keyword' => [
@@ -137,7 +137,7 @@ class InputActionValidatorTest extends \PHPUnit\Framework\TestCase
                 'expectedResult' => new InvalidResult(
                     $inputActionWithIdentifierContainingToKeywordMissingToKeyword,
                     TypeInterface::ACTION,
-                    InvalidResultCode::CODE_INPUT_ACTION_TO_KEYWORD_MISSING
+                    ActionValidator::CODE_INPUT_ACTION_TO_KEYWORD_MISSING
                 ),
             ],
             'input action with value containing "to" keyword, missing "to" keyword' => [
@@ -145,7 +145,7 @@ class InputActionValidatorTest extends \PHPUnit\Framework\TestCase
                 'expectedResult' => new InvalidResult(
                     $inputActionWithValueContainingToKeywordMissingToKeyword,
                     TypeInterface::ACTION,
-                    InvalidResultCode::CODE_INPUT_ACTION_TO_KEYWORD_MISSING
+                    ActionValidator::CODE_INPUT_ACTION_TO_KEYWORD_MISSING
                 ),
             ],
         ];
