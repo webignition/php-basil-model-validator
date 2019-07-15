@@ -101,11 +101,17 @@ class InputActionValidatorTest extends \PHPUnit\Framework\TestCase
 
         $inputActionMissingValue = $actionFactory->createFromActionString('set ".selector" to');
         $inputActionMissingToKeyword = $actionFactory->createFromActionString('set ".selector" "foo"');
-        $inputActionWithIdentifierContainingToKeywordMissingToKeyword =
-            $actionFactory->createFromActionString('set ".selector to value" "foo"');
+        $inputActionWithIdentifierContainingToKeywordMissingToKeyword = $actionFactory->createFromActionString(
+            'set ".selector to value" "foo"'
+        );
 
-        $inputActionWithValueContainingToKeywordMissingToKeyword =
-            $actionFactory->createFromActionString('set ".selector" "foo to value"');
+        $inputActionWithValueContainingToKeywordMissingToKeyword = $actionFactory->createFromActionString(
+            'set ".selector" "foo to value"'
+        );
+
+        $inputActionWithUnactionableIdentifier = $actionFactory->createFromActionString(
+            'set $elements.element_name to "value"'
+        );
 
         return [
             'input action missing identifier' => [
@@ -146,6 +152,14 @@ class InputActionValidatorTest extends \PHPUnit\Framework\TestCase
                     $inputActionWithValueContainingToKeywordMissingToKeyword,
                     TypeInterface::ACTION,
                     ActionValidator::CODE_INPUT_ACTION_TO_KEYWORD_MISSING
+                ),
+            ],
+            'input action with unactionable identifier' => [
+                'action' => $inputActionWithUnactionableIdentifier,
+                'expectedResult' => new InvalidResult(
+                    $inputActionWithUnactionableIdentifier,
+                    TypeInterface::ACTION,
+                    ActionValidator::CODE_INPUT_ACTION_UNACTIONABLE_IDENTIFIER
                 ),
             ],
         ];

@@ -31,8 +31,14 @@ class InputActionValidator implements ValidatorInterface
             return InvalidResult::createUnhandledModelResult($model);
         }
 
-        if (null === $model->getIdentifier()) {
+        $identifier = $model->getIdentifier();
+
+        if (null === $identifier) {
             return $this->createInvalidResult($model, ActionValidator::CODE_INPUT_ACTION_IDENTIFIER_MISSING);
+        }
+
+        if (false === $identifier->isActionable()) {
+            return $this->createInvalidResult($model, ActionValidator::CODE_INPUT_ACTION_UNACTIONABLE_IDENTIFIER);
         }
 
         if (null === $model->getValue()) {
