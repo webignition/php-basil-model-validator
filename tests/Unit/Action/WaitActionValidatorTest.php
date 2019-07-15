@@ -66,11 +66,11 @@ class WaitActionValidatorTest extends \PHPUnit\Framework\TestCase
 
     public function testValidateNotValidWrongObjectType()
     {
-        $object = new \stdClass();
+        $model = new \stdClass();
 
         $this->assertEquals(
-            InvalidResult::createUnhandledModelResult($object),
-            $this->waitActionValidator->validate($object)
+            InvalidResult::createUnhandledModelResult($model),
+            $this->waitActionValidator->validate($model)
         );
     }
 
