@@ -10,11 +10,14 @@ use webignition\BasilModel\Identifier\IdentifierTypes;
 use webignition\BasilModel\Value\Value;
 use webignition\BasilModel\Value\ValueTypes;
 use webignition\BasilModelFactory\IdentifierFactory;
+use webignition\BasilModelFactory\ValueFactory;
 use webignition\BasilModelValidator\IdentifierValidator;
 use webignition\BasilModelValidator\Result\InvalidIdentifierResult;
 use webignition\BasilModelValidator\Result\InvalidResult;
 use webignition\BasilModelValidator\Result\ResultInterface;
+use webignition\BasilModelValidator\Result\TypeInterface;
 use webignition\BasilModelValidator\Result\ValidResult;
+use webignition\BasilModelValidator\ValueValidator;
 
 class IdentifierValidatorTest extends \PHPUnit\Framework\TestCase
 {
@@ -27,7 +30,7 @@ class IdentifierValidatorTest extends \PHPUnit\Framework\TestCase
     {
         parent::setUp();
 
-        $this->identifierValidator = new IdentifierValidator();
+        $this->identifierValidator = new IdentifierValidator(new ValueValidator());
     }
 
     public function testHandles()
@@ -56,30 +59,27 @@ class IdentifierValidatorTest extends \PHPUnit\Framework\TestCase
     public function validateNotValidDataProvider(): array
     {
         $identifierFactory = IdentifierFactory::createFactory();
+        $valueFactory = ValueFactory::createFactory();
 
-        $identifierWithInvalidType = new Identifier('foo', new Value(ValueTypes::STRING, 'value'));
-        $identifierWithInvalidValue = new Identifier(IdentifierTypes::CSS_SELECTOR, new Value(ValueTypes::STRING, ''));
-        $identifierWithInvalidParent = (new Identifier(
-            IdentifierTypes::CSS_SELECTOR,
-            new Value(ValueTypes::STRING, '.selector')
-        ))
+        $identifierWithInvalidType = new Identifier('foo', $valueFactory->createFromValueString('value'));
+        $identifierWithEmptyValue = new Identifier(IdentifierTypes::CSS_SELECTOR, new Value(ValueTypes::STRING, ''));
+
+        $identifierWithInvalidParent = $identifierFactory
+            ->create('".selector"')
             ->withParentIdentifier($identifierWithInvalidType);
 
-        $identifierWithInvalidPageObjectProperty = $identifierFactory->create('$page.foo');
+        $invalidPageObjectValue = $valueFactory->createFromValueString('$page.foo');
+
+        $identifierWithInvalidPageObjectProperty = new Identifier(
+            IdentifierTypes::PAGE_OBJECT_PARAMETER,
+            $invalidPageObjectValue
+        );
 
         $expectedInvalidPageObjectPropertyResult = new InvalidIdentifierResult(
             $identifierWithInvalidPageObjectProperty,
             IdentifierValidator::CODE_INVALID_PAGE_OBJECT_PROPERTY
         );
         $expectedInvalidPageObjectPropertyResult->setPageProperty('foo');
-
-        $identifierWithInvalidBrowserObjectProperty = $identifierFactory->create('$browser.bar');
-
-        $expectedInvalidBrowserObjectPropertyResult = new InvalidIdentifierResult(
-            $identifierWithInvalidBrowserObjectProperty,
-            IdentifierValidator::CODE_INVALID_BROWSER_OBJECT_PROPERTY
-        );
-        $expectedInvalidBrowserObjectPropertyResult->setBrowserProperty('bar');
 
         return [
             'invalid type' => [
@@ -89,10 +89,10 @@ class IdentifierValidatorTest extends \PHPUnit\Framework\TestCase
                     IdentifierValidator::CODE_TYPE_INVALID
                 ),
             ],
-            'invalid value' => [
-                'identifier' => $identifierWithInvalidValue,
+            'invalid value, empty css selector' => [
+                'identifier' => $identifierWithEmptyValue,
                 'expectedResult' => new InvalidIdentifierResult(
-                    $identifierWithInvalidValue,
+                    $identifierWithEmptyValue,
                     IdentifierValidator::CODE_VALUE_MISSING
                 ),
             ],
@@ -100,16 +100,24 @@ class IdentifierValidatorTest extends \PHPUnit\Framework\TestCase
                 'identifier' => $identifierWithInvalidParent,
                 'expectedResult' => new InvalidIdentifierResult(
                     $identifierWithInvalidParent,
-                    IdentifierValidator::CODE_INVALID_PARENT_IDENTIFIER
+                    IdentifierValidator::CODE_INVALID_PARENT_IDENTIFIER,
+                    new InvalidIdentifierResult(
+                        $identifierWithInvalidType,
+                        IdentifierValidator::CODE_TYPE_INVALID
+                    )
                 ),
             ],
             'invalid page object property' => [
                 'identifier' => $identifierWithInvalidPageObjectProperty,
-                'expectedResult' => $expectedInvalidPageObjectPropertyResult,
-            ],
-            'invalid browser object property' => [
-                'identifier' => $identifierWithInvalidBrowserObjectProperty,
-                'expectedResult' => $expectedInvalidBrowserObjectPropertyResult,
+                'expectedResult' => new InvalidIdentifierResult(
+                    $identifierWithInvalidPageObjectProperty,
+                    IdentifierValidator::CODE_VALUE_INVALID,
+                    new InvalidResult(
+                        $invalidPageObjectValue,
+                        TypeInterface::VALUE,
+                        ValueValidator::CODE_PROPERTY_NAME_INVALID
+                    )
+                ),
             ],
         ];
     }
