@@ -24,13 +24,18 @@ class InvalidIdentifierResultTest extends \PHPUnit\Framework\TestCase
         );
 
         $code = IdentifierValidator::CODE_VALUE_MISSING;
+        $pageProperty = 'foo';
+        $browserProperty = 'bar';
+
         $result = new InvalidIdentifierResult($model, $code);
+        $result->setPageProperty($pageProperty);
+        $result->setBrowserProperty($browserProperty);
 
         $this->assertFalse($result->getIsValid());
         $this->assertSame($model, $result->getModel());
         $this->assertEquals(TypeInterface::IDENTIFIER, $result->getType());
         $this->assertEquals($code, $result->getCode());
-        $this->assertEquals('', $result->getPageProperty());
-        $this->assertEquals('', $result->getBrowserProperty());
+        $this->assertEquals($pageProperty, $result->getPageProperty());
+        $this->assertEquals($browserProperty, $result->getBrowserProperty());
     }
 }

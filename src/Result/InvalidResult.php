@@ -2,15 +2,31 @@
 
 namespace webignition\BasilModelValidator\Result;
 
-class InvalidResult extends AbstractResult
+class InvalidResult extends AbstractResult implements InvalidResultInterface
 {
-    public function __construct(object $model, int $type, int $code = 0)
+    private $type;
+    private $code;
+
+    public function __construct(object $model, int $type, int $code)
     {
-        parent::__construct(false, $model, $type, $code);
+        parent::__construct(false, $model);
+
+        $this->type = $type;
+        $this->code = $code;
     }
 
-    public static function createUnhandledModelResult(object $model): ResultInterface
+    public static function createUnhandledModelResult(object $model): InvalidResultInterface
     {
-        return new InvalidResult($model, TypeInterface::UNHANDLED);
+        return new InvalidResult($model, TypeInterface::UNHANDLED, 0);
+    }
+
+    public function getType(): int
+    {
+        return $this->type;
+    }
+
+    public function getCode(): int
+    {
+        return $this->code;
     }
 }

@@ -14,7 +14,6 @@ use webignition\BasilModelValidator\IdentifierValidator;
 use webignition\BasilModelValidator\Result\InvalidIdentifierResult;
 use webignition\BasilModelValidator\Result\InvalidResult;
 use webignition\BasilModelValidator\Result\ResultInterface;
-use webignition\BasilModelValidator\Result\TypeInterface;
 use webignition\BasilModelValidator\Result\ValidResult;
 
 class IdentifierValidatorTest extends \PHPUnit\Framework\TestCase
@@ -41,7 +40,7 @@ class IdentifierValidatorTest extends \PHPUnit\Framework\TestCase
     {
         $model = new \stdClass();
 
-        $expectedResult = new InvalidResult($model, TypeInterface::UNHANDLED);
+        $expectedResult = InvalidResult::createUnhandledModelResult($model);
 
         $this->assertEquals($expectedResult, $this->identifierValidator->validate($model));
     }

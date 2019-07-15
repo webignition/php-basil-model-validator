@@ -34,7 +34,7 @@ class PageValidatorTest extends \PHPUnit\Framework\TestCase
     public function testValidateWrongModelTypeIsNotValid()
     {
         $model = new \stdClass();
-        $expectedResult = new InvalidResult($model, TypeInterface::UNHANDLED);
+        $expectedResult = InvalidResult::createUnhandledModelResult($model);
 
         $this->assertEquals($expectedResult, $this->pageValidator->validate($model));
     }

@@ -14,7 +14,6 @@ use webignition\BasilModelFactory\Action\ActionFactory;
 use webignition\BasilModelValidator\Action\NoArgumentsActionValidator;
 use webignition\BasilModelValidator\Result\InvalidResult;
 use webignition\BasilModelValidator\Result\ResultInterface;
-use webignition\BasilModelValidator\Result\TypeInterface;
 use webignition\BasilModelValidator\Result\ValidResult;
 
 class NoArgumentsActionValidatorTest extends \PHPUnit\Framework\TestCase
@@ -88,10 +87,7 @@ class NoArgumentsActionValidatorTest extends \PHPUnit\Framework\TestCase
         return [
             'no arguments action wrong type' => [
                 'action' => $noArgumentsActionWrongType,
-                'expectedResult' => new InvalidResult(
-                    $noArgumentsActionWrongType,
-                    TypeInterface::UNHANDLED
-                ),
+                'expectedResult' => InvalidResult::createUnhandledModelResult($noArgumentsActionWrongType),
             ],
         ];
     }
