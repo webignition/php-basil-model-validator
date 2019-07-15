@@ -15,6 +15,8 @@ class ActionValidator implements ValidatorInterface
     const CODE_INTERACTION_ACTION_IDENTIFIER_MISSING = 4;
     const CODE_WAIT_ACTION_DURATION_MISSING = 5;
     const CODE_INPUT_ACTION_UNACTIONABLE_IDENTIFIER = 6;
+    const CODE_INVALID_IDENTIFIER = 7;
+    const CODE_INVALID_VALUE = 8;
 
     /**
      * @var ValidatorInterface[]
