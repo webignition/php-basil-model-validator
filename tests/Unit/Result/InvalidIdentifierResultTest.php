@@ -24,16 +24,12 @@ class InvalidIdentifierResultTest extends \PHPUnit\Framework\TestCase
         );
 
         $code = IdentifierValidator::CODE_VALUE_MISSING;
-        $message = '';
-
         $result = new InvalidIdentifierResult($model, $code);
 
         $this->assertFalse($result->getIsValid());
         $this->assertSame($model, $result->getModel());
         $this->assertEquals(TypeInterface::IDENTIFIER, $result->getType());
         $this->assertEquals($code, $result->getCode());
-        $this->assertEquals($message, $result->getMessage());
-
         $this->assertEquals('', $result->getPageProperty());
         $this->assertEquals('', $result->getBrowserProperty());
     }

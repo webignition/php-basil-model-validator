@@ -19,6 +19,5 @@ class ValidResultTest extends \PHPUnit\Framework\TestCase
         $this->assertSame($model, $result->getModel());
         $this->assertEquals(TypeInterface::NOT_APPLICABLE, $result->getType());
         $this->assertEquals(0, $result->getCode());
-        $this->assertEquals('', $result->getMessage());
     }
 }

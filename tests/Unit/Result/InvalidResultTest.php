@@ -25,7 +25,6 @@ class InvalidResultTest extends \PHPUnit\Framework\TestCase
 
         $type = TypeInterface::IDENTIFIER;
         $code = IdentifierValidator::CODE_VALUE_MISSING;
-        $message = '';
 
         $result = new InvalidResult($model, $type, $code);
 
@@ -33,6 +32,5 @@ class InvalidResultTest extends \PHPUnit\Framework\TestCase
         $this->assertSame($model, $result->getModel());
         $this->assertEquals($type, $result->getType());
         $this->assertEquals($code, $result->getCode());
-        $this->assertEquals($message, $result->getMessage());
     }
 }

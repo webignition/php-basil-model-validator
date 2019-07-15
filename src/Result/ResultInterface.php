@@ -8,5 +8,4 @@ interface ResultInterface
     public function getModel(): object;
     public function getType(): int;
     public function getCode(): int;
-    public function getMessage(): string;
 }
