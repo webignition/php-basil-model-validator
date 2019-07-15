@@ -1,4 +1,5 @@
 <?php
+/** @noinspection PhpUnhandledExceptionInspection */
 /** @noinspection PhpDocSignatureInspection */
 
 namespace webignition\BasilModelValidator\Tests\Unit\Action;
@@ -11,8 +12,10 @@ use webignition\BasilModel\Action\NoArgumentsAction;
 use webignition\BasilModel\Action\UnrecognisedAction;
 use webignition\BasilModel\Action\WaitAction;
 use webignition\BasilModelFactory\Action\ActionFactory;
+use webignition\BasilModelFactory\IdentifierFactory;
 use webignition\BasilModelValidator\Action\ActionValidator;
 use webignition\BasilModelValidator\Action\InteractionActionValidator;
+use webignition\BasilModelValidator\IdentifierValidator;
 use webignition\BasilModelValidator\Result\InvalidResult;
 use webignition\BasilModelValidator\Result\ResultInterface;
 use webignition\BasilModelValidator\Result\TypeInterface;
@@ -94,8 +97,17 @@ class InteractionActionValidatorTest extends \PHPUnit\Framework\TestCase
 
     public function validateNotValidDataProvider(): array
     {
-        $interactionActionWithoutIdentifier = ActionFactory::createFactory()->createFromActionString(
-            'click'
+        $actionFactory = ActionFactory::createFactory();
+        $identifierFactory = IdentifierFactory::createFactory();
+
+        $interactionActionWithoutIdentifier = $actionFactory->createFromActionString('click');
+
+        $interactionActionWithUnactionableIdentifier = $actionFactory->createFromActionString('click $page.url');
+
+        $invalidIdentifier = $identifierFactory->create('$elements.element_name');
+
+        $interactionActionWithInvalidIdentifier = $actionFactory->createFromActionString(
+            'click $elements.element_name'
         );
 
         return [
@@ -105,6 +117,27 @@ class InteractionActionValidatorTest extends \PHPUnit\Framework\TestCase
                     $interactionActionWithoutIdentifier,
                     TypeInterface::ACTION,
                     ActionValidator::CODE_INTERACTION_ACTION_IDENTIFIER_MISSING
+                ),
+            ],
+            'interaction action with unactionable identifier' => [
+                'action' => $interactionActionWithUnactionableIdentifier,
+                'expectedResult' => new InvalidResult(
+                    $interactionActionWithUnactionableIdentifier,
+                    TypeInterface::ACTION,
+                    ActionValidator::CODE_UNACTIONABLE_IDENTIFIER
+                ),
+            ],
+            'interaction action with invalid identifier' => [
+                'action' => $interactionActionWithInvalidIdentifier,
+                'expectedResult' => new InvalidResult(
+                    $interactionActionWithInvalidIdentifier,
+                    TypeInterface::ACTION,
+                    ActionValidator::CODE_INVALID_IDENTIFIER,
+                    new InvalidResult(
+                        $invalidIdentifier,
+                        TypeInterface::IDENTIFIER,
+                        IdentifierValidator::CODE_TYPE_INVALID
+                    )
                 ),
             ],
         ];

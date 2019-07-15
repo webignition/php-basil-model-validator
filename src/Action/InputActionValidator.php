@@ -50,40 +50,38 @@ class InputActionValidator implements ValidatorInterface
 
         $identifier = $model->getIdentifier();
 
-        if ($identifier instanceof IdentifierInterface) {
-            $identifierValidationResult = $this->identifierValidator->validate($identifier);
-
-            if ($identifierValidationResult instanceof InvalidResultInterface) {
-                return $this->createInvalidResult(
-                    $model,
-                    ActionValidator::CODE_INVALID_IDENTIFIER,
-                    $identifierValidationResult
-                );
-            }
-        } else {
+        if (!$identifier instanceof IdentifierInterface) {
             return $this->createInvalidResult($model, ActionValidator::CODE_INPUT_ACTION_IDENTIFIER_MISSING);
         }
 
+        $identifierValidationResult = $this->identifierValidator->validate($identifier);
+
+        if ($identifierValidationResult instanceof InvalidResultInterface) {
+            return $this->createInvalidResult(
+                $model,
+                ActionValidator::CODE_INVALID_IDENTIFIER,
+                $identifierValidationResult
+            );
+        }
+
         if (false === $identifier->isActionable()) {
-            return $this->createInvalidResult($model, ActionValidator::CODE_INPUT_ACTION_UNACTIONABLE_IDENTIFIER);
+            return $this->createInvalidResult($model, ActionValidator::CODE_UNACTIONABLE_IDENTIFIER);
         }
 
         $value = $model->getValue();
 
-        if ($value instanceof ValueInterface) {
-            $valueValidationResult = $this->valueValidator->validate($value);
-
-            if ($valueValidationResult instanceof InvalidResultInterface) {
-                return $this->createInvalidResult(
-                    $model,
-                    ActionValidator::CODE_INVALID_VALUE,
-                    $valueValidationResult
-                );
-            }
+        if (!$value instanceof ValueInterface) {
+            return $this->createInvalidResult($model, ActionValidator::CODE_INPUT_ACTION_VALUE_MISSING);
         }
 
-        if (null === $model->getValue()) {
-            return $this->createInvalidResult($model, ActionValidator::CODE_INPUT_ACTION_VALUE_MISSING);
+        $valueValidationResult = $this->valueValidator->validate($value);
+
+        if ($valueValidationResult instanceof InvalidResultInterface) {
+            return $this->createInvalidResult(
+                $model,
+                ActionValidator::CODE_INVALID_VALUE,
+                $valueValidationResult
+            );
         }
 
         if (!$this->hasToKeyword($model)) {

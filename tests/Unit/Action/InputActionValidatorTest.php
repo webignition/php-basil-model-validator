@@ -178,7 +178,7 @@ class InputActionValidatorTest extends \PHPUnit\Framework\TestCase
                 'expectedResult' => new InvalidResult(
                     $inputActionWithUnactionableIdentifier,
                     TypeInterface::ACTION,
-                    ActionValidator::CODE_INPUT_ACTION_UNACTIONABLE_IDENTIFIER
+                    ActionValidator::CODE_UNACTIONABLE_IDENTIFIER
                 ),
             ],
             'input action with invalid identifier' => [
