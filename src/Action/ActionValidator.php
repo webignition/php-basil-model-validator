@@ -20,9 +20,17 @@ class ActionValidator implements ValidatorInterface
      */
     private $actionTypeValidators = [];
 
-    public function addActionTypeValidator(ValidatorInterface $actionTypeValidator)
+    public function __construct()
     {
-        $this->actionTypeValidators[] = $actionTypeValidator;
+        $this->actionTypeValidators[] = InputActionValidator::create();
+        $this->actionTypeValidators[] = InteractionActionValidator::create();
+        $this->actionTypeValidators[] = NoArgumentsActionValidator::create();
+        $this->actionTypeValidators[] = WaitActionValidator::create();
+    }
+
+    public static function create(): ActionValidator
+    {
+        return new ActionValidator();
     }
 
     public function handles(object $model): bool

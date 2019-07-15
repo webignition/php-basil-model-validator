@@ -27,7 +27,7 @@ class WaitActionValidatorTest extends \PHPUnit\Framework\TestCase
     {
         parent::setUp();
 
-        $this->waitActionValidator = new WaitActionValidator();
+        $this->waitActionValidator = WaitActionValidator::create();
     }
 
     /**

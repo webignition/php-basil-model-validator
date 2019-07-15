@@ -4,11 +4,10 @@
 namespace webignition\BasilModelValidator\Tests\Unit\Action;
 
 use webignition\BasilModel\Action\ActionInterface;
+use webignition\BasilModelFactory\Action\ActionFactory;
 use webignition\BasilModelValidator\Action\ActionValidator;
-use webignition\BasilModelValidator\Action\Factory;
 use webignition\BasilModelValidator\Result\InvalidResult;
-use webignition\BasilModelValidator\Result\ResultInterface;
-use webignition\BasilModelValidator\ValidatorInterface;
+use webignition\BasilModelValidator\Result\ValidResult;
 
 class ActionValidatorTest extends \PHPUnit\Framework\TestCase
 {
@@ -21,7 +20,7 @@ class ActionValidatorTest extends \PHPUnit\Framework\TestCase
     {
         parent::setUp();
 
-        $this->actionValidator = Factory::create();
+        $this->actionValidator = ActionValidator::create();
     }
 
     public function testHandles()
@@ -32,29 +31,15 @@ class ActionValidatorTest extends \PHPUnit\Framework\TestCase
 
     public function testValidateSuccess()
     {
-        $action = \Mockery::mock(ActionInterface::class);
+        $actionFactory = ActionFactory::createFactory();
 
-        $result = \Mockery::mock(ResultInterface::class);
-
-        $actionTypeValidator = \Mockery::mock(ValidatorInterface::class);
-        $actionTypeValidator
-            ->shouldReceive('handles')
-            ->once()
-            ->with($action)
-            ->andReturn(true);
-
-        $actionTypeValidator
-            ->shouldReceive('validate')
-            ->once()
-            ->with($action)
-            ->andReturn($result);
+        $action = $actionFactory->createFromActionString('wait 30');
+        $expectedResult = new ValidResult($action);
 
         $actionValidator = new ActionValidator();
-        $actionValidator->addActionTypeValidator($actionTypeValidator);
-
         $returnedResult = $actionValidator->validate($action);
 
-        $this->assertSame($result, $returnedResult);
+        $this->assertEquals($expectedResult, $returnedResult);
     }
 
     public function testValidateWrongObjectType()

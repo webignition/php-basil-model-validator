@@ -29,7 +29,7 @@ class InteractionActionValidatorTest extends \PHPUnit\Framework\TestCase
     {
         parent::setUp();
 
-        $this->interactionActionValidator = new InteractionActionValidator();
+        $this->interactionActionValidator = InteractionActionValidator::create();
     }
 
     /**

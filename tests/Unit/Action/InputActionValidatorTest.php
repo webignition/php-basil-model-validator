@@ -30,7 +30,7 @@ class InputActionValidatorTest extends \PHPUnit\Framework\TestCase
     {
         parent::setUp();
 
-        $this->inputActionValidator = new InputActionValidator();
+        $this->inputActionValidator = InputActionValidator::create();
     }
 
     /**
