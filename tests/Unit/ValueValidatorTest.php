@@ -64,10 +64,22 @@ class ValueValidatorTest extends \PHPUnit\Framework\TestCase
                 'value' => new Value(ValueTypes::STRING, 'value'),
             ],
             'type: data parameter' => [
-                'value' => new Value(ValueTypes::STRING, '$data.value'),
+                'value' => new Value(ValueTypes::DATA_PARAMETER, '$data.value'),
             ],
             'type: element parameter' => [
-                'value' => new Value(ValueTypes::STRING, '$elements.element_name'),
+                'value' => new Value(ValueTypes::ELEMENT_PARAMETER, '$elements.element_name'),
+            ],
+            'type: page object property, url' => [
+                'value' => new Value(ValueTypes::PAGE_OBJECT_PROPERTY, '$page.url'),
+            ],
+            'type: page object property, title' => [
+                'value' => new Value(ValueTypes::PAGE_OBJECT_PROPERTY, '$page.title'),
+            ],
+            'type: browser object property, size' => [
+                'value' => new Value(ValueTypes::BROWSER_OBJECT_PROPERTY, '$browser.size'),
+            ],
+            'type: page model reference' => [
+                'value' => new Value(ValueTypes::PAGE_MODEL_REFERENCE, 'page_import_name.elements.element_names'),
             ],
         ];
     }

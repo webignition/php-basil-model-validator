@@ -13,12 +13,6 @@ class ValueValidator implements ValidatorInterface
 {
     const CODE_TYPE_INVALID = 1;
 
-    const VALID_TYPES = [
-        ValueTypes::STRING,
-        ValueTypes::DATA_PARAMETER,
-        ValueTypes::ELEMENT_PARAMETER,
-    ];
-
     public function handles(object $model): bool
     {
         return $model instanceof ValueInterface;
@@ -30,7 +24,7 @@ class ValueValidator implements ValidatorInterface
             return InvalidResult::createUnhandledModelResult($model);
         }
 
-        if (!in_array($model->getType(), self::VALID_TYPES)) {
+        if (!in_array($model->getType(), ValueTypes::ALL)) {
             return new InvalidResult($model, TypeInterface::VALUE, self::CODE_TYPE_INVALID);
         }
 
