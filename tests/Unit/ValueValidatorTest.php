@@ -5,7 +5,7 @@ namespace webignition\BasilModelValidator\Tests\Unit;
 
 use webignition\BasilModel\Value\Value;
 use webignition\BasilModel\Value\ValueInterface;
-use webignition\BasilModel\Value\ValueTypes;
+use webignition\BasilModelFactory\ValueFactory;
 use webignition\BasilModelValidator\Result\InvalidResult;
 use webignition\BasilModelValidator\Result\TypeInterface;
 use webignition\BasilModelValidator\Result\ValidResult;
@@ -39,12 +39,34 @@ class ValueValidatorTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expectedResult, $this->valueValidator->validate($model));
     }
 
-    public function testValidateNotValid()
+    /**
+     * @dataProvider validateNotValidDataProvider
+     */
+    public function testValidateNotValid(ValueInterface $value, int $expectedResultCode)
     {
-        $value = new Value('foo', '');
-        $expectedResult = new InvalidResult($value, TypeInterface::VALUE, ValueValidator::CODE_TYPE_INVALID);
+        $expectedResult = new InvalidResult($value, TypeInterface::VALUE, $expectedResultCode);
 
         $this->assertEquals($expectedResult, $this->valueValidator->validate($value));
+    }
+
+    public function validateNotValidDataProvider(): array
+    {
+        $valueFactory = ValueFactory::createFactory();
+
+        return [
+            'invalid type' => [
+                'value' => new Value('foo', ''),
+                'expectedResultCode' => ValueValidator::CODE_TYPE_INVALID,
+            ],
+            'invalid page object property name' => [
+                'value' => $valueFactory->createFromValueString('$page.foo'),
+                'expectedResultCode' => ValueValidator::CODE_PROPERTY_NAME_INVALID,
+            ],
+            'invalid browser object property name' => [
+                'value' => $valueFactory->createFromValueString('$browser.foo'),
+                'expectedResultCode' => ValueValidator::CODE_PROPERTY_NAME_INVALID,
+            ],
+        ];
     }
 
     /**
@@ -59,15 +81,29 @@ class ValueValidatorTest extends \PHPUnit\Framework\TestCase
 
     public function validateIsValidDataProvider(): array
     {
+        $valueFactory = ValueFactory::createFactory();
+
         return [
             'type: string' => [
-                'value' => new Value(ValueTypes::STRING, 'value'),
+                'value' => $valueFactory->createFromValueString('value'),
             ],
             'type: data parameter' => [
-                'value' => new Value(ValueTypes::STRING, '$data.value'),
+                'value' => $valueFactory->createFromValueString('$data.value'),
             ],
             'type: element parameter' => [
-                'value' => new Value(ValueTypes::STRING, '$elements.element_name'),
+                'value' => $valueFactory->createFromValueString('$elements.element_name'),
+            ],
+            'type: page object property, url' => [
+                'value' => $valueFactory->createFromValueString('$page.url'),
+            ],
+            'type: page object property, title' => [
+                'value' => $valueFactory->createFromValueString('$page.title'),
+            ],
+            'type: browser object property, size' => [
+                'value' => $valueFactory->createFromValueString('$browser.size'),
+            ],
+            'type: page model reference' => [
+                'value' => $valueFactory->createFromValueString('page_import_name.elements.element_name'),
             ],
         ];
     }
