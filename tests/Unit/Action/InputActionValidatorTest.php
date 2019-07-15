@@ -1,4 +1,5 @@
 <?php
+/** @noinspection PhpUnhandledExceptionInspection */
 /** @noinspection PhpDocSignatureInspection */
 
 namespace webignition\BasilModelValidator\Tests\Unit\Action;
@@ -12,12 +13,16 @@ use webignition\BasilModel\Action\WaitAction;
 use webignition\BasilModel\Value\Value;
 use webignition\BasilModel\Value\ValueTypes;
 use webignition\BasilModelFactory\Action\ActionFactory;
+use webignition\BasilModelFactory\IdentifierFactory;
+use webignition\BasilModelFactory\ValueFactory;
 use webignition\BasilModelValidator\Action\ActionValidator;
 use webignition\BasilModelValidator\Action\InputActionValidator;
+use webignition\BasilModelValidator\IdentifierValidator;
 use webignition\BasilModelValidator\Result\InvalidResult;
 use webignition\BasilModelValidator\Result\ResultInterface;
 use webignition\BasilModelValidator\Result\TypeInterface;
 use webignition\BasilModelValidator\Result\ValidResult;
+use webignition\BasilModelValidator\ValueValidator;
 
 class InputActionValidatorTest extends \PHPUnit\Framework\TestCase
 {
@@ -88,6 +93,8 @@ class InputActionValidatorTest extends \PHPUnit\Framework\TestCase
     public function validateNotValidDataProvider(): array
     {
         $actionFactory = ActionFactory::createFactory();
+        $identifierFactory = IdentifierFactory::createFactory();
+        $valueFactory = ValueFactory::createFactory();
 
         $inputActionMissingIdentifier = new InputAction(
             'set to "foo"',
@@ -101,11 +108,29 @@ class InputActionValidatorTest extends \PHPUnit\Framework\TestCase
 
         $inputActionMissingValue = $actionFactory->createFromActionString('set ".selector" to');
         $inputActionMissingToKeyword = $actionFactory->createFromActionString('set ".selector" "foo"');
-        $inputActionWithIdentifierContainingToKeywordMissingToKeyword =
-            $actionFactory->createFromActionString('set ".selector to value" "foo"');
+        $inputActionWithIdentifierContainingToKeywordMissingToKeyword = $actionFactory->createFromActionString(
+            'set ".selector to value" "foo"'
+        );
 
-        $inputActionWithValueContainingToKeywordMissingToKeyword =
-            $actionFactory->createFromActionString('set ".selector" "foo to value"');
+        $inputActionWithValueContainingToKeywordMissingToKeyword = $actionFactory->createFromActionString(
+            'set ".selector" "foo to value"'
+        );
+
+        $inputActionWithUnactionableIdentifier = $actionFactory->createFromActionString(
+            'set $page.url to "value"'
+        );
+
+        $invalidIdentifier = $identifierFactory->create('$elements.element_name');
+
+        $inputActionWithInvalidIdentifier = $actionFactory->createFromActionString(
+            'set $elements.element_name to "value"'
+        );
+
+        $invalidValue = $valueFactory->createFromValueString('$page.foo');
+
+        $inputActionWithInvalidValue = $actionFactory->createFromActionString(
+            'set ".selector" to $page.foo'
+        );
 
         return [
             'input action missing identifier' => [
@@ -146,6 +171,40 @@ class InputActionValidatorTest extends \PHPUnit\Framework\TestCase
                     $inputActionWithValueContainingToKeywordMissingToKeyword,
                     TypeInterface::ACTION,
                     ActionValidator::CODE_INPUT_ACTION_TO_KEYWORD_MISSING
+                ),
+            ],
+            'input action with unactionable identifier' => [
+                'action' => $inputActionWithUnactionableIdentifier,
+                'expectedResult' => new InvalidResult(
+                    $inputActionWithUnactionableIdentifier,
+                    TypeInterface::ACTION,
+                    ActionValidator::CODE_UNACTIONABLE_IDENTIFIER
+                ),
+            ],
+            'input action with invalid identifier' => [
+                'action' => $inputActionWithInvalidIdentifier,
+                'expectedResult' => new InvalidResult(
+                    $inputActionWithInvalidIdentifier,
+                    TypeInterface::ACTION,
+                    ActionValidator::CODE_INVALID_IDENTIFIER,
+                    new InvalidResult(
+                        $invalidIdentifier,
+                        TypeInterface::IDENTIFIER,
+                        IdentifierValidator::CODE_TYPE_INVALID
+                    )
+                ),
+            ],
+            'input action with invalid value' => [
+                'action' => $inputActionWithInvalidValue,
+                'expectedResult' => new InvalidResult(
+                    $inputActionWithInvalidValue,
+                    TypeInterface::ACTION,
+                    ActionValidator::CODE_INVALID_VALUE,
+                    new InvalidResult(
+                        $invalidValue,
+                        TypeInterface::VALUE,
+                        ValueValidator::CODE_PROPERTY_NAME_INVALID
+                    )
                 ),
             ],
         ];
