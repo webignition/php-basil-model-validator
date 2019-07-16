@@ -41,7 +41,7 @@ class ActionValidator implements ValidatorInterface
         return $model instanceof ActionInterface;
     }
 
-    public function validate(object $model): ResultInterface
+    public function validate(object $model, ?array $context = []): ResultInterface
     {
         if (!$model instanceof ActionInterface) {
             return InvalidResult::createUnhandledModelResult($model);

@@ -56,7 +56,7 @@ class IdentifierValidator implements ValidatorInterface
         return $model instanceof IdentifierInterface;
     }
 
-    public function validate(object $model): ResultInterface
+    public function validate(object $model, ?array $context = []): ResultInterface
     {
         if (!$model instanceof IdentifierInterface) {
             return InvalidResult::createUnhandledModelResult($model);

@@ -35,7 +35,7 @@ class ValueValidator implements ValidatorInterface
         return $model instanceof ValueInterface;
     }
 
-    public function validate(object $model): ResultInterface
+    public function validate(object $model, ?array $context = []): ResultInterface
     {
         if (!$model instanceof ValueInterface) {
             return InvalidResult::createUnhandledModelResult($model);

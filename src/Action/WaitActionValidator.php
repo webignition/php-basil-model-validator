@@ -23,7 +23,7 @@ class WaitActionValidator implements ValidatorInterface
         return $model instanceof ActionInterface && ActionTypes::WAIT === $model->getType();
     }
 
-    public function validate(object $model): ResultInterface
+    public function validate(object $model, ?array $context = []): ResultInterface
     {
         if (!$model instanceof WaitActionInterface) {
             return InvalidResult::createUnhandledModelResult($model);

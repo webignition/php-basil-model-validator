@@ -50,7 +50,7 @@ class AssertionValidator implements ValidatorInterface
         return $model instanceof AssertionInterface;
     }
 
-    public function validate(object $model): ResultInterface
+    public function validate(object $model, ?array $context = []): ResultInterface
     {
         if (!$model instanceof AssertionInterface) {
             return InvalidResult::createUnhandledModelResult($model);

@@ -42,7 +42,7 @@ class InputActionValidator implements ValidatorInterface
         );
     }
 
-    public function validate(object $model): ResultInterface
+    public function validate(object $model, ?array $context = []): ResultInterface
     {
         if (!$model instanceof InputActionInterface) {
             return InvalidResult::createUnhandledModelResult($model);
