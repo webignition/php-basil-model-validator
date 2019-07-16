@@ -22,7 +22,7 @@ class NoArgumentsActionValidator implements ValidatorInterface
             in_array($model->getType(), [ActionTypes::RELOAD, ActionTypes::BACK, ActionTypes::FORWARD]);
     }
 
-    public function validate(object $model): ResultInterface
+    public function validate(object $model, ?array $context = []): ResultInterface
     {
         return $this->handles($model)
             ? new ValidResult($model)

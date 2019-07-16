@@ -36,7 +36,7 @@ class InteractionActionValidator implements ValidatorInterface
             in_array($model->getType(), [ActionTypes::CLICK, ActionTypes::SUBMIT, ActionTypes::WAIT_FOR]);
     }
 
-    public function validate(object $model): ResultInterface
+    public function validate(object $model, ?array $context = []): ResultInterface
     {
         if (!$model instanceof InteractionActionInterface) {
             return InvalidResult::createUnhandledModelResult($model);
