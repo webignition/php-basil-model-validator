@@ -118,6 +118,14 @@ class StepValidator implements ValidatorInterface
             if ($assertionValidationResult instanceof InvalidResultInterface) {
                 return $this->createInvalidResult($model, self::CODE_ASSERTION_INVALID, $assertionValidationResult);
             }
+
+            if ($assertion instanceof ValueContainerInterface) {
+                $actionDataValidationResult = $this->validateValueContainerDataParameter($model, $assertion);
+
+                if ($actionDataValidationResult instanceof InvalidResultInterface) {
+                    return $actionDataValidationResult;
+                }
+            }
         }
 
         return new ValidResult($model);
