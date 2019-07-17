@@ -115,6 +115,15 @@ class StepValidatorTest extends \PHPUnit\Framework\TestCase
         $elementIdentifier = $identifierFactory->create('$elements.element_name');
         $elementIdentifier = $elementIdentifier->withName('element_name');
 
+        $assertionWithElementParameterValue = $assertionFactory->createFromAssertionString('$elements.missing exists');
+
+        $stepWithAssertionWithElementIdentifierParameterValue = new Step(
+            [],
+            [
+                $assertionWithElementParameterValue
+            ]
+        );
+
         return [
             'invalid action: input action missing value' => [
                 'step' => $stepWithInputActionMissingValue,
@@ -212,6 +221,7 @@ class StepValidatorTest extends \PHPUnit\Framework\TestCase
                     StepValidator::REASON_ELEMENT_IDENTIFIER_MISSING
                 ))->withContext([
                     StepValidator::CONTEXT_ELEMENT_IDENTIFIER_NAME => 'missing',
+                    StepValidator::CONTEXT_IDENTIFIER_CONTAINER => $actionWithElementParameterValue,
                 ]),
             ],
             'invalid identifier collection: action has element parameter value, step has no matching element' => [
@@ -226,6 +236,37 @@ class StepValidatorTest extends \PHPUnit\Framework\TestCase
                     StepValidator::REASON_ELEMENT_IDENTIFIER_MISSING
                 ))->withContext([
                     StepValidator::CONTEXT_ELEMENT_IDENTIFIER_NAME => 'missing',
+                    StepValidator::CONTEXT_IDENTIFIER_CONTAINER => $actionWithElementParameterValue,
+                ]),
+            ],
+            'invalid identifier collection: assertion has element parameter value, step has no element identifiers' => [
+                'step' => $stepWithAssertionWithElementIdentifierParameterValue,
+                'expectedResult' => (new InvalidResult(
+                    $stepWithAssertionWithElementIdentifierParameterValue,
+                    TypeInterface::STEP,
+                    StepValidator::REASON_ELEMENT_IDENTIFIER_MISSING
+                ))->withContext([
+                    StepValidator::CONTEXT_ELEMENT_IDENTIFIER_NAME => 'missing',
+                    StepValidator::CONTEXT_IDENTIFIER_CONTAINER => $assertionWithElementParameterValue,
+                ]),
+            ],
+            'invalid identifier collection: assertion has element parameter value, step has no matching element' => [
+                'step' => $stepWithAssertionWithElementIdentifierParameterValue->withIdentifierCollection(
+                    new IdentifierCollection([
+                        $elementIdentifier,
+                    ])
+                ),
+                'expectedResult' => (new InvalidResult(
+                    $stepWithAssertionWithElementIdentifierParameterValue->withIdentifierCollection(
+                        new IdentifierCollection([
+                            $elementIdentifier,
+                        ])
+                    ),
+                    TypeInterface::STEP,
+                    StepValidator::REASON_ELEMENT_IDENTIFIER_MISSING
+                ))->withContext([
+                    StepValidator::CONTEXT_ELEMENT_IDENTIFIER_NAME => 'missing',
+                    StepValidator::CONTEXT_IDENTIFIER_CONTAINER => $assertionWithElementParameterValue,
                 ]),
             ],
         ];
@@ -343,6 +384,21 @@ class StepValidatorTest extends \PHPUnit\Framework\TestCase
                 ))->withIdentifierCollection(new IdentifierCollection([
                     $identifierFactory->create('".input1"', 'input1'),
                     $identifierFactory->create('".input2"', 'input2'),
+                ])),
+            ],
+            'actions with element parameters, assertions with element parameters' => [
+                'step' => (new Step(
+                    [
+                        $actionFactory->createFromActionString('set $elements.input1 to "input 1 value"'),
+                        $actionFactory->createFromActionString('set $elements.input2 to "input 2 value"'),
+                    ],
+                    [
+                        $assertionFactory->createFromAssertionString('$elements.heading exists'),
+                    ]
+                ))->withIdentifierCollection(new IdentifierCollection([
+                    $identifierFactory->create('".input1"', 'input1'),
+                    $identifierFactory->create('".input2"', 'input2'),
+                    $identifierFactory->create('".heading"', 'heading'),
                 ])),
             ],
         ];

@@ -28,8 +28,9 @@ class StepValidator implements ValidatorInterface
     const REASON_DATA_SET_INCOMPLETE = 'step-data-set-incomplete';
     const REASON_DATA_SET_EMPTY = 'step-data-set-empty';
     const REASON_ELEMENT_IDENTIFIER_MISSING = 'step-element-identifier-missing';
-    const CONTEXT_VALUE_CONTAINER = 'action';
+    const CONTEXT_VALUE_CONTAINER = 'value-container';
     const CONTEXT_ELEMENT_IDENTIFIER_NAME = 'element-identifier-name';
+    const CONTEXT_IDENTIFIER_CONTAINER = 'identifier-container';
 
     private $actionValidator;
     private $assertionValidator;
@@ -92,33 +93,18 @@ class StepValidator implements ValidatorInterface
             }
 
             if ($action instanceof ValueContainerInterface) {
-                $actionDataValidationResult = $this->validateValueContainerDataParameter($model, $action);
+                $dataParameterValidationResult = $this->validateValueContainerDataParameter($model, $action);
 
-                if ($actionDataValidationResult instanceof InvalidResultInterface) {
-                    return $actionDataValidationResult;
+                if ($dataParameterValidationResult instanceof InvalidResultInterface) {
+                    return $dataParameterValidationResult;
                 }
             }
 
             if ($action instanceof IdentifierContainerInterface) {
-                $identifier = $action->getIdentifier();
+                $elementParameterValidationResult = $this->validateIdentifierContainerElementParameter($model, $action);
 
-                if (IdentifierTypes::ELEMENT_PARAMETER === $identifier->getType()) {
-                    $objectValue = $identifier->getValue();
-
-                    if ($objectValue instanceof ObjectValueInterface) {
-                        $identifierName = $objectValue->getObjectProperty();
-                        $identifier = $model->getIdentifierCollection()->getIdentifier($identifierName);
-
-                        if (!$identifier instanceof IdentifierInterface) {
-                            return (new InvalidResult(
-                                $model,
-                                TypeInterface::STEP,
-                                self::REASON_ELEMENT_IDENTIFIER_MISSING
-                            ))->withContext([
-                                self::CONTEXT_ELEMENT_IDENTIFIER_NAME => $identifierName,
-                            ]);
-                        }
-                    }
+                if ($elementParameterValidationResult instanceof InvalidResultInterface) {
+                    return $elementParameterValidationResult;
                 }
             }
         }
@@ -131,10 +117,21 @@ class StepValidator implements ValidatorInterface
             }
 
             if ($assertion instanceof ValueContainerInterface) {
-                $actionDataValidationResult = $this->validateValueContainerDataParameter($model, $assertion);
+                $dataParameterValidationResult = $this->validateValueContainerDataParameter($model, $assertion);
 
-                if ($actionDataValidationResult instanceof InvalidResultInterface) {
-                    return $actionDataValidationResult;
+                if ($dataParameterValidationResult instanceof InvalidResultInterface) {
+                    return $dataParameterValidationResult;
+                }
+            }
+
+            if ($assertion instanceof IdentifierContainerInterface) {
+                $elementParameterValidationResult = $this->validateIdentifierContainerElementParameter(
+                    $model,
+                    $assertion
+                );
+
+                if ($elementParameterValidationResult instanceof InvalidResultInterface) {
+                    return $elementParameterValidationResult;
                 }
             }
         }
@@ -181,6 +178,35 @@ class StepValidator implements ValidatorInterface
                             StepValidator::CONTEXT_VALUE_CONTAINER => $valueContainer,
                         ])
                     );
+                }
+            }
+        }
+
+        return null;
+    }
+
+    private function validateIdentifierContainerElementParameter(
+        StepInterface $step,
+        IdentifierContainerInterface $identifierContainer
+    ): ?InvalidResultInterface {
+        $identifier = $identifierContainer->getIdentifier();
+
+        if (IdentifierTypes::ELEMENT_PARAMETER === $identifier->getType()) {
+            $objectValue = $identifier->getValue();
+
+            if ($objectValue instanceof ObjectValueInterface) {
+                $identifierName = $objectValue->getObjectProperty();
+                $identifier = $step->getIdentifierCollection()->getIdentifier($identifierName);
+
+                if (!$identifier instanceof IdentifierInterface) {
+                    return (new InvalidResult(
+                        $step,
+                        TypeInterface::STEP,
+                        self::REASON_ELEMENT_IDENTIFIER_MISSING
+                    ))->withContext([
+                        self::CONTEXT_ELEMENT_IDENTIFIER_NAME => $identifierName,
+                        self::CONTEXT_IDENTIFIER_CONTAINER => $identifierContainer,
+                    ]);
                 }
             }
         }
