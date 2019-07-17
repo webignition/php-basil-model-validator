@@ -79,10 +79,6 @@ class IdentifierValidatorTest extends \PHPUnit\Framework\TestCase
             'page_import.elements.element_name'
         );
 
-        $identifierWithElementParameterReference = $identifierFactory->create(
-            '$elements.element_name'
-        );
-
         $cssSelectorIdentifierWithNonStringValue = new Identifier(
             IdentifierTypes::CSS_SELECTOR,
             new ObjectValue(
@@ -152,14 +148,6 @@ class IdentifierValidatorTest extends \PHPUnit\Framework\TestCase
                 'identifier' => $identifierWithPageModelElementReference,
                 'expectedResult' => new InvalidResult(
                     $identifierWithPageModelElementReference,
-                    TypeInterface::IDENTIFIER,
-                    IdentifierValidator::CODE_TYPE_INVALID
-                ),
-            ],
-            'invalid type, element parameter' => [
-                'identifier' => $identifierWithElementParameterReference,
-                'expectedResult' => new InvalidResult(
-                    $identifierWithElementParameterReference,
                     TypeInterface::IDENTIFIER,
                     IdentifierValidator::CODE_TYPE_INVALID
                 ),
@@ -283,6 +271,9 @@ class IdentifierValidatorTest extends \PHPUnit\Framework\TestCase
             ],
             'type: browser object parameter, size' => [
                 'identifier' => $identifierFactory->create('$browser.size'),
+            ],
+            'type: element parameter' => [
+                'identifier' => $identifierFactory->create('$elements.element_name'),
             ],
         ];
     }
