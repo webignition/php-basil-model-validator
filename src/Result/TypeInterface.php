@@ -4,12 +4,12 @@ namespace webignition\BasilModelValidator\Result;
 
 interface TypeInterface
 {
-    const NOT_APPLICABLE = 0;
-    const UNHANDLED = 1;
-    const ACTION = 2;
-    const IDENTIFIER = 3;
-    const VALUE = 4;
-    const ASSERTION = 5;
-    const PAGE = 6;
-    const DATA_SET = 7;
+    const NOT_APPLICABLE = 'not-applicable';
+    const UNHANDLED = 'unhandled';
+    const ACTION = 'action';
+    const IDENTIFIER = 'identifier';
+    const VALUE = 'value';
+    const ASSERTION = 'assertion';
+    const PAGE = 'page';
+    const DATA_SET = 'step';
 }

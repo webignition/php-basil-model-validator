@@ -8,7 +8,7 @@ class InvalidResult extends AbstractResult implements InvalidResultInterface
     private $code;
     private $previous;
 
-    public function __construct(object $model, int $type, int $code, ?InvalidResultInterface $previous = null)
+    public function __construct(object $model, string $type, int $code, ?InvalidResultInterface $previous = null)
     {
         parent::__construct(false, $model);
 
@@ -22,7 +22,7 @@ class InvalidResult extends AbstractResult implements InvalidResultInterface
         return new InvalidResult($model, TypeInterface::UNHANDLED, 0);
     }
 
-    public function getType(): int
+    public function getType(): string
     {
         return $this->type;
     }
