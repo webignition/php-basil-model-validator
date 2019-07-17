@@ -7,6 +7,8 @@ use webignition\BasilModel\Action\InputActionInterface;
 use webignition\BasilModel\DataSet\DataSetCollection;
 use webignition\BasilModel\DataSet\DataSetCollectionInterface;
 use webignition\BasilModel\Identifier\IdentifierInterface;
+use webignition\BasilModel\Identifier\IdentifierTypes;
+use webignition\BasilModel\IdentifierContainerInterface;
 use webignition\BasilModel\Step\StepInterface;
 use webignition\BasilModel\Value\ObjectValueInterface;
 use webignition\BasilModel\Value\ValueInterface;
@@ -21,11 +23,13 @@ use webignition\BasilModelValidator\Result\ValidResult;
 
 class StepValidator implements ValidatorInterface
 {
-    const CODE_ACTION_INVALID = 1;
-    const CODE_ASSERTION_INVALID = 2;
-    const CODE_DATA_SET_INCOMPLETE = 3;
-    const CODE_DATA_SET_EMPTY = 4;
+    const REASON_ACTION_INVALID = 'step-action-invalid';
+    const REASON_ASSERTION_INVALID = 'step-assertion-invalid';
+    const REASON_DATA_SET_INCOMPLETE = 'step-data-set-incomplete';
+    const REASON_DATA_SET_EMPTY = 'step-data-set-empty';
+    const REASON_ELEMENT_IDENTIFIER_MISSING = 'step-element-identifier-missing';
     const CONTEXT_VALUE_CONTAINER = 'action';
+    const CONTEXT_ELEMENT_IDENTIFIER_NAME = 'element-identifier-name';
 
     private $actionValidator;
     private $assertionValidator;
@@ -61,10 +65,10 @@ class StepValidator implements ValidatorInterface
             return InvalidResult::createUnhandledModelResult($model);
         }
 
-        // actions valid
-        // assertions valid
-        // actions with data parameters have data sets
-        // assertions with data parameters have data sets
+        // *actions valid
+        // *assertions valid
+        // *actions with data parameters have data sets
+        // *assertions with data parameters have data sets
         // actions with element parameters have element identifiers
         // assertions with element parameters have element identifiers
         // actions have actionable identifiers
@@ -84,7 +88,7 @@ class StepValidator implements ValidatorInterface
             $actionValidationResult = $this->actionValidator->validate($action);
 
             if ($actionValidationResult instanceof InvalidResultInterface) {
-                return $this->createInvalidResult($model, self::CODE_ACTION_INVALID, $actionValidationResult);
+                return $this->createInvalidResult($model, self::REASON_ACTION_INVALID, $actionValidationResult);
             }
 
             if ($action instanceof ValueContainerInterface) {
@@ -95,28 +99,35 @@ class StepValidator implements ValidatorInterface
                 }
             }
 
-            // validate datasetcollection only if the collection is being used
-            // ... and only verify that each dataset contains the required keys ... additional keys don't matters
+            if ($action instanceof IdentifierContainerInterface) {
+                $identifier = $action->getIdentifier();
 
-//            $this->findActionsWithDataParameterValues($st)
+                if (IdentifierTypes::ELEMENT_PARAMETER === $identifier->getType()) {
+                    $objectValue = $identifier->getValue();
 
-//            if ($action instanceof InputActionInterface) {
-//                $identifier = $action->getIdentifier();
-//
-//                if ($identifier instanceof IdentifierInterface) {
-//                    $identifier->getType();
-//                }
-//
-//                $action->getValue();
-//                $action->getIdentifier();
-//            }
+                    if ($objectValue instanceof ObjectValueInterface) {
+                        $identifierName = $objectValue->getObjectProperty();
+                        $identifier = $model->getIdentifierCollection()->getIdentifier($identifierName);
+
+                        if (!$identifier instanceof IdentifierInterface) {
+                            return (new InvalidResult(
+                                $model,
+                                TypeInterface::STEP,
+                                self::REASON_ELEMENT_IDENTIFIER_MISSING
+                            ))->withContext([
+                                self::CONTEXT_ELEMENT_IDENTIFIER_NAME => $identifierName,
+                            ]);
+                        }
+                    }
+                }
+            }
         }
 
         foreach ($model->getAssertions() as $assertion) {
             $assertionValidationResult = $this->assertionValidator->validate($assertion);
 
             if ($assertionValidationResult instanceof InvalidResultInterface) {
-                return $this->createInvalidResult($model, self::CODE_ASSERTION_INVALID, $assertionValidationResult);
+                return $this->createInvalidResult($model, self::REASON_ASSERTION_INVALID, $assertionValidationResult);
             }
 
             if ($assertion instanceof ValueContainerInterface) {
@@ -145,7 +156,7 @@ class StepValidator implements ValidatorInterface
                 return (new InvalidResult(
                     $step,
                     TypeInterface::STEP,
-                    self::CODE_DATA_SET_EMPTY
+                    self::REASON_DATA_SET_EMPTY
                 ))->withContext([
                     DataSetValidator::CONTEXT_DATA_PARAMETER_NAME => $parameterName,
                     StepValidator::CONTEXT_VALUE_CONTAINER => $valueContainer,
@@ -164,7 +175,7 @@ class StepValidator implements ValidatorInterface
                     return new InvalidResult(
                         $step,
                         TypeInterface::STEP,
-                        self::CODE_DATA_SET_INCOMPLETE,
+                        self::REASON_DATA_SET_INCOMPLETE,
                         $dataSetValidationResult->withContext([
                             DataSetValidator::CONTEXT_DATA_PARAMETER_NAME => $parameterName,
                             StepValidator::CONTEXT_VALUE_CONTAINER => $valueContainer,
@@ -179,9 +190,9 @@ class StepValidator implements ValidatorInterface
 
     private function createInvalidResult(
         object $model,
-        int $code,
+        string $reason,
         ?InvalidResultInterface $previous = null
     ): InvalidResultInterface {
-        return new InvalidResult($model, TypeInterface::STEP, $code, $previous);
+        return new InvalidResult($model, TypeInterface::STEP, $reason, $previous);
     }
 }

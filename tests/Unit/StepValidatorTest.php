@@ -6,10 +6,13 @@ namespace webignition\BasilModelValidator\Tests\Unit;
 
 use webignition\BasilModel\DataSet\DataSet;
 use webignition\BasilModel\DataSet\DataSetCollection;
+use webignition\BasilModel\Identifier\Identifier;
+use webignition\BasilModel\Identifier\IdentifierCollection;
 use webignition\BasilModel\Step\Step;
 use webignition\BasilModel\Step\StepInterface;
 use webignition\BasilModelFactory\Action\ActionFactory;
 use webignition\BasilModelFactory\AssertionFactory;
+use webignition\BasilModelFactory\IdentifierFactory;
 use webignition\BasilModelValidator\Action\ActionValidator;
 use webignition\BasilModelValidator\AssertionValidator;
 use webignition\BasilModelValidator\DataSetValidator;
@@ -59,6 +62,7 @@ class StepValidatorTest extends \PHPUnit\Framework\TestCase
     {
         $actionFactory = ActionFactory::createFactory();
         $assertionFactory = AssertionFactory::createFactory();
+        $identifierFactory = IdentifierFactory::createFactory();
 
         $inputActionMissingValue = $actionFactory->createFromActionString('set ".selector" to');
         $stepWithInputActionMissingValue = new Step(
@@ -99,17 +103,29 @@ class StepValidatorTest extends \PHPUnit\Framework\TestCase
             ]
         );
 
+        $actionWithElementParameterValue = $actionFactory->createFromActionString('click $elements.missing');
+
+        $stepWithActionWithElementParameterValue = new Step(
+            [
+                $actionWithElementParameterValue,
+            ],
+            []
+        );
+
+        $elementIdentifier = $identifierFactory->create('$elements.element_name');
+        $elementIdentifier = $elementIdentifier->withName('element_name');
+
         return [
             'invalid action: input action missing value' => [
                 'step' => $stepWithInputActionMissingValue,
                 'expectedResult' => new InvalidResult(
                     $stepWithInputActionMissingValue,
                     TypeInterface::STEP,
-                    StepValidator::CODE_ACTION_INVALID,
+                    StepValidator::REASON_ACTION_INVALID,
                     new InvalidResult(
                         $inputActionMissingValue,
                         TypeInterface::ACTION,
-                        ActionValidator::CODE_INPUT_ACTION_VALUE_MISSING
+                        ActionValidator::REASON_INPUT_ACTION_VALUE_MISSING
                     )
                 ),
             ],
@@ -118,26 +134,26 @@ class StepValidatorTest extends \PHPUnit\Framework\TestCase
                 'expectedResult' => new InvalidResult(
                     $stepWithAssertionWithInvalidComparison,
                     TypeInterface::STEP,
-                    StepValidator::CODE_ASSERTION_INVALID,
+                    StepValidator::REASON_ASSERTION_INVALID,
                     new InvalidResult(
                         $assertionWithInvalidComparison,
                         TypeInterface::ASSERTION,
-                        AssertionValidator::CODE_COMPARISON_INVALID
+                        AssertionValidator::REASON_COMPARISON_INVALID
                     )
                 ),
             ],
-            'invalid action: has data parameter value, step has no data sets' => [
+            'invalid data set collection: action has data parameter value, step has no data sets' => [
                 'step' => $stepWithInputActionWithDataParameterValue,
                 'expectedResult' => (new InvalidResult(
                     $stepWithInputActionWithDataParameterValue,
                     TypeInterface::STEP,
-                    StepValidator::CODE_DATA_SET_EMPTY
+                    StepValidator::REASON_DATA_SET_EMPTY
                 ))->withContext([
                     DataSetValidator::CONTEXT_DATA_PARAMETER_NAME => 'key',
                     StepValidator::CONTEXT_VALUE_CONTAINER => $inputActionWithDataParameterValue,
                 ]),
             ],
-            'invalid action: has data parameter value, step has no matching data sets' => [
+            'invalid data set collection: action has data parameter value, step has no matching data sets' => [
                 'step' => $stepWithInputActionWithDataParameterValue->withDataSetCollection(new DataSetCollection([
                     $dataSet,
                 ])),
@@ -146,29 +162,29 @@ class StepValidatorTest extends \PHPUnit\Framework\TestCase
                         $dataSet,
                     ])),
                     TypeInterface::STEP,
-                    StepValidator::CODE_DATA_SET_INCOMPLETE,
+                    StepValidator::REASON_DATA_SET_INCOMPLETE,
                     (new InvalidResult(
                         $dataSet,
                         TypeInterface::DATA_SET,
-                        DataSetValidator::CODE_DATA_SET_INCOMPLETE
+                        DataSetValidator::REASON_DATA_SET_INCOMPLETE
                     ))->withContext([
                         DataSetValidator::CONTEXT_DATA_PARAMETER_NAME => 'key',
                         StepValidator::CONTEXT_VALUE_CONTAINER => $inputActionWithDataParameterValue,
                     ])
                 ),
             ],
-            'invalid assertion: has data parameter value, step has no data sets' => [
+            'invalid data set collection: assertion has data parameter value, step has no data sets' => [
                 'step' => $stepWithAssertionWithDataParameterValue,
                 'expectedResult' => (new InvalidResult(
                     $stepWithAssertionWithDataParameterValue,
                     TypeInterface::STEP,
-                    StepValidator::CODE_DATA_SET_EMPTY
+                    StepValidator::REASON_DATA_SET_EMPTY
                 ))->withContext([
                     DataSetValidator::CONTEXT_DATA_PARAMETER_NAME => 'key',
                     StepValidator::CONTEXT_VALUE_CONTAINER => $assertionWithDataParameterValue,
                 ]),
             ],
-            'invalid assertion: has data parameter value, step has no matching data sets' => [
+            'invalid data set collection: assertion has data parameter value, step has no matching data sets' => [
                 'step' => $stepWithAssertionWithDataParameterValue->withDataSetCollection(new DataSetCollection([
                     $dataSet,
                 ])),
@@ -177,16 +193,40 @@ class StepValidatorTest extends \PHPUnit\Framework\TestCase
                         $dataSet,
                     ])),
                     TypeInterface::STEP,
-                    StepValidator::CODE_DATA_SET_INCOMPLETE,
+                    StepValidator::REASON_DATA_SET_INCOMPLETE,
                     (new InvalidResult(
                         $dataSet,
                         TypeInterface::DATA_SET,
-                        DataSetValidator::CODE_DATA_SET_INCOMPLETE
+                        DataSetValidator::REASON_DATA_SET_INCOMPLETE
                     ))->withContext([
                         DataSetValidator::CONTEXT_DATA_PARAMETER_NAME => 'key',
                         StepValidator::CONTEXT_VALUE_CONTAINER => $assertionWithDataParameterValue,
                     ])
                 ),
+            ],
+            'invalid identifier collection: action has element parameter value, step has no element identifiers' => [
+                'step' => $stepWithActionWithElementParameterValue,
+                'expectedResult' => (new InvalidResult(
+                    $stepWithActionWithElementParameterValue,
+                    TypeInterface::STEP,
+                    StepValidator::REASON_ELEMENT_IDENTIFIER_MISSING
+                ))->withContext([
+                    StepValidator::CONTEXT_ELEMENT_IDENTIFIER_NAME => 'missing',
+                ]),
+            ],
+            'invalid identifier collection: action has element parameter value, step has no matching element' => [
+                'step' => $stepWithActionWithElementParameterValue->withIdentifierCollection(new IdentifierCollection([
+                    $elementIdentifier,
+                ])),
+                'expectedResult' => (new InvalidResult(
+                    $stepWithActionWithElementParameterValue->withIdentifierCollection(new IdentifierCollection([
+                        $elementIdentifier,
+                    ])),
+                    TypeInterface::STEP,
+                    StepValidator::REASON_ELEMENT_IDENTIFIER_MISSING
+                ))->withContext([
+                    StepValidator::CONTEXT_ELEMENT_IDENTIFIER_NAME => 'missing',
+                ]),
             ],
         ];
     }
@@ -205,6 +245,7 @@ class StepValidatorTest extends \PHPUnit\Framework\TestCase
     {
         $actionFactory = ActionFactory::createFactory();
         $assertionFactory = AssertionFactory::createFactory();
+        $identifierFactory = IdentifierFactory::createFactory();
 
         return [
             'no actions, no assertions' => [
@@ -288,6 +329,20 @@ class StepValidatorTest extends \PHPUnit\Framework\TestCase
                         'input2_parameter_name' => 'input 2 value 2',
                         'url' => 'http://example.com/',
                     ],
+                ])),
+            ],
+            'actions with element parameters, assertions' => [
+                'step' => (new Step(
+                    [
+                        $actionFactory->createFromActionString('set $elements.input1 to "input 1 value"'),
+                        $actionFactory->createFromActionString('set $elements.input2 to "input 2 value"'),
+                    ],
+                    [
+                        $assertionFactory->createFromAssertionString('".selector" exists'),
+                    ]
+                ))->withIdentifierCollection(new IdentifierCollection([
+                    $identifierFactory->create('".input1"', 'input1'),
+                    $identifierFactory->create('".input2"', 'input2'),
                 ])),
             ],
         ];
