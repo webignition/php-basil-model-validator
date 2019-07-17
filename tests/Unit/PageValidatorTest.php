@@ -42,7 +42,7 @@ class PageValidatorTest extends \PHPUnit\Framework\TestCase
     public function testValidateNotValid()
     {
         $page = new Page(new Uri(''), []);
-        $expectedResult = new InvalidResult($page, TypeInterface::PAGE, PageValidator::CODE_URL_MISSING);
+        $expectedResult = new InvalidResult($page, TypeInterface::PAGE, PageValidator::REASON_URL_MISSING);
 
         $this->assertEquals($expectedResult, $this->pageValidator->validate($page));
     }

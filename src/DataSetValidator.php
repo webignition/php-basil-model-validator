@@ -11,7 +11,7 @@ use webignition\BasilModelValidator\Result\ValidResult;
 class DataSetValidator implements ValidatorInterface
 {
     const CONTEXT_DATA_PARAMETER_NAME = 'data-parameter-name';
-    const CODE_DATA_SET_INCOMPLETE = 1;
+    const REASON_DATA_SET_INCOMPLETE = 'data-set-incomplete';
 
     public static function create(): DataSetValidator
     {
@@ -36,7 +36,7 @@ class DataSetValidator implements ValidatorInterface
                 return new InvalidResult(
                     $model,
                     TypeInterface::DATA_SET,
-                    self::CODE_DATA_SET_INCOMPLETE
+                    self::REASON_DATA_SET_INCOMPLETE
                 );
             }
         }

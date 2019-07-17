@@ -137,7 +137,7 @@ class InputActionValidatorTest extends \PHPUnit\Framework\TestCase
                 'expectedResult' => new InvalidResult(
                     $inputActionMissingIdentifier,
                     TypeInterface::ACTION,
-                    ActionValidator::CODE_INPUT_ACTION_IDENTIFIER_MISSING
+                    ActionValidator::REASON_INPUT_ACTION_IDENTIFIER_MISSING
                 ),
             ],
             'input action missing value' => [
@@ -145,7 +145,7 @@ class InputActionValidatorTest extends \PHPUnit\Framework\TestCase
                 'expectedResult' => new InvalidResult(
                     $inputActionMissingValue,
                     TypeInterface::ACTION,
-                    ActionValidator::CODE_INPUT_ACTION_VALUE_MISSING
+                    ActionValidator::REASON_INPUT_ACTION_VALUE_MISSING
                 ),
             ],
             'input action with identifier and value, missing "to" keyword' => [
@@ -153,7 +153,7 @@ class InputActionValidatorTest extends \PHPUnit\Framework\TestCase
                 'expectedResult' => new InvalidResult(
                     $inputActionMissingToKeyword,
                     TypeInterface::ACTION,
-                    ActionValidator::CODE_INPUT_ACTION_TO_KEYWORD_MISSING
+                    ActionValidator::REASON_INPUT_ACTION_TO_KEYWORD_MISSING
                 ),
             ],
             'input action with identifier containing "to" keyword and value, missing "to" keyword' => [
@@ -161,7 +161,7 @@ class InputActionValidatorTest extends \PHPUnit\Framework\TestCase
                 'expectedResult' => new InvalidResult(
                     $inputActionWithIdentifierContainingToKeywordMissingToKeyword,
                     TypeInterface::ACTION,
-                    ActionValidator::CODE_INPUT_ACTION_TO_KEYWORD_MISSING
+                    ActionValidator::REASON_INPUT_ACTION_TO_KEYWORD_MISSING
                 ),
             ],
             'input action with value containing "to" keyword, missing "to" keyword' => [
@@ -169,7 +169,7 @@ class InputActionValidatorTest extends \PHPUnit\Framework\TestCase
                 'expectedResult' => new InvalidResult(
                     $inputActionWithValueContainingToKeywordMissingToKeyword,
                     TypeInterface::ACTION,
-                    ActionValidator::CODE_INPUT_ACTION_TO_KEYWORD_MISSING
+                    ActionValidator::REASON_INPUT_ACTION_TO_KEYWORD_MISSING
                 ),
             ],
             'input action with unactionable identifier' => [
@@ -177,7 +177,7 @@ class InputActionValidatorTest extends \PHPUnit\Framework\TestCase
                 'expectedResult' => new InvalidResult(
                     $inputActionWithUnactionableIdentifier,
                     TypeInterface::ACTION,
-                    ActionValidator::CODE_UNACTIONABLE_IDENTIFIER
+                    ActionValidator::REASON_UNACTIONABLE_IDENTIFIER
                 ),
             ],
             'input action with invalid identifier' => [
@@ -185,15 +185,15 @@ class InputActionValidatorTest extends \PHPUnit\Framework\TestCase
                 'expectedResult' => new InvalidResult(
                     $inputActionWithInvalidIdentifier,
                     TypeInterface::ACTION,
-                    ActionValidator::CODE_INVALID_IDENTIFIER,
+                    ActionValidator::REASON_INVALID_IDENTIFIER,
                     new InvalidResult(
                         $invalidIdentifier,
                         TypeInterface::IDENTIFIER,
-                        IdentifierValidator::CODE_VALUE_INVALID,
+                        IdentifierValidator::REASON_VALUE_INVALID,
                         new InvalidResult(
                             $invalidValue,
                             TypeInterface::VALUE,
-                            ValueValidator::CODE_PROPERTY_NAME_INVALID
+                            ValueValidator::REASON_PROPERTY_NAME_INVALID
                         )
                     )
                 ),
@@ -203,11 +203,11 @@ class InputActionValidatorTest extends \PHPUnit\Framework\TestCase
                 'expectedResult' => new InvalidResult(
                     $inputActionWithInvalidValue,
                     TypeInterface::ACTION,
-                    ActionValidator::CODE_INVALID_VALUE,
+                    ActionValidator::REASON_INVALID_VALUE,
                     new InvalidResult(
                         $invalidValue,
                         TypeInterface::VALUE,
-                        ValueValidator::CODE_PROPERTY_NAME_INVALID
+                        ValueValidator::REASON_PROPERTY_NAME_INVALID
                     )
                 ),
             ],

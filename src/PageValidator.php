@@ -10,7 +10,7 @@ use webignition\BasilModelValidator\Result\ValidResult;
 
 class PageValidator implements ValidatorInterface
 {
-    const CODE_URL_MISSING = 1;
+    const REASON_URL_MISSING = 'page-url-missing';
 
     public static function create(): PageValidator
     {
@@ -29,7 +29,7 @@ class PageValidator implements ValidatorInterface
         }
 
         if ('' === (string) $model->getUri()) {
-            return new InvalidResult($model, TypeInterface::PAGE, self::CODE_URL_MISSING);
+            return new InvalidResult($model, TypeInterface::PAGE, self::REASON_URL_MISSING);
         }
 
         return new ValidResult($model);

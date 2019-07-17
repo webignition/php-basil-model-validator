@@ -51,7 +51,7 @@ class InputActionValidator implements ValidatorInterface
         $identifier = $model->getIdentifier();
 
         if (!$identifier instanceof IdentifierInterface) {
-            return $this->createInvalidResult($model, ActionValidator::CODE_INPUT_ACTION_IDENTIFIER_MISSING);
+            return $this->createInvalidResult($model, ActionValidator::REASON_INPUT_ACTION_IDENTIFIER_MISSING);
         }
 
         $identifierValidationResult = $this->identifierValidator->validate($identifier);
@@ -59,19 +59,19 @@ class InputActionValidator implements ValidatorInterface
         if ($identifierValidationResult instanceof InvalidResultInterface) {
             return $this->createInvalidResult(
                 $model,
-                ActionValidator::CODE_INVALID_IDENTIFIER,
+                ActionValidator::REASON_INVALID_IDENTIFIER,
                 $identifierValidationResult
             );
         }
 
         if (false === $identifier->isActionable()) {
-            return $this->createInvalidResult($model, ActionValidator::CODE_UNACTIONABLE_IDENTIFIER);
+            return $this->createInvalidResult($model, ActionValidator::REASON_UNACTIONABLE_IDENTIFIER);
         }
 
         $value = $model->getValue();
 
         if (!$value instanceof ValueInterface) {
-            return $this->createInvalidResult($model, ActionValidator::CODE_INPUT_ACTION_VALUE_MISSING);
+            return $this->createInvalidResult($model, ActionValidator::REASON_INPUT_ACTION_VALUE_MISSING);
         }
 
         $valueValidationResult = $this->valueValidator->validate($value);
@@ -79,13 +79,13 @@ class InputActionValidator implements ValidatorInterface
         if ($valueValidationResult instanceof InvalidResultInterface) {
             return $this->createInvalidResult(
                 $model,
-                ActionValidator::CODE_INVALID_VALUE,
+                ActionValidator::REASON_INVALID_VALUE,
                 $valueValidationResult
             );
         }
 
         if (!$this->hasToKeyword($model)) {
-            return $this->createInvalidResult($model, ActionValidator::CODE_INPUT_ACTION_TO_KEYWORD_MISSING);
+            return $this->createInvalidResult($model, ActionValidator::REASON_INPUT_ACTION_TO_KEYWORD_MISSING);
         }
 
         return new ValidResult($model);
@@ -107,9 +107,9 @@ class InputActionValidator implements ValidatorInterface
 
     private function createInvalidResult(
         object $model,
-        int $code,
+        string $reason,
         ?InvalidResultInterface $previous = null
     ): ResultInterface {
-        return new InvalidResult($model, TypeInterface::ACTION, $code, $previous);
+        return new InvalidResult($model, TypeInterface::ACTION, $reason, $previous);
     }
 }

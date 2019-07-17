@@ -45,7 +45,7 @@ class InteractionActionValidator implements ValidatorInterface
         $identifier = $model->getIdentifier();
 
         if (!$identifier instanceof IdentifierInterface) {
-            return $this->createInvalidResult($model, ActionValidator::CODE_INTERACTION_ACTION_IDENTIFIER_MISSING);
+            return $this->createInvalidResult($model, ActionValidator::REASON_INTERACTION_ACTION_IDENTIFIER_MISSING);
         }
 
         $identifierValidationResult = $this->identifierValidator->validate($identifier);
@@ -53,13 +53,13 @@ class InteractionActionValidator implements ValidatorInterface
         if ($identifierValidationResult instanceof InvalidResultInterface) {
             return $this->createInvalidResult(
                 $model,
-                ActionValidator::CODE_INVALID_IDENTIFIER,
+                ActionValidator::REASON_INVALID_IDENTIFIER,
                 $identifierValidationResult
             );
         }
 
         if (false === $identifier->isActionable()) {
-            return $this->createInvalidResult($model, ActionValidator::CODE_UNACTIONABLE_IDENTIFIER);
+            return $this->createInvalidResult($model, ActionValidator::REASON_UNACTIONABLE_IDENTIFIER);
         }
 
         return new ValidResult($model);
@@ -67,9 +67,9 @@ class InteractionActionValidator implements ValidatorInterface
 
     private function createInvalidResult(
         object $model,
-        int $code,
+        string $reason,
         ?InvalidResultInterface $previous = null
     ): ResultInterface {
-        return new InvalidResult($model, TypeInterface::ACTION, $code, $previous);
+        return new InvalidResult($model, TypeInterface::ACTION, $reason, $previous);
     }
 }

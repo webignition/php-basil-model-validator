@@ -42,9 +42,9 @@ class ValueValidatorTest extends \PHPUnit\Framework\TestCase
     /**
      * @dataProvider validateNotValidDataProvider
      */
-    public function testValidateNotValid(ValueInterface $value, int $expectedResultCode)
+    public function testValidateNotValid(ValueInterface $value, string $expectedReason)
     {
-        $expectedResult = new InvalidResult($value, TypeInterface::VALUE, $expectedResultCode);
+        $expectedResult = new InvalidResult($value, TypeInterface::VALUE, $expectedReason);
 
         $this->assertEquals($expectedResult, $this->valueValidator->validate($value));
     }
@@ -56,15 +56,15 @@ class ValueValidatorTest extends \PHPUnit\Framework\TestCase
         return [
             'invalid type' => [
                 'value' => new Value('foo', ''),
-                'expectedResultCode' => ValueValidator::CODE_TYPE_INVALID,
+                'expectedReason' => ValueValidator::REASON_TYPE_INVALID,
             ],
             'invalid page object property name' => [
                 'value' => $valueFactory->createFromValueString('$page.foo'),
-                'expectedResultCode' => ValueValidator::CODE_PROPERTY_NAME_INVALID,
+                'expectedReason' => ValueValidator::REASON_PROPERTY_NAME_INVALID,
             ],
             'invalid browser object property name' => [
                 'value' => $valueFactory->createFromValueString('$browser.foo'),
-                'expectedResultCode' => ValueValidator::CODE_PROPERTY_NAME_INVALID,
+                'expectedReason' => ValueValidator::REASON_PROPERTY_NAME_INVALID,
             ],
         ];
     }
