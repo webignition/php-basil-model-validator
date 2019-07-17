@@ -89,7 +89,7 @@ class AssertionValidatorTest extends \PHPUnit\Framework\TestCase
                 'expectedResult' => new InvalidResult(
                     $assertionMissingIdentifier,
                     TypeInterface::ASSERTION,
-                    AssertionValidator::CODE_IDENTIFIER_MISSING
+                    AssertionValidator::REASON_IDENTIFIER_MISSING
                 ),
             ],
             'invalid comparison' => [
@@ -97,7 +97,7 @@ class AssertionValidatorTest extends \PHPUnit\Framework\TestCase
                 'expectedResult' => new InvalidResult(
                     $assertionWithInvalidComparison,
                     TypeInterface::ASSERTION,
-                    AssertionValidator::CODE_COMPARISON_INVALID
+                    AssertionValidator::REASON_COMPARISON_INVALID
                 ),
             ],
             'is comparison missing value' => [
@@ -105,7 +105,7 @@ class AssertionValidatorTest extends \PHPUnit\Framework\TestCase
                 'expectedResult' => new InvalidResult(
                     $isComparisonMissingValue,
                     TypeInterface::ASSERTION,
-                    AssertionValidator::CODE_VALUE_MISSING
+                    AssertionValidator::REASON_VALUE_MISSING
                 ),
             ],
             'is-not comparison missing value' => [
@@ -113,7 +113,7 @@ class AssertionValidatorTest extends \PHPUnit\Framework\TestCase
                 'expectedResult' => new InvalidResult(
                     $isNotComparisonMissingValue,
                     TypeInterface::ASSERTION,
-                    AssertionValidator::CODE_VALUE_MISSING
+                    AssertionValidator::REASON_VALUE_MISSING
                 ),
             ],
             'includes comparison missing value' => [
@@ -121,7 +121,7 @@ class AssertionValidatorTest extends \PHPUnit\Framework\TestCase
                 'expectedResult' => new InvalidResult(
                     $includesComparisonMissingValue,
                     TypeInterface::ASSERTION,
-                    AssertionValidator::CODE_VALUE_MISSING
+                    AssertionValidator::REASON_VALUE_MISSING
                 ),
             ],
             'excludes comparison missing value' => [
@@ -129,7 +129,7 @@ class AssertionValidatorTest extends \PHPUnit\Framework\TestCase
                 'expectedResult' => new InvalidResult(
                     $excludesComparisonMissingValue,
                     TypeInterface::ASSERTION,
-                    AssertionValidator::CODE_VALUE_MISSING
+                    AssertionValidator::REASON_VALUE_MISSING
                 ),
             ],
             'matches comparison missing value' => [
@@ -137,7 +137,7 @@ class AssertionValidatorTest extends \PHPUnit\Framework\TestCase
                 'expectedResult' => new InvalidResult(
                     $matchesComparisonMissingValue,
                     TypeInterface::ASSERTION,
-                    AssertionValidator::CODE_VALUE_MISSING
+                    AssertionValidator::REASON_VALUE_MISSING
                 ),
             ],
             'invalid identifier' => [
@@ -145,7 +145,7 @@ class AssertionValidatorTest extends \PHPUnit\Framework\TestCase
                 'expectedResult' => new InvalidResult(
                     $assertionWithInvalidIdentifier,
                     TypeInterface::ASSERTION,
-                    AssertionValidator::CODE_IDENTIFIER_INVALID
+                    AssertionValidator::REASON_IDENTIFIER_INVALID
                 ),
             ],
             'invalid value' => [
@@ -153,11 +153,11 @@ class AssertionValidatorTest extends \PHPUnit\Framework\TestCase
                 'expectedResult' => new InvalidResult(
                     $assertionWithInvalidValue,
                     TypeInterface::ASSERTION,
-                    AssertionValidator::CODE_VALUE_INVALID,
+                    AssertionValidator::REASON_VALUE_INVALID,
                     new InvalidResult(
                         $invalidValue,
                         TypeInterface::VALUE,
-                        ValueValidator::CODE_TYPE_INVALID
+                        ValueValidator::REASON_TYPE_INVALID
                     )
                 ),
             ],

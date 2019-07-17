@@ -14,11 +14,11 @@ use webignition\BasilModelValidator\Result\ValidResult;
 
 class IdentifierValidator implements ValidatorInterface
 {
-    const CODE_TYPE_INVALID = 1;
-    const CODE_VALUE_MISSING = 2;
-    const CODE_INVALID_PARENT_IDENTIFIER = 3;
-    const CODE_VALUE_INVALID = 4;
-    const CODE_TYPE_MISMATCH = 5;
+    const REASON_TYPE_INVALID = 'identifier-type-invalid';
+    const REASON_VALUE_MISSING = 'identifier-value-missing';
+    const REASON_INVALID_PARENT_IDENTIFIER = 'identifier-invalid-parent-identifier';
+    const REASON_VALUE_INVALID = 'identifier-value-invalid';
+    const REASON_TYPE_MISMATCH = 'identifier-type-mismatch';
 
     const VALID_TYPES = [
         IdentifierTypes::CSS_SELECTOR,
@@ -64,39 +64,39 @@ class IdentifierValidator implements ValidatorInterface
         }
 
         if (!in_array($model->getType(), self::VALID_TYPES)) {
-            return $this->createInvalidResult($model, self::CODE_TYPE_INVALID);
+            return $this->createInvalidResult($model, self::REASON_TYPE_INVALID);
         }
 
         $value = $model->getValue();
 
         if ($value->isEmpty()) {
-            return $this->createInvalidResult($model, self::CODE_VALUE_MISSING);
+            return $this->createInvalidResult($model, self::REASON_VALUE_MISSING);
         }
 
         $valueValidationResult = $this->valueValidator->validate($value);
         if ($valueValidationResult instanceof InvalidResultInterface) {
-            return $this->createInvalidResult($model, self::CODE_VALUE_INVALID, $valueValidationResult);
+            return $this->createInvalidResult($model, self::REASON_VALUE_INVALID, $valueValidationResult);
         }
 
         $type = $model->getType();
 
         if (in_array($type, self::TYPES_REQUIRING_STRING_VALUE)) {
             if (ValueTypes::STRING !== $value->getType()) {
-                return $this->createInvalidResult($model, self::CODE_TYPE_MISMATCH);
+                return $this->createInvalidResult($model, self::REASON_TYPE_MISMATCH);
             }
         }
 
         if (in_array($type, self::TYPES_REQUIRING_OBJECT_VALUE)) {
             if (!$value instanceof ObjectValueInterface) {
-                return $this->createInvalidResult($model, self::CODE_TYPE_MISMATCH);
+                return $this->createInvalidResult($model, self::REASON_TYPE_MISMATCH);
             }
 
             if ($value->getType() === ValueTypes::PAGE_OBJECT_PROPERTY && $value->getObjectName() !== 'page') {
-                return $this->createInvalidResult($model, self::CODE_TYPE_MISMATCH);
+                return $this->createInvalidResult($model, self::REASON_TYPE_MISMATCH);
             }
 
             if ($value->getType() === ValueTypes::BROWSER_OBJECT_PROPERTY && $value->getObjectName() !== 'browser') {
-                return $this->createInvalidResult($model, self::CODE_TYPE_MISMATCH);
+                return $this->createInvalidResult($model, self::REASON_TYPE_MISMATCH);
             }
         }
 
@@ -108,7 +108,7 @@ class IdentifierValidator implements ValidatorInterface
             if ($parentValidationResult instanceof InvalidResultInterface) {
                 return $this->createInvalidResult(
                     $model,
-                    self::CODE_INVALID_PARENT_IDENTIFIER,
+                    self::REASON_INVALID_PARENT_IDENTIFIER,
                     $parentValidationResult
                 );
             }
@@ -119,9 +119,9 @@ class IdentifierValidator implements ValidatorInterface
 
     private function createInvalidResult(
         object $model,
-        int $code,
+        string $reason,
         ?InvalidResultInterface $previous = null
     ): InvalidResultInterface {
-        return new InvalidResult($model, TypeInterface::IDENTIFIER, $code, $previous);
+        return new InvalidResult($model, TypeInterface::IDENTIFIER, $reason, $previous);
     }
 }

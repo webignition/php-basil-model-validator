@@ -44,9 +44,9 @@ class DataSetValidatorTest extends \PHPUnit\Framework\TestCase
     public function testValidateNotValid(
         DataSetInterface $dataSet,
         array $context,
-        int $expectedResultCode
+        string $expectedReason
     ) {
-        $expectedResult = new InvalidResult($dataSet, TypeInterface::DATA_SET, $expectedResultCode);
+        $expectedResult = new InvalidResult($dataSet, TypeInterface::DATA_SET, $expectedReason);
 
         $this->assertEquals($expectedResult, $this->dataSetValidator->validate($dataSet, $context));
     }
@@ -59,7 +59,7 @@ class DataSetValidatorTest extends \PHPUnit\Framework\TestCase
                 'context' => [
                     DataSetValidator::CONTEXT_DATA_PARAMETER_NAME => 'username',
                 ],
-                'expectedResultCode' => DataSetValidator::CODE_DATA_SET_INCOMPLETE,
+                'expectedReason' => DataSetValidator::REASON_DATA_SET_INCOMPLETE,
             ],
             'single data set, does not have data parameter name' => [
                 'dataSet' => new DataSet([
@@ -68,7 +68,7 @@ class DataSetValidatorTest extends \PHPUnit\Framework\TestCase
                 'context' => [
                     DataSetValidator::CONTEXT_DATA_PARAMETER_NAME => 'username',
                 ],
-                'expectedResultCode' => DataSetValidator::CODE_DATA_SET_INCOMPLETE,
+                'expectedReason' => DataSetValidator::REASON_DATA_SET_INCOMPLETE,
             ],
         ];
     }

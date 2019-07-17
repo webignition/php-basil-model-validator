@@ -92,7 +92,7 @@ class WaitActionValidatorTest extends \PHPUnit\Framework\TestCase
                 'expectedResult' => new InvalidResult(
                     $waitActionNoDuration,
                     TypeInterface::ACTION,
-                    ActionValidator::CODE_WAIT_ACTION_DURATION_MISSING
+                    ActionValidator::REASON_WAIT_ACTION_DURATION_MISSING
                 ),
             ],
         ];

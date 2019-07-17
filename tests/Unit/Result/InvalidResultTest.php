@@ -26,14 +26,14 @@ class InvalidResultTest extends \PHPUnit\Framework\TestCase
         );
 
         $type = TypeInterface::IDENTIFIER;
-        $code = IdentifierValidator::CODE_VALUE_MISSING;
+        $reason = IdentifierValidator::REASON_VALUE_MISSING;
 
-        $result = new InvalidResult($model, $type, $code);
+        $result = new InvalidResult($model, $type, $reason);
 
         $this->assertFalse($result->getIsValid());
         $this->assertSame($model, $result->getModel());
         $this->assertEquals($type, $result->getType());
-        $this->assertEquals($code, $result->getCode());
+        $this->assertEquals($reason, $result->getReason());
     }
 
     public function testCreateUnhandledModelResult()
@@ -45,7 +45,7 @@ class InvalidResultTest extends \PHPUnit\Framework\TestCase
         $this->assertFalse($result->getIsValid());
         $this->assertSame($model, $result->getModel());
         $this->assertSame(TypeInterface::UNHANDLED, $result->getType());
-        $this->assertSame(0, $result->getCode());
+        $this->assertSame('', $result->getReason());
     }
 
     public function testGetPrevious()
@@ -57,7 +57,7 @@ class InvalidResultTest extends \PHPUnit\Framework\TestCase
         $valueValidationInvalidResult = new InvalidResult(
             $invalidValue,
             TypeInterface::VALUE,
-            ValueValidator::CODE_PROPERTY_NAME_INVALID
+            ValueValidator::REASON_PROPERTY_NAME_INVALID
         );
 
         $invalidIdentifier = new Identifier(IdentifierTypes::PAGE_OBJECT_PARAMETER, $invalidValue);
@@ -65,7 +65,7 @@ class InvalidResultTest extends \PHPUnit\Framework\TestCase
         $identifierValidationInvalidResult = new InvalidResult(
             $invalidIdentifier,
             TypeInterface::IDENTIFIER,
-            IdentifierValidator::CODE_VALUE_INVALID,
+            IdentifierValidator::REASON_VALUE_INVALID,
             $valueValidationInvalidResult
         );
 

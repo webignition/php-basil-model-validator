@@ -9,14 +9,14 @@ use webignition\BasilModelValidator\ValidatorInterface;
 
 class ActionValidator implements ValidatorInterface
 {
-    const CODE_INPUT_ACTION_IDENTIFIER_MISSING = 1;
-    const CODE_INPUT_ACTION_VALUE_MISSING = 2;
-    const CODE_INPUT_ACTION_TO_KEYWORD_MISSING = 3;
-    const CODE_INTERACTION_ACTION_IDENTIFIER_MISSING = 4;
-    const CODE_WAIT_ACTION_DURATION_MISSING = 5;
-    const CODE_UNACTIONABLE_IDENTIFIER = 6;
-    const CODE_INVALID_IDENTIFIER = 7;
-    const CODE_INVALID_VALUE = 8;
+    const REASON_INPUT_ACTION_IDENTIFIER_MISSING = 'action-input-action-identifier-missing';
+    const REASON_INPUT_ACTION_VALUE_MISSING = 'input-action-value-missing';
+    const REASON_INPUT_ACTION_TO_KEYWORD_MISSING = 'input-action-to-keyword-missing';
+    const REASON_INTERACTION_ACTION_IDENTIFIER_MISSING = 'interaction-action-identifier-missing';
+    const REASON_WAIT_ACTION_DURATION_MISSING = 'wait-action-duration-missing';
+    const REASON_UNACTIONABLE_IDENTIFIER = 'action-unactionable-identifier';
+    const REASON_INVALID_IDENTIFIER = 'action-invalid-identifier';
+    const REASON_INVALID_VALUE = 'action-invalid-value';
 
     /**
      * @var ValidatorInterface[]

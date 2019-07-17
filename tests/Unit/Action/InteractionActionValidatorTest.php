@@ -120,7 +120,7 @@ class InteractionActionValidatorTest extends \PHPUnit\Framework\TestCase
                 'expectedResult' => new InvalidResult(
                     $interactionActionWithoutIdentifier,
                     TypeInterface::ACTION,
-                    ActionValidator::CODE_INTERACTION_ACTION_IDENTIFIER_MISSING
+                    ActionValidator::REASON_INTERACTION_ACTION_IDENTIFIER_MISSING
                 ),
             ],
             'interaction action with unactionable identifier' => [
@@ -128,7 +128,7 @@ class InteractionActionValidatorTest extends \PHPUnit\Framework\TestCase
                 'expectedResult' => new InvalidResult(
                     $interactionActionWithUnactionableIdentifier,
                     TypeInterface::ACTION,
-                    ActionValidator::CODE_UNACTIONABLE_IDENTIFIER
+                    ActionValidator::REASON_UNACTIONABLE_IDENTIFIER
                 ),
             ],
             'interaction action with invalid identifier' => [
@@ -136,15 +136,15 @@ class InteractionActionValidatorTest extends \PHPUnit\Framework\TestCase
                 'expectedResult' => new InvalidResult(
                     $interactionActionWithInvalidIdentifier,
                     TypeInterface::ACTION,
-                    ActionValidator::CODE_INVALID_IDENTIFIER,
+                    ActionValidator::REASON_INVALID_IDENTIFIER,
                     new InvalidResult(
                         $invalidIdentifier,
                         TypeInterface::IDENTIFIER,
-                        IdentifierValidator::CODE_VALUE_INVALID,
+                        IdentifierValidator::REASON_VALUE_INVALID,
                         new InvalidResult(
                             $invalidValue,
                             TypeInterface::VALUE,
-                            ValueValidator::CODE_PROPERTY_NAME_INVALID
+                            ValueValidator::REASON_PROPERTY_NAME_INVALID
                         )
                     )
                 ),

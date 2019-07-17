@@ -141,7 +141,7 @@ class IdentifierValidatorTest extends \PHPUnit\Framework\TestCase
                 'expectedResult' => new InvalidResult(
                     $identifierWithInvalidType,
                     TypeInterface::IDENTIFIER,
-                    IdentifierValidator::CODE_TYPE_INVALID
+                    IdentifierValidator::REASON_TYPE_INVALID
                 ),
             ],
             'invalid type, page model element reference' => [
@@ -149,7 +149,7 @@ class IdentifierValidatorTest extends \PHPUnit\Framework\TestCase
                 'expectedResult' => new InvalidResult(
                     $identifierWithPageModelElementReference,
                     TypeInterface::IDENTIFIER,
-                    IdentifierValidator::CODE_TYPE_INVALID
+                    IdentifierValidator::REASON_TYPE_INVALID
                 ),
             ],
             'invalid value, empty css selector' => [
@@ -157,7 +157,7 @@ class IdentifierValidatorTest extends \PHPUnit\Framework\TestCase
                 'expectedResult' => new InvalidResult(
                     $identifierWithEmptyValue,
                     TypeInterface::IDENTIFIER,
-                    IdentifierValidator::CODE_VALUE_MISSING
+                    IdentifierValidator::REASON_VALUE_MISSING
                 ),
             ],
             'invalid parent identifier' => [
@@ -165,11 +165,11 @@ class IdentifierValidatorTest extends \PHPUnit\Framework\TestCase
                 'expectedResult' => new InvalidResult(
                     $identifierWithInvalidParent,
                     TypeInterface::IDENTIFIER,
-                    IdentifierValidator::CODE_INVALID_PARENT_IDENTIFIER,
+                    IdentifierValidator::REASON_INVALID_PARENT_IDENTIFIER,
                     new InvalidResult(
                         $identifierWithInvalidType,
                         TypeInterface::IDENTIFIER,
-                        IdentifierValidator::CODE_TYPE_INVALID
+                        IdentifierValidator::REASON_TYPE_INVALID
                     )
                 ),
             ],
@@ -178,11 +178,11 @@ class IdentifierValidatorTest extends \PHPUnit\Framework\TestCase
                 'expectedResult' => new InvalidResult(
                     $identifierWithInvalidPageObjectProperty,
                     TypeInterface::IDENTIFIER,
-                    IdentifierValidator::CODE_VALUE_INVALID,
+                    IdentifierValidator::REASON_VALUE_INVALID,
                     new InvalidResult(
                         $invalidPageObjectValue,
                         TypeInterface::VALUE,
-                        ValueValidator::CODE_PROPERTY_NAME_INVALID
+                        ValueValidator::REASON_PROPERTY_NAME_INVALID
                     )
                 ),
             ],
@@ -191,7 +191,7 @@ class IdentifierValidatorTest extends \PHPUnit\Framework\TestCase
                 'expectedResult' => new InvalidResult(
                     $cssSelectorIdentifierWithNonStringValue,
                     TypeInterface::IDENTIFIER,
-                    IdentifierValidator::CODE_TYPE_MISMATCH
+                    IdentifierValidator::REASON_TYPE_MISMATCH
                 ),
             ],
             'type mismatch, xpath expression with non-string value' => [
@@ -199,7 +199,7 @@ class IdentifierValidatorTest extends \PHPUnit\Framework\TestCase
                 'expectedResult' => new InvalidResult(
                     $xpathExpressionIdentifierWithNonStringValue,
                     TypeInterface::IDENTIFIER,
-                    IdentifierValidator::CODE_TYPE_MISMATCH
+                    IdentifierValidator::REASON_TYPE_MISMATCH
                 ),
             ],
             'type mismatch, page object property with regular value' => [
@@ -207,7 +207,7 @@ class IdentifierValidatorTest extends \PHPUnit\Framework\TestCase
                 'expectedResult' => new InvalidResult(
                     $pageObjectIdentifierWithRegularValue,
                     TypeInterface::IDENTIFIER,
-                    IdentifierValidator::CODE_TYPE_MISMATCH
+                    IdentifierValidator::REASON_TYPE_MISMATCH
                 ),
             ],
             'type mismatch, page object property with invalid object value' => [
@@ -215,7 +215,7 @@ class IdentifierValidatorTest extends \PHPUnit\Framework\TestCase
                 'expectedResult' => new InvalidResult(
                     $pageObjectIdentifierWithInvalidObjectValue,
                     TypeInterface::IDENTIFIER,
-                    IdentifierValidator::CODE_TYPE_MISMATCH
+                    IdentifierValidator::REASON_TYPE_MISMATCH
                 ),
             ],
             'type mismatch, browser object property with regular value' => [
@@ -223,7 +223,7 @@ class IdentifierValidatorTest extends \PHPUnit\Framework\TestCase
                 'expectedResult' => new InvalidResult(
                     $browserObjectIdentifierWithRegularValue,
                     TypeInterface::IDENTIFIER,
-                    IdentifierValidator::CODE_TYPE_MISMATCH
+                    IdentifierValidator::REASON_TYPE_MISMATCH
                 ),
             ],
             'type mismatch, browser object property with invalid object value' => [
@@ -231,7 +231,7 @@ class IdentifierValidatorTest extends \PHPUnit\Framework\TestCase
                 'expectedResult' => new InvalidResult(
                     $browserObjectIdentifierWithInvalidObjectValue,
                     TypeInterface::IDENTIFIER,
-                    IdentifierValidator::CODE_TYPE_MISMATCH
+                    IdentifierValidator::REASON_TYPE_MISMATCH
                 ),
             ],
         ];

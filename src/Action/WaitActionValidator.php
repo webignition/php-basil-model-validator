@@ -33,7 +33,7 @@ class WaitActionValidator implements ValidatorInterface
             return new InvalidResult(
                 $model,
                 TypeInterface::ACTION,
-                ActionValidator::CODE_WAIT_ACTION_DURATION_MISSING
+                ActionValidator::REASON_WAIT_ACTION_DURATION_MISSING
             );
         }
 
