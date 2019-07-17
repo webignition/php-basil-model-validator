@@ -4,12 +4,15 @@
 
 namespace webignition\BasilModelValidator\Tests\Unit;
 
+use webignition\BasilModel\DataSet\DataSet;
+use webignition\BasilModel\DataSet\DataSetCollection;
 use webignition\BasilModel\Step\Step;
 use webignition\BasilModel\Step\StepInterface;
 use webignition\BasilModelFactory\Action\ActionFactory;
 use webignition\BasilModelFactory\AssertionFactory;
 use webignition\BasilModelValidator\Action\ActionValidator;
 use webignition\BasilModelValidator\AssertionValidator;
+use webignition\BasilModelValidator\DataSetValidator;
 use webignition\BasilModelValidator\Result\InvalidResult;
 use webignition\BasilModelValidator\Result\InvalidResultInterface;
 use webignition\BasilModelValidator\Result\TypeInterface;
@@ -70,9 +73,22 @@ class StepValidatorTest extends \PHPUnit\Framework\TestCase
         $stepWithAssertionWithInvalidComparison = new Step(
             [],
             [
-                $assertionWithInvalidComparison
+                $assertionWithInvalidComparison,
             ]
         );
+
+        $inputActionWithDataParameterValue = $actionFactory->createFromActionString('set ".selector" to $data.key');
+
+        $stepWithInputActionWithDataParameterValue = new Step(
+            [
+                $inputActionWithDataParameterValue,
+            ],
+            []
+        );
+
+        $dataSet = new DataSet('0', [
+            'foo' => 'bar',
+        ]);
 
         return [
             'invalid action: input action missing value' => [
@@ -99,6 +115,37 @@ class StepValidatorTest extends \PHPUnit\Framework\TestCase
                         TypeInterface::ASSERTION,
                         AssertionValidator::CODE_COMPARISON_INVALID
                     )
+                ),
+            ],
+            'invalid action: has data parameter value, step has no data sets' => [
+                'step' => $stepWithInputActionWithDataParameterValue,
+                'expectedResult' => (new InvalidResult(
+                    $stepWithInputActionWithDataParameterValue,
+                    TypeInterface::STEP,
+                    StepValidator::CODE_DATA_SET_EMPTY
+                ))->withContext([
+                    DataSetValidator::CONTEXT_DATA_PARAMETER_NAME => 'key',
+                    StepValidator::CONTEXT_ACTION => $inputActionWithDataParameterValue,
+                ]),
+            ],
+            'invalid action: has data parameter value, step has no matching data sets' => [
+                'step' => $stepWithInputActionWithDataParameterValue->withDataSetCollection(new DataSetCollection([
+                    $dataSet,
+                ])),
+                'expectedResult' => new InvalidResult(
+                    $stepWithInputActionWithDataParameterValue->withDataSetCollection(new DataSetCollection([
+                        $dataSet,
+                    ])),
+                    TypeInterface::STEP,
+                    StepValidator::CODE_DATA_SET_INCOMPLETE,
+                    (new InvalidResult(
+                        $dataSet,
+                        TypeInterface::DATA_SET,
+                        DataSetValidator::CODE_DATA_SET_INCOMPLETE
+                    ))->withContext([
+                        DataSetValidator::CONTEXT_DATA_PARAMETER_NAME => 'key',
+                        StepValidator::CONTEXT_ACTION => $inputActionWithDataParameterValue,
+                    ])
                 ),
             ],
         ];
@@ -138,6 +185,48 @@ class StepValidatorTest extends \PHPUnit\Framework\TestCase
                         $assertionFactory->createFromAssertionString('".delayed-field" is "delayed-value"'),
                     ]
                 ),
+            ],
+            'actions with data sets, assertions' => [
+                'step' => (new Step(
+                    [
+                        $actionFactory->createFromActionString('set ".input1" to $data.input1_parameter_name'),
+                        $actionFactory->createFromActionString('set ".input2" to $data.input2_parameter_name'),
+                    ],
+                    [
+                        $assertionFactory->createFromAssertionString('$page.url is "http://example.com/"'),
+                    ]
+                ))->withDataSetCollection(DataSetCollection::fromArray([
+                    [
+                        'input1_parameter_name' => 'input 1 value 1',
+                        'input2_parameter_name' => 'input 2 value 1',
+                    ],
+                    [
+                        'input1_parameter_name' => 'input 1 value 2',
+                        'input2_parameter_name' => 'input 2 value 2',
+                    ],
+                ])),
+            ],
+            'actions with data sets with superfluous values, assertions' => [
+                'step' => (new Step(
+                    [
+                        $actionFactory->createFromActionString('set ".input1" to $data.input1_parameter_name'),
+                        $actionFactory->createFromActionString('set ".input2" to $data.input2_parameter_name'),
+                    ],
+                    [
+                        $assertionFactory->createFromAssertionString('$page.url is "http://example.com/"'),
+                    ]
+                ))->withDataSetCollection(DataSetCollection::fromArray([
+                    [
+                        'input1_parameter_name' => 'input 1 value 1',
+                        'input2_parameter_name' => 'input 2 value 1',
+                        'foo' => 'bar',
+                    ],
+                    [
+                        'input1_parameter_name' => 'input 1 value 2',
+                        'input2_parameter_name' => 'input 2 value 2',
+                        'foo' => 'bar',
+                    ],
+                ])),
             ],
         ];
     }

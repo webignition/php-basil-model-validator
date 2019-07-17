@@ -7,6 +7,7 @@ class InvalidResult extends AbstractResult implements InvalidResultInterface
     private $type;
     private $reason;
     private $previous;
+    private $context = [];
 
     public function __construct(object $model, string $type, string $reason, ?InvalidResultInterface $previous = null)
     {
@@ -35,5 +36,18 @@ class InvalidResult extends AbstractResult implements InvalidResultInterface
     public function getPrevious(): InvalidResultInterface
     {
         return $this->previous;
+    }
+
+    public function withContext(array $context): InvalidResultInterface
+    {
+        $new = clone $this;
+        $new->context = $context;
+
+        return $new;
+    }
+
+    public function getContext(): array
+    {
+        return $this->context;
     }
 }
