@@ -4,12 +4,14 @@ namespace webignition\BasilModelValidator;
 
 use webignition\BasilModel\Action\ActionInterface;
 use webignition\BasilModel\Action\InputActionInterface;
+use webignition\BasilModel\DataSet\DataSetCollection;
 use webignition\BasilModel\DataSet\DataSetCollectionInterface;
 use webignition\BasilModel\Identifier\IdentifierInterface;
 use webignition\BasilModel\Step\StepInterface;
 use webignition\BasilModel\Value\ObjectValueInterface;
 use webignition\BasilModel\Value\ValueInterface;
 use webignition\BasilModel\Value\ValueTypes;
+use webignition\BasilModel\ValueContainerInterface;
 use webignition\BasilModelValidator\Action\ActionValidator;
 use webignition\BasilModelValidator\Result\InvalidResult;
 use webignition\BasilModelValidator\Result\InvalidResultInterface;
@@ -23,7 +25,7 @@ class StepValidator implements ValidatorInterface
     const CODE_ASSERTION_INVALID = 2;
     const CODE_DATA_SET_INCOMPLETE = 3;
     const CODE_DATA_SET_EMPTY = 4;
-    const CONTEXT_ACTION = 'action';
+    const CONTEXT_VALUE_CONTAINER = 'action';
 
     private $actionValidator;
     private $assertionValidator;
@@ -85,45 +87,11 @@ class StepValidator implements ValidatorInterface
                 return $this->createInvalidResult($model, self::CODE_ACTION_INVALID, $actionValidationResult);
             }
 
-            if ($action instanceof InputActionInterface) {
-                $value = $action->getValue();
+            if ($action instanceof ValueContainerInterface) {
+                $actionDataValidationResult = $this->validateValueContainerDataParameter($model, $action);
 
-                if ($value instanceof ObjectValueInterface && ValueTypes::DATA_PARAMETER === $value->getType()) {
-                    $parameterName = $value->getObjectProperty();
-
-                    $dataSetCollection = $model->getDataSetCollection();
-
-                    if (count($dataSetCollection) === 0) {
-                        return (new InvalidResult(
-                            $model,
-                            TypeInterface::STEP,
-                            self::CODE_DATA_SET_EMPTY
-                        ))->withContext([
-                            DataSetValidator::CONTEXT_DATA_PARAMETER_NAME => $parameterName,
-                            StepValidator::CONTEXT_ACTION => $action,
-                        ]);
-                    }
-
-                    foreach ($dataSetCollection as $dataSet) {
-                        $dataSetValidationResult = $this->dataSetValidator->validate(
-                            $dataSet,
-                            [
-                                DataSetValidator::CONTEXT_DATA_PARAMETER_NAME => $parameterName,
-                            ]
-                        );
-
-                        if ($dataSetValidationResult instanceof InvalidResult) {
-                            return new InvalidResult(
-                                $model,
-                                TypeInterface::STEP,
-                                self::CODE_DATA_SET_INCOMPLETE,
-                                $dataSetValidationResult->withContext([
-                                    DataSetValidator::CONTEXT_DATA_PARAMETER_NAME => $parameterName,
-                                    StepValidator::CONTEXT_ACTION => $action,
-                                ])
-                            );
-                        }
-                    }
+                if ($actionDataValidationResult instanceof InvalidResultInterface) {
+                    return $actionDataValidationResult;
                 }
             }
 
@@ -153,6 +121,52 @@ class StepValidator implements ValidatorInterface
         }
 
         return new ValidResult($model);
+    }
+
+    private function validateValueContainerDataParameter(
+        StepInterface $step,
+        ValueContainerInterface $valueContainer
+    ): ?InvalidResultInterface {
+        $value = $valueContainer->getValue();
+
+        if ($value instanceof ObjectValueInterface && ValueTypes::DATA_PARAMETER === $value->getType()) {
+            $parameterName = $value->getObjectProperty();
+            $dataSetCollection = $step->getDataSetCollection();
+
+            if (count($dataSetCollection) === 0) {
+                return (new InvalidResult(
+                    $step,
+                    TypeInterface::STEP,
+                    self::CODE_DATA_SET_EMPTY
+                ))->withContext([
+                    DataSetValidator::CONTEXT_DATA_PARAMETER_NAME => $parameterName,
+                    StepValidator::CONTEXT_VALUE_CONTAINER => $valueContainer,
+                ]);
+            }
+
+            foreach ($dataSetCollection as $dataSet) {
+                $dataSetValidationResult = $this->dataSetValidator->validate(
+                    $dataSet,
+                    [
+                        DataSetValidator::CONTEXT_DATA_PARAMETER_NAME => $parameterName,
+                    ]
+                );
+
+                if ($dataSetValidationResult instanceof InvalidResult) {
+                    return new InvalidResult(
+                        $step,
+                        TypeInterface::STEP,
+                        self::CODE_DATA_SET_INCOMPLETE,
+                        $dataSetValidationResult->withContext([
+                            DataSetValidator::CONTEXT_DATA_PARAMETER_NAME => $parameterName,
+                            StepValidator::CONTEXT_VALUE_CONTAINER => $valueContainer,
+                        ])
+                    );
+                }
+            }
+        }
+
+        return null;
     }
 
     private function createInvalidResult(

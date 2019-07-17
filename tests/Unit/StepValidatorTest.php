@@ -125,7 +125,7 @@ class StepValidatorTest extends \PHPUnit\Framework\TestCase
                     StepValidator::CODE_DATA_SET_EMPTY
                 ))->withContext([
                     DataSetValidator::CONTEXT_DATA_PARAMETER_NAME => 'key',
-                    StepValidator::CONTEXT_ACTION => $inputActionWithDataParameterValue,
+                    StepValidator::CONTEXT_VALUE_CONTAINER => $inputActionWithDataParameterValue,
                 ]),
             ],
             'invalid action: has data parameter value, step has no matching data sets' => [
@@ -144,7 +144,7 @@ class StepValidatorTest extends \PHPUnit\Framework\TestCase
                         DataSetValidator::CODE_DATA_SET_INCOMPLETE
                     ))->withContext([
                         DataSetValidator::CONTEXT_DATA_PARAMETER_NAME => 'key',
-                        StepValidator::CONTEXT_ACTION => $inputActionWithDataParameterValue,
+                        StepValidator::CONTEXT_VALUE_CONTAINER => $inputActionWithDataParameterValue,
                     ])
                 ),
             ],
