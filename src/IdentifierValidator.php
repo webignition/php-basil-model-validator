@@ -25,6 +25,7 @@ class IdentifierValidator implements ValidatorInterface
         IdentifierTypes::XPATH_EXPRESSION,
         IdentifierTypes::PAGE_OBJECT_PARAMETER,
         IdentifierTypes::BROWSER_OBJECT_PARAMETER,
+        IdentifierTypes::ELEMENT_PARAMETER,
     ];
 
     const TYPES_REQUIRING_STRING_VALUE = [

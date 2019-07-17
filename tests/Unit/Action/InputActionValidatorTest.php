@@ -120,13 +120,12 @@ class InputActionValidatorTest extends \PHPUnit\Framework\TestCase
             'set $page.url to "value"'
         );
 
-        $invalidIdentifier = $identifierFactory->create('$elements.element_name');
+        $invalidIdentifier = $identifierFactory->create('$page.foo');
+        $invalidValue = $valueFactory->createFromValueString('$page.foo');
 
         $inputActionWithInvalidIdentifier = $actionFactory->createFromActionString(
-            'set $elements.element_name to "value"'
+            'set $page.foo to "value"'
         );
-
-        $invalidValue = $valueFactory->createFromValueString('$page.foo');
 
         $inputActionWithInvalidValue = $actionFactory->createFromActionString(
             'set ".selector" to $page.foo'
@@ -190,7 +189,12 @@ class InputActionValidatorTest extends \PHPUnit\Framework\TestCase
                     new InvalidResult(
                         $invalidIdentifier,
                         TypeInterface::IDENTIFIER,
-                        IdentifierValidator::CODE_TYPE_INVALID
+                        IdentifierValidator::CODE_VALUE_INVALID,
+                        new InvalidResult(
+                            $invalidValue,
+                            TypeInterface::VALUE,
+                            ValueValidator::CODE_PROPERTY_NAME_INVALID
+                        )
                     )
                 ),
             ],

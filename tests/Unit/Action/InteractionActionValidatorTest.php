@@ -13,6 +13,7 @@ use webignition\BasilModel\Action\UnrecognisedAction;
 use webignition\BasilModel\Action\WaitAction;
 use webignition\BasilModelFactory\Action\ActionFactory;
 use webignition\BasilModelFactory\IdentifierFactory;
+use webignition\BasilModelFactory\ValueFactory;
 use webignition\BasilModelValidator\Action\ActionValidator;
 use webignition\BasilModelValidator\Action\InteractionActionValidator;
 use webignition\BasilModelValidator\IdentifierValidator;
@@ -20,6 +21,7 @@ use webignition\BasilModelValidator\Result\InvalidResult;
 use webignition\BasilModelValidator\Result\ResultInterface;
 use webignition\BasilModelValidator\Result\TypeInterface;
 use webignition\BasilModelValidator\Result\ValidResult;
+use webignition\BasilModelValidator\ValueValidator;
 
 class InteractionActionValidatorTest extends \PHPUnit\Framework\TestCase
 {
@@ -99,15 +101,17 @@ class InteractionActionValidatorTest extends \PHPUnit\Framework\TestCase
     {
         $actionFactory = ActionFactory::createFactory();
         $identifierFactory = IdentifierFactory::createFactory();
+        $valueFactory = ValueFactory::createFactory();
 
         $interactionActionWithoutIdentifier = $actionFactory->createFromActionString('click');
 
         $interactionActionWithUnactionableIdentifier = $actionFactory->createFromActionString('click $page.url');
 
-        $invalidIdentifier = $identifierFactory->create('$elements.element_name');
+        $invalidIdentifier = $identifierFactory->create('$page.foo');
+        $invalidValue = $valueFactory->createFromValueString('$page.foo');
 
         $interactionActionWithInvalidIdentifier = $actionFactory->createFromActionString(
-            'click $elements.element_name'
+            'click $page.foo'
         );
 
         return [
@@ -136,7 +140,12 @@ class InteractionActionValidatorTest extends \PHPUnit\Framework\TestCase
                     new InvalidResult(
                         $invalidIdentifier,
                         TypeInterface::IDENTIFIER,
-                        IdentifierValidator::CODE_TYPE_INVALID
+                        IdentifierValidator::CODE_VALUE_INVALID,
+                        new InvalidResult(
+                            $invalidValue,
+                            TypeInterface::VALUE,
+                            ValueValidator::CODE_PROPERTY_NAME_INVALID
+                        )
                     )
                 ),
             ],
