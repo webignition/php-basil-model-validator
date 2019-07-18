@@ -26,7 +26,7 @@ class DataSetValidatorTest extends \PHPUnit\Framework\TestCase
 
     public function testHandles()
     {
-        $this->assertTrue($this->dataSetValidator->handles(new DataSet([])));
+        $this->assertTrue($this->dataSetValidator->handles(new DataSet('0', [])));
         $this->assertFalse($this->dataSetValidator->handles(new \stdClass()));
     }
 
@@ -55,14 +55,14 @@ class DataSetValidatorTest extends \PHPUnit\Framework\TestCase
     {
         return [
             'empty, does not have data parameter name' => [
-                'dataSet' => new DataSet([]),
+                'dataSet' => new DataSet('0', []),
                 'context' => [
                     DataSetValidator::CONTEXT_DATA_PARAMETER_NAME => 'username',
                 ],
                 'expectedReason' => DataSetValidator::REASON_DATA_SET_INCOMPLETE,
             ],
             'single data set, does not have data parameter name' => [
-                'dataSet' => new DataSet([
+                'dataSet' => new DataSet('0', [
                     'role' => 'user',
                 ]),
                 'context' => [
@@ -87,17 +87,17 @@ class DataSetValidatorTest extends \PHPUnit\Framework\TestCase
     {
         return [
             'empty, no data parameter name' => [
-                'dataSet' => new DataSet([]),
+                'dataSet' => new DataSet('0', []),
                 'context' => [],
             ],
             'single data set, no data parameter name' => [
-                'dataSet' => new DataSet([
+                'dataSet' => new DataSet('0', [
                     'foo' => 'bar',
                 ]),
                 'context' => [],
             ],
             'single data set, has data parameter name' => [
-                'dataSet' => new DataSet([
+                'dataSet' => new DataSet('0', [
                     'username' => 'user1',
                 ]),
                 'context' => [
@@ -105,7 +105,7 @@ class DataSetValidatorTest extends \PHPUnit\Framework\TestCase
                 ],
             ],
             'single data set, has data parameter name and additional parameter names' => [
-                'dataSet' => new DataSet([
+                'dataSet' => new DataSet('0', [
                     'username' => 'user1',
                     'role' => 'user',
                 ]),
