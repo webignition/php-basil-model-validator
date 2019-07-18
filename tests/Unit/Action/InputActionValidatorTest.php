@@ -131,6 +131,10 @@ class InputActionValidatorTest extends \PHPUnit\Framework\TestCase
             'set ".selector" to $page.foo'
         );
 
+        $inputActionWithUnactionableValue = $actionFactory->createFromActionString(
+            'set ".selector" to page_import_name.elements.element_name'
+        );
+
         return [
             'input action missing identifier' => [
                 'action' => $inputActionMissingIdentifier,
@@ -209,6 +213,14 @@ class InputActionValidatorTest extends \PHPUnit\Framework\TestCase
                         TypeInterface::VALUE,
                         ValueValidator::REASON_PROPERTY_NAME_INVALID
                     )
+                ),
+            ],
+            'input action with unactionable value' => [
+                'action' => $inputActionWithUnactionableValue,
+                'expectedResult' => new InvalidResult(
+                    $inputActionWithUnactionableValue,
+                    TypeInterface::ACTION,
+                    ActionValidator::REASON_INPUT_ACTION_UNACTIONABLE_VALUE
                 ),
             ],
         ];

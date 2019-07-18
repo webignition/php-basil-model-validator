@@ -74,6 +74,10 @@ class InputActionValidator implements ValidatorInterface
             return $this->createInvalidResult($model, ActionValidator::REASON_INPUT_ACTION_VALUE_MISSING);
         }
 
+        if (!$value->isActionable()) {
+            return $this->createInvalidResult($model, ActionValidator::REASON_INPUT_ACTION_UNACTIONABLE_VALUE);
+        }
+
         $valueValidationResult = $this->valueValidator->validate($value);
 
         if ($valueValidationResult instanceof InvalidResultInterface) {

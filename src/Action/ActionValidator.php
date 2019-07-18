@@ -12,6 +12,7 @@ class ActionValidator implements ValidatorInterface
     const REASON_INPUT_ACTION_IDENTIFIER_MISSING = 'action-input-action-identifier-missing';
     const REASON_INPUT_ACTION_VALUE_MISSING = 'input-action-value-missing';
     const REASON_INPUT_ACTION_TO_KEYWORD_MISSING = 'input-action-to-keyword-missing';
+    const REASON_INPUT_ACTION_UNACTIONABLE_VALUE = 'input-action-unactionable-value';
     const REASON_INTERACTION_ACTION_IDENTIFIER_MISSING = 'interaction-action-identifier-missing';
     const REASON_WAIT_ACTION_DURATION_MISSING = 'wait-action-duration-missing';
     const REASON_UNACTIONABLE_IDENTIFIER = 'action-unactionable-identifier';

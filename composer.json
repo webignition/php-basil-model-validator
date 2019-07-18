@@ -34,7 +34,7 @@
     "require": {
         "php": ">=7.2",
         "ext-mbstring": "*",
-        "webignition/php-basil-models": ">=0.30,<1"
+        "webignition/php-basil-models": ">=0.31,<1"
     },
     "require-dev": {
         "phpunit/phpunit": "~8.0",
@@ -43,6 +43,6 @@
         "mockery/mockery": "^1.2",
         "phpstan/phpstan-mockery": "^0.11.1",
         "nyholm/psr7": "^1.1",
-        "webignition/php-basil-model-factory": ">=0.2,<1"
+        "webignition/php-basil-model-factory": ">=0.4,<1"
     }
 }
