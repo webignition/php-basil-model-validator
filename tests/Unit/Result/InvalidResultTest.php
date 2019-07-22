@@ -71,4 +71,16 @@ class InvalidResultTest extends \PHPUnit\Framework\TestCase
 
         $this->assertSame($valueValidationInvalidResult, $identifierValidationInvalidResult->getPrevious());
     }
+
+    public function testGetContext()
+    {
+        $context = [
+            'foo' => 'bar',
+        ];
+
+        $invalidResult = new InvalidResult(new \stdClass(), TypeInterface::NOT_APPLICABLE, 'reason');
+        $invalidResult = $invalidResult->withContext($context);
+
+        $this->assertSame($context, $invalidResult->getContext());
+    }
 }
