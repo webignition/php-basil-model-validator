@@ -173,7 +173,8 @@ class StepValidator implements ValidatorInterface
     ): ?InvalidResultInterface {
         $identifier = $identifierContainer->getIdentifier();
 
-        if (IdentifierTypes::ELEMENT_PARAMETER === $identifier->getType()) {
+        if ($identifier instanceof IdentifierInterface &&
+            IdentifierTypes::ELEMENT_PARAMETER === $identifier->getType()) {
             $objectValue = $identifier->getValue();
 
             if ($objectValue instanceof ObjectValueInterface) {
