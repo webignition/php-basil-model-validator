@@ -6,7 +6,6 @@ namespace webignition\BasilModelValidator\Tests\Unit;
 
 use webignition\BasilModel\DataSet\DataSet;
 use webignition\BasilModel\DataSet\DataSetCollection;
-use webignition\BasilModel\Identifier\Identifier;
 use webignition\BasilModel\Identifier\IdentifierCollection;
 use webignition\BasilModel\Step\Step;
 use webignition\BasilModel\Step\StepInterface;
@@ -123,6 +122,8 @@ class StepValidatorTest extends \PHPUnit\Framework\TestCase
                 $assertionWithElementParameterValue
             ]
         );
+
+        $stepWithNoActionsNoAssertions = new Step([], []);
 
         return [
             'invalid action: input action missing value' => [
@@ -269,6 +270,14 @@ class StepValidatorTest extends \PHPUnit\Framework\TestCase
                     StepValidator::CONTEXT_IDENTIFIER_CONTAINER => $assertionWithElementParameterValue,
                 ]),
             ],
+            'no assertions' => [
+                'step' => $stepWithNoActionsNoAssertions,
+                'expectedResult' => new InvalidResult(
+                    $stepWithNoActionsNoAssertions,
+                    TypeInterface::STEP,
+                    StepValidator::REASON_NO_ASSERTIONS
+                ),
+            ],
         ];
     }
 
@@ -289,8 +298,10 @@ class StepValidatorTest extends \PHPUnit\Framework\TestCase
         $identifierFactory = IdentifierFactory::createFactory();
 
         return [
-            'no actions, no assertions' => [
-                'step' => new Step([], []),
+            'no actions' => [
+                'step' => new Step([], [
+                    $assertionFactory->createFromAssertionString('$page.url is "http://example.com/"'),
+                ]),
             ],
             'actions and assertions without data sets, without element identifiers' => [
                 'step' => new Step(

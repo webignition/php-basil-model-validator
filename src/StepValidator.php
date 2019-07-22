@@ -2,16 +2,11 @@
 
 namespace webignition\BasilModelValidator;
 
-use webignition\BasilModel\Action\ActionInterface;
-use webignition\BasilModel\Action\InputActionInterface;
-use webignition\BasilModel\DataSet\DataSetCollection;
-use webignition\BasilModel\DataSet\DataSetCollectionInterface;
 use webignition\BasilModel\Identifier\IdentifierInterface;
 use webignition\BasilModel\Identifier\IdentifierTypes;
 use webignition\BasilModel\IdentifierContainerInterface;
 use webignition\BasilModel\Step\StepInterface;
 use webignition\BasilModel\Value\ObjectValueInterface;
-use webignition\BasilModel\Value\ValueInterface;
 use webignition\BasilModel\Value\ValueTypes;
 use webignition\BasilModel\ValueContainerInterface;
 use webignition\BasilModelValidator\Action\ActionValidator;
@@ -28,6 +23,7 @@ class StepValidator implements ValidatorInterface
     const REASON_DATA_SET_INCOMPLETE = 'step-data-set-incomplete';
     const REASON_DATA_SET_EMPTY = 'step-data-set-empty';
     const REASON_ELEMENT_IDENTIFIER_MISSING = 'step-element-identifier-missing';
+    const REASON_NO_ASSERTIONS = 'no-assertions';
     const CONTEXT_VALUE_CONTAINER = 'value-container';
     const CONTEXT_ELEMENT_IDENTIFIER_NAME = 'element-identifier-name';
     const CONTEXT_IDENTIFIER_CONTAINER = 'identifier-container';
@@ -66,25 +62,6 @@ class StepValidator implements ValidatorInterface
             return InvalidResult::createUnhandledModelResult($model);
         }
 
-        // *actions valid
-        // *assertions valid
-        // *actions with data parameters have data sets
-        // *assertions with data parameters have data sets
-        // actions with element parameters have element identifiers
-        // assertions with element parameters have element identifiers
-        // actions have actionable identifiers
-        // assertions have assertable identifiers (?)
-        // has more than zero assertions
-
-
-
-        // actions requiring actionable identifiers
-        // relevant action verbs:
-        // click
-        // set
-        // submit
-        // wait-for
-
         foreach ($model->getActions() as $action) {
             $actionValidationResult = $this->actionValidator->validate($action);
 
@@ -109,7 +86,12 @@ class StepValidator implements ValidatorInterface
             }
         }
 
-        foreach ($model->getAssertions() as $assertion) {
+        $assertions = $model->getAssertions();
+        if (0 === count($assertions)) {
+            return $this->createInvalidResult($model, self::REASON_NO_ASSERTIONS);
+        }
+
+        foreach ($assertions as $assertion) {
             $assertionValidationResult = $this->assertionValidator->validate($assertion);
 
             if ($assertionValidationResult instanceof InvalidResultInterface) {
