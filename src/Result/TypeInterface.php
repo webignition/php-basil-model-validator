@@ -15,4 +15,5 @@ interface TypeInterface
     const STEP = 'step';
     const TEST_CONFIGURATION = 'test-configuration';
     const TEST = 'test';
+    const TEST_SUITE = 'test-suite';
 }
