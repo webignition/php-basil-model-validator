@@ -13,4 +13,5 @@ interface TypeInterface
     const PAGE = 'page';
     const DATA_SET = 'data-set';
     const STEP = 'step';
+    const TEST_CONFIGURATION = 'test-configuration';
 }
