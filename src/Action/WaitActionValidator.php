@@ -29,11 +29,21 @@ class WaitActionValidator implements ValidatorInterface
             return InvalidResult::createUnhandledModelResult($model);
         }
 
-        if (empty($model->getDuration())) {
+        $duration = $model->getDuration();
+
+        if ($duration->isEmpty()) {
             return new InvalidResult(
                 $model,
                 TypeInterface::ACTION,
                 ActionValidator::REASON_WAIT_ACTION_DURATION_MISSING
+            );
+        }
+
+        if (!$duration->isActionable()) {
+            return new InvalidResult(
+                $model,
+                TypeInterface::ACTION,
+                ActionValidator::REASON_WAIT_ACTION_DURATION_UNACTIONABLE
             );
         }
 
