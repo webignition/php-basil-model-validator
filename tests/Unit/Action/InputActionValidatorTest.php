@@ -66,7 +66,7 @@ class InputActionValidatorTest extends \PHPUnit\Framework\TestCase
                 'expectedHandles' => false,
             ],
             'wait action' => [
-                'action' => new WaitAction('wait 20', ''),
+                'action' => new WaitAction('wait 20', new Value(ValueTypes::STRING, '20')),
                 'expectedHandles' => false,
             ],
         ];

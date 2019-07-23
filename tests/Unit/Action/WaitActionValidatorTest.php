@@ -9,7 +9,6 @@ use webignition\BasilModel\Action\InteractionAction;
 use webignition\BasilModel\Action\NoArgumentsAction;
 use webignition\BasilModel\Action\UnrecognisedAction;
 use webignition\BasilModel\Action\WaitAction;
-use webignition\BasilModel\Value\ObjectValue;
 use webignition\BasilModel\Value\Value;
 use webignition\BasilModel\Value\ValueTypes;
 use webignition\BasilModelFactory\Action\ActionFactory;
