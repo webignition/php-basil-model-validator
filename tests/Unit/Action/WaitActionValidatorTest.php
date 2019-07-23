@@ -9,6 +9,9 @@ use webignition\BasilModel\Action\InteractionAction;
 use webignition\BasilModel\Action\NoArgumentsAction;
 use webignition\BasilModel\Action\UnrecognisedAction;
 use webignition\BasilModel\Action\WaitAction;
+use webignition\BasilModel\Value\Value;
+use webignition\BasilModel\Value\ValueTypes;
+use webignition\BasilModelFactory\Action\ActionFactory;
 use webignition\BasilModelValidator\Action\ActionValidator;
 use webignition\BasilModelValidator\Action\WaitActionValidator;
 use webignition\BasilModelValidator\Result\InvalidResult;
@@ -58,7 +61,7 @@ class WaitActionValidatorTest extends \PHPUnit\Framework\TestCase
                 'expectedHandles' => false,
             ],
             'wait action' => [
-                'action' => new WaitAction('wait 1', ''),
+                'action' => new WaitAction('wait 1', new Value(ValueTypes::STRING, '1')),
                 'expectedHandles' => true,
             ],
         ];
@@ -84,7 +87,14 @@ class WaitActionValidatorTest extends \PHPUnit\Framework\TestCase
 
     public function validateNotValidDataProvider(): array
     {
-        $waitActionNoDuration = new WaitAction('wait', '');
+        $waitActionNoDuration = new WaitAction('wait', new Value(ValueTypes::STRING, ''));
+        $waitActionWithUnactionableDuration = new WaitAction(
+            'wait page_import_name.elements.element_name',
+            new Value(
+                ValueTypes::PAGE_MODEL_REFERENCE,
+                'page_import_name.elements.element_name'
+            )
+        );
 
         return [
             'wait action duration missing' => [
@@ -95,15 +105,39 @@ class WaitActionValidatorTest extends \PHPUnit\Framework\TestCase
                     ActionValidator::REASON_WAIT_ACTION_DURATION_MISSING
                 ),
             ],
+            'wait action duration unactionable' => [
+                'action' => $waitActionWithUnactionableDuration,
+                'expectedResult' => new InvalidResult(
+                    $waitActionWithUnactionableDuration,
+                    TypeInterface::ACTION,
+                    ActionValidator::REASON_WAIT_ACTION_DURATION_UNACTIONABLE
+                ),
+            ],
         ];
     }
 
-    public function testValidateIsValid()
+    /**
+     * @dataProvider validateIsValidDataProvider
+     */
+    public function testValidateIsValid(string $actionString)
     {
-        $action = new WaitAction('wait 5', '5');
+        $actionFactory = ActionFactory::createFactory();
+        $action = $actionFactory->createFromActionString($actionString);
 
         $expectedResult = new ValidResult($action);
 
         $this->assertEquals($expectedResult, $this->waitActionValidator->validate($action));
+    }
+
+    public function validateIsValidDataProvider(): array
+    {
+        return [
+            'string value' => [
+                'actionString' => 'wait 5',
+            ],
+            'environment parameter value' => [
+                'actionString' => 'wait $env.DURATION',
+            ],
+        ];
     }
 }

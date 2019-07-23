@@ -10,6 +10,8 @@ use webignition\BasilModel\Action\InteractionAction;
 use webignition\BasilModel\Action\NoArgumentsAction;
 use webignition\BasilModel\Action\UnrecognisedAction;
 use webignition\BasilModel\Action\WaitAction;
+use webignition\BasilModel\Value\Value;
+use webignition\BasilModel\Value\ValueTypes;
 use webignition\BasilModelFactory\Action\ActionFactory;
 use webignition\BasilModelValidator\Action\NoArgumentsActionValidator;
 use webignition\BasilModelValidator\Result\InvalidResult;
@@ -66,7 +68,7 @@ class NoArgumentsActionValidatorTest extends \PHPUnit\Framework\TestCase
                 'expectedHandles' => false,
             ],
             'wait action' => [
-                'action' => new WaitAction('wait 20', ''),
+                'action' => new WaitAction('wait 20', new Value(ValueTypes::STRING, '20')),
                 'expectedHandles' => false,
             ],
         ];

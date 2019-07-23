@@ -11,6 +11,8 @@ use webignition\BasilModel\Action\InteractionAction;
 use webignition\BasilModel\Action\NoArgumentsAction;
 use webignition\BasilModel\Action\UnrecognisedAction;
 use webignition\BasilModel\Action\WaitAction;
+use webignition\BasilModel\Value\Value;
+use webignition\BasilModel\Value\ValueTypes;
 use webignition\BasilModelFactory\Action\ActionFactory;
 use webignition\BasilModelFactory\IdentifierFactory;
 use webignition\BasilModelFactory\ValueFactory;
@@ -73,7 +75,7 @@ class InteractionActionValidatorTest extends \PHPUnit\Framework\TestCase
                 'expectedHandles' => false,
             ],
             'wait action' => [
-                'action' => new WaitAction('wait 20', ''),
+                'action' => new WaitAction('wait 20', new Value(ValueTypes::STRING, '20')),
                 'expectedHandles' => false,
             ],
         ];
