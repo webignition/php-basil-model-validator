@@ -226,12 +226,27 @@ class InputActionValidatorTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    public function testValidateIsValid()
+    /**
+     * @dataProvider validateIsValidDataProvider
+     */
+    public function testValidateIsValid(string $actionString)
     {
-        $action = ActionFactory::createFactory()->createFromActionString('set ".selector" to "foo"');
+        $action = ActionFactory::createFactory()->createFromActionString($actionString);
 
         $expectedResult = new ValidResult($action);
 
         $this->assertEquals($expectedResult, $this->inputActionValidator->validate($action));
+    }
+
+    public function validateIsValidDataProvider(): array
+    {
+        return [
+            'set css css selector to string value' => [
+                'actionString' => 'set ".selector" to "foo"',
+            ],
+            'set css css selector to environment parameter value' => [
+                'actionString' => 'set ".selector" to $env.KEY',
+            ],
+        ];
     }
 }
