@@ -16,12 +16,6 @@ use webignition\BasilModelValidator\Result\ValidResult;
 
 class AssertionValidator implements ValidatorInterface
 {
-//    const REASON_IDENTIFIER_MISSING = 'assertion-identifier-missing';
-
-//    const REASON_VALUE_MISSING = 'assertion-value-missing';
-//    const REASON_IDENTIFIER_INVALID = 'assertion-identifier-invalid';
-//    const REASON_VALUE_INVALID = 'assertion-value-invalid';
-
     const REASON_EXAMINED_VALUE_MISSING = 'assertion-examined-value-missing';
     const REASON_EXAMINED_VALUE_INVALID  = 'assertion-examined-value-invalid';
     const REASON_COMPARISON_INVALID = 'assertion-comparison-missing';
@@ -62,9 +56,6 @@ class AssertionValidator implements ValidatorInterface
 
     public function validate(object $model, ?array $context = []): ResultInterface
     {
-//        var_dump($model);
-//        exit();
-
         if (!$model instanceof AssertionInterface) {
             return InvalidResult::createUnhandledModelResult($model);
         }
@@ -73,11 +64,6 @@ class AssertionValidator implements ValidatorInterface
         if (null === $examinedValue) {
             return $this->createInvalidResult($model, self::REASON_EXAMINED_VALUE_MISSING);
         }
-
-        // examined value must be:
-
-        // valid element value, or
-        // valid browser, data, element, page, environment object property
 
         $examinedValueValidationResult = $this->valueValidator->validate($examinedValue);
         if ($examinedValueValidationResult instanceof InvalidResultInterface) {
@@ -88,15 +74,6 @@ class AssertionValidator implements ValidatorInterface
             );
         }
 
-//        if (null === $model->getIdentifier()) {
-//            return $this->createInvalidResult($model, self::REASON_IDENTIFIER_MISSING);
-//        }
-//
-//        $identifierValidationResult = $this->identifierValidator->validate($model->getIdentifier());
-//        if (false === $identifierValidationResult->getIsValid()) {
-//            return $this->createInvalidResult($model, self::REASON_IDENTIFIER_INVALID);
-//        }
-//
         if (!in_array($model->getComparison(), self::VALID_COMPARISONS)) {
             return $this->createInvalidResult($model, self::REASON_COMPARISON_INVALID);
         }
