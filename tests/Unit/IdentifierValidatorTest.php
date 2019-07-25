@@ -4,14 +4,14 @@
 
 namespace webignition\BasilModelValidator\Tests\Unit;
 
+use webignition\BasilModel\Identifier\ElementIdentifier;
 use webignition\BasilModel\Identifier\Identifier;
 use webignition\BasilModel\Identifier\IdentifierInterface;
 use webignition\BasilModel\Identifier\IdentifierTypes;
+use webignition\BasilModel\Value\LiteralValue;
 use webignition\BasilModel\Value\ObjectValue;
-use webignition\BasilModel\Value\Value;
 use webignition\BasilModel\Value\ValueTypes;
 use webignition\BasilModelFactory\IdentifierFactory;
-use webignition\BasilModelFactory\ValueFactory;
 use webignition\BasilModelValidator\IdentifierValidator;
 use webignition\BasilModelValidator\Result\InvalidResult;
 use webignition\BasilModelValidator\Result\ResultInterface;
@@ -59,80 +59,36 @@ class IdentifierValidatorTest extends \PHPUnit\Framework\TestCase
     public function validateNotValidDataProvider(): array
     {
         $identifierFactory = IdentifierFactory::createFactory();
-        $valueFactory = ValueFactory::createFactory();
 
-        $identifierWithInvalidType = new Identifier('foo', $valueFactory->createFromValueString('value'));
-        $identifierWithEmptyValue = new Identifier(IdentifierTypes::CSS_SELECTOR, new Value(ValueTypes::STRING, ''));
+        $identifierWithInvalidType = new Identifier('foo', LiteralValue::createStringValue('value'));
 
-        $identifierWithInvalidParent = $identifierFactory
-            ->create('".selector"')
-            ->withParentIdentifier($identifierWithInvalidType);
-
-        $invalidPageObjectValue = $valueFactory->createFromValueString('$page.foo');
-
-        $identifierWithInvalidPageObjectProperty = new Identifier(
-            IdentifierTypes::PAGE_OBJECT_PARAMETER,
-            $invalidPageObjectValue
+        $invalidParentIdentifier = new ElementIdentifier(
+            LiteralValue::createStringValue('invalid')
         );
 
-        $identifierWithPageModelElementReference = $identifierFactory->create(
-            'page_import.elements.element_name'
+        $identifierWithInvalidParent = (new ElementIdentifier(
+            LiteralValue::createCssSelectorValue('.selector')
+        ))->withParentIdentifier($invalidParentIdentifier);
+
+        $valueWithInvalidType = new ObjectValue('foo', 'bar', '', '');
+        $identifierWithValueWithInvalidType = new Identifier(
+            IdentifierTypes::ELEMENT_SELECTOR,
+            $valueWithInvalidType
         );
 
-        $cssSelectorIdentifierWithNonStringValue = new Identifier(
-            IdentifierTypes::CSS_SELECTOR,
-            new ObjectValue(
-                ValueTypes::BROWSER_OBJECT_PROPERTY,
-                '$browser.size',
-                'browser',
-                'size'
-            )
+        $identifierWithPageElementReference = $identifierFactory->create('page_import.elements.element_name');
+        $identifierWithEmptyElementParameter = new Identifier(
+            IdentifierTypes::ELEMENT_PARAMETER,
+            new ObjectValue(ValueTypes::ELEMENT_PARAMETER, '', '', '')
         );
 
-        $xpathExpressionIdentifierWithNonStringValue = new Identifier(
-            IdentifierTypes::XPATH_EXPRESSION,
-            new ObjectValue(
-                ValueTypes::BROWSER_OBJECT_PROPERTY,
-                '$browser.size',
-                'browser',
-                'size'
-            )
+        $elementIdentifierWithWrongValueType = new ElementIdentifier(
+            LiteralValue::createStringValue('foo')
         );
 
-        $pageObjectIdentifierWithRegularValue = new Identifier(
-            IdentifierTypes::PAGE_OBJECT_PARAMETER,
-            new Value(
-                ValueTypes::PAGE_OBJECT_PROPERTY,
-                '$page.title'
-            )
-        );
-
-        $pageObjectIdentifierWithInvalidObjectValue = new Identifier(
-            IdentifierTypes::PAGE_OBJECT_PARAMETER,
-            new ObjectValue(
-                ValueTypes::PAGE_OBJECT_PROPERTY,
-                '$page.title',
-                'foo',
-                'title'
-            )
-        );
-
-        $browserObjectIdentifierWithRegularValue = new Identifier(
-            IdentifierTypes::BROWSER_OBJECT_PARAMETER,
-            new Value(
-                ValueTypes::BROWSER_OBJECT_PROPERTY,
-                '$browser.size'
-            )
-        );
-
-        $browserObjectIdentifierWithInvalidObjectValue = new Identifier(
-            IdentifierTypes::BROWSER_OBJECT_PARAMETER,
-            new ObjectValue(
-                ValueTypes::BROWSER_OBJECT_PROPERTY,
-                '$browser.size',
-                'foo',
-                'size'
-            )
+        $elementParameterIdentifierWithWrongValueType = new Identifier(
+            IdentifierTypes::ELEMENT_PARAMETER,
+            LiteralValue::createStringValue('foo')
         );
 
         return [
@@ -144,20 +100,65 @@ class IdentifierValidatorTest extends \PHPUnit\Framework\TestCase
                     IdentifierValidator::REASON_TYPE_INVALID
                 ),
             ],
-            'invalid type, page model element reference' => [
-                'identifier' => $identifierWithPageModelElementReference,
+            'invalid type, page element reference' => [
+                'identifier' => $identifierWithPageElementReference,
                 'expectedResult' => new InvalidResult(
-                    $identifierWithPageModelElementReference,
+                    $identifierWithPageElementReference,
                     TypeInterface::IDENTIFIER,
                     IdentifierValidator::REASON_TYPE_INVALID
                 ),
             ],
-            'invalid value, empty css selector' => [
-                'identifier' => $identifierWithEmptyValue,
+            'empty css selector' => [
+                'identifier' => new ElementIdentifier(LiteralValue::createCssSelectorValue('')),
                 'expectedResult' => new InvalidResult(
-                    $identifierWithEmptyValue,
+                    new ElementIdentifier(LiteralValue::createCssSelectorValue('')),
                     TypeInterface::IDENTIFIER,
                     IdentifierValidator::REASON_VALUE_MISSING
+                ),
+            ],
+            'empty xpath expression' => [
+                'identifier' => new ElementIdentifier(LiteralValue::createXpathExpressionValue('')),
+                'expectedResult' => new InvalidResult(
+                    new ElementIdentifier(LiteralValue::createXpathExpressionValue('')),
+                    TypeInterface::IDENTIFIER,
+                    IdentifierValidator::REASON_VALUE_MISSING
+                ),
+            ],
+            'empty element parameter' => [
+                'identifier' => $identifierWithEmptyElementParameter,
+                'expectedResult' => new InvalidResult(
+                    $identifierWithEmptyElementParameter,
+                    TypeInterface::IDENTIFIER,
+                    IdentifierValidator::REASON_VALUE_MISSING
+                ),
+            ],
+            'invalid value' => [
+                'identifier' => $identifierWithValueWithInvalidType,
+                'expectedResult' => new InvalidResult(
+                    $identifierWithValueWithInvalidType,
+                    TypeInterface::IDENTIFIER,
+                    IdentifierValidator::REASON_VALUE_INVALID,
+                    new InvalidResult(
+                        $valueWithInvalidType,
+                        TypeInterface::VALUE,
+                        ValueValidator::REASON_TYPE_INVALID
+                    )
+                ),
+            ],
+            'element identifier with wrong value type' => [
+                'identifier' => $elementIdentifierWithWrongValueType,
+                'expectedResult' => new InvalidResult(
+                    $elementIdentifierWithWrongValueType,
+                    TypeInterface::IDENTIFIER,
+                    IdentifierValidator::REASON_VALUE_TYPE_MISMATCH
+                ),
+            ],
+            'element parameter with wrong value type' => [
+                'identifier' => $elementParameterIdentifierWithWrongValueType,
+                'expectedResult' => new InvalidResult(
+                    $elementParameterIdentifierWithWrongValueType,
+                    TypeInterface::IDENTIFIER,
+                    IdentifierValidator::REASON_VALUE_TYPE_MISMATCH
                 ),
             ],
             'invalid parent identifier' => [
@@ -167,71 +168,10 @@ class IdentifierValidatorTest extends \PHPUnit\Framework\TestCase
                     TypeInterface::IDENTIFIER,
                     IdentifierValidator::REASON_INVALID_PARENT_IDENTIFIER,
                     new InvalidResult(
-                        $identifierWithInvalidType,
+                        $invalidParentIdentifier,
                         TypeInterface::IDENTIFIER,
-                        IdentifierValidator::REASON_TYPE_INVALID
+                        IdentifierValidator::REASON_VALUE_TYPE_MISMATCH
                     )
-                ),
-            ],
-            'invalid page object property' => [
-                'identifier' => $identifierWithInvalidPageObjectProperty,
-                'expectedResult' => new InvalidResult(
-                    $identifierWithInvalidPageObjectProperty,
-                    TypeInterface::IDENTIFIER,
-                    IdentifierValidator::REASON_VALUE_INVALID,
-                    new InvalidResult(
-                        $invalidPageObjectValue,
-                        TypeInterface::VALUE,
-                        ValueValidator::REASON_PROPERTY_NAME_INVALID
-                    )
-                ),
-            ],
-            'type mismatch, css selector with non-string value' => [
-                'identifier' => $cssSelectorIdentifierWithNonStringValue,
-                'expectedResult' => new InvalidResult(
-                    $cssSelectorIdentifierWithNonStringValue,
-                    TypeInterface::IDENTIFIER,
-                    IdentifierValidator::REASON_TYPE_MISMATCH
-                ),
-            ],
-            'type mismatch, xpath expression with non-string value' => [
-                'identifier' => $xpathExpressionIdentifierWithNonStringValue,
-                'expectedResult' => new InvalidResult(
-                    $xpathExpressionIdentifierWithNonStringValue,
-                    TypeInterface::IDENTIFIER,
-                    IdentifierValidator::REASON_TYPE_MISMATCH
-                ),
-            ],
-            'type mismatch, page object property with regular value' => [
-                'identifier' => $pageObjectIdentifierWithRegularValue,
-                'expectedResult' => new InvalidResult(
-                    $pageObjectIdentifierWithRegularValue,
-                    TypeInterface::IDENTIFIER,
-                    IdentifierValidator::REASON_TYPE_MISMATCH
-                ),
-            ],
-            'type mismatch, page object property with invalid object value' => [
-                'identifier' => $pageObjectIdentifierWithInvalidObjectValue,
-                'expectedResult' => new InvalidResult(
-                    $pageObjectIdentifierWithInvalidObjectValue,
-                    TypeInterface::IDENTIFIER,
-                    IdentifierValidator::REASON_TYPE_MISMATCH
-                ),
-            ],
-            'type mismatch, browser object property with regular value' => [
-                'identifier' => $browserObjectIdentifierWithRegularValue,
-                'expectedResult' => new InvalidResult(
-                    $browserObjectIdentifierWithRegularValue,
-                    TypeInterface::IDENTIFIER,
-                    IdentifierValidator::REASON_TYPE_MISMATCH
-                ),
-            ],
-            'type mismatch, browser object property with invalid object value' => [
-                'identifier' => $browserObjectIdentifierWithInvalidObjectValue,
-                'expectedResult' => new InvalidResult(
-                    $browserObjectIdentifierWithInvalidObjectValue,
-                    TypeInterface::IDENTIFIER,
-                    IdentifierValidator::REASON_TYPE_MISMATCH
                 ),
             ],
         ];
@@ -250,29 +190,24 @@ class IdentifierValidatorTest extends \PHPUnit\Framework\TestCase
     public function validateIsValidDataProvider(): array
     {
         $identifierFactory = IdentifierFactory::createFactory();
-        $parentIdentifier = $identifierFactory->create('".parent"');
+
+        $parentIdentifier = new ElementIdentifier(
+            LiteralValue::createCssSelectorValue('.parent')
+        );
 
         return [
-            'type: css selector' => [
+            ' css selector' => [
                 'identifier' => $identifierFactory->create('".selector"'),
             ],
-            'type: css selector with parent' => [
-                'identifier' => $identifierFactory->create('".selector"')
-                    ->withParentIdentifier($parentIdentifier),
+            'css selector with parent' => [
+                'identifier' => (new ElementIdentifier(
+                    LiteralValue::createCssSelectorValue('.selector')
+                ))->withParentIdentifier($parentIdentifier),
             ],
-            'type: xpath expression' => [
+            'xpath expression' => [
                 'identifier' => $identifierFactory->create('"//h1"'),
             ],
-            'type: page object parameter, url' => [
-                'identifier' => $identifierFactory->create('$page.url'),
-            ],
-            'type: page object parameter, title' => [
-                'identifier' => $identifierFactory->create('$page.title'),
-            ],
-            'type: browser object parameter, size' => [
-                'identifier' => $identifierFactory->create('$browser.size'),
-            ],
-            'type: element parameter' => [
+            'element parameter' => [
                 'identifier' => $identifierFactory->create('$elements.element_name'),
             ],
         ];

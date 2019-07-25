@@ -2,6 +2,7 @@
 
 namespace webignition\BasilModelValidator;
 
+use webignition\BasilModel\Identifier\ElementIdentifierInterface;
 use webignition\BasilModel\Identifier\IdentifierInterface;
 use webignition\BasilModel\Identifier\IdentifierTypes;
 use webignition\BasilModel\Value\ObjectValueInterface;
@@ -19,23 +20,19 @@ class IdentifierValidator implements ValidatorInterface
     const REASON_INVALID_PARENT_IDENTIFIER = 'identifier-invalid-parent-identifier';
     const REASON_VALUE_INVALID = 'identifier-value-invalid';
     const REASON_TYPE_MISMATCH = 'identifier-type-mismatch';
+    const REASON_VALUE_TYPE_MISMATCH = 'identifier-value-type-mismatch';
 
     const VALID_TYPES = [
-        IdentifierTypes::CSS_SELECTOR,
-        IdentifierTypes::XPATH_EXPRESSION,
-        IdentifierTypes::PAGE_OBJECT_PARAMETER,
-        IdentifierTypes::BROWSER_OBJECT_PARAMETER,
+        IdentifierTypes::ELEMENT_SELECTOR,
         IdentifierTypes::ELEMENT_PARAMETER,
     ];
 
     const TYPES_REQUIRING_STRING_VALUE = [
-        IdentifierTypes::CSS_SELECTOR,
-        IdentifierTypes::XPATH_EXPRESSION,
+        IdentifierTypes::ELEMENT_SELECTOR,
     ];
 
     const TYPES_REQUIRING_OBJECT_VALUE = [
-        IdentifierTypes::PAGE_OBJECT_PARAMETER,
-        IdentifierTypes::BROWSER_OBJECT_PARAMETER,
+        IdentifierTypes::PAGE_ELEMENT_REFERENCE,
     ];
 
     private $valueValidator;
@@ -80,37 +77,35 @@ class IdentifierValidator implements ValidatorInterface
 
         $type = $model->getType();
 
-        if (in_array($type, self::TYPES_REQUIRING_STRING_VALUE)) {
-            if (ValueTypes::STRING !== $value->getType()) {
-                return $this->createInvalidResult($model, self::REASON_TYPE_MISMATCH);
+        if ($model instanceof ElementIdentifierInterface) {
+            $value = $model->getValue();
+            $valueType = $value->getType();
+
+            if (!in_array($valueType, [ValueTypes::CSS_SELECTOR, ValueTypes::XPATH_EXPRESSION])) {
+                return $this->createInvalidResult($model, self::REASON_VALUE_TYPE_MISMATCH);
+            }
+
+            $parentIdentifier = $model->getParentIdentifier();
+
+            if ($parentIdentifier instanceof IdentifierInterface) {
+                $parentValidationResult = $this->validate($parentIdentifier);
+
+                if ($parentValidationResult instanceof InvalidResultInterface) {
+                    return $this->createInvalidResult(
+                        $model,
+                        self::REASON_INVALID_PARENT_IDENTIFIER,
+                        $parentValidationResult
+                    );
+                }
             }
         }
 
-        if (in_array($type, self::TYPES_REQUIRING_OBJECT_VALUE)) {
-            if (!$value instanceof ObjectValueInterface) {
-                return $this->createInvalidResult($model, self::REASON_TYPE_MISMATCH);
-            }
+        if (IdentifierTypes::ELEMENT_PARAMETER === $type) {
+            $value = $model->getValue();
+            $valueType = $value->getType();
 
-            if ($value->getType() === ValueTypes::PAGE_OBJECT_PROPERTY && $value->getObjectName() !== 'page') {
-                return $this->createInvalidResult($model, self::REASON_TYPE_MISMATCH);
-            }
-
-            if ($value->getType() === ValueTypes::BROWSER_OBJECT_PROPERTY && $value->getObjectName() !== 'browser') {
-                return $this->createInvalidResult($model, self::REASON_TYPE_MISMATCH);
-            }
-        }
-
-        $parentIdentifier = $model->getParentIdentifier();
-
-        if ($parentIdentifier instanceof IdentifierInterface) {
-            $parentValidationResult = $this->validate($parentIdentifier);
-
-            if ($parentValidationResult instanceof InvalidResultInterface) {
-                return $this->createInvalidResult(
-                    $model,
-                    self::REASON_INVALID_PARENT_IDENTIFIER,
-                    $parentValidationResult
-                );
+            if (!$value instanceof ObjectValueInterface || $valueType !== ValueTypes::ELEMENT_PARAMETER) {
+                return $this->createInvalidResult($model, self::REASON_VALUE_TYPE_MISMATCH);
             }
         }
 
