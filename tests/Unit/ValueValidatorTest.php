@@ -3,8 +3,12 @@
 
 namespace webignition\BasilModelValidator\Tests\Unit;
 
-use webignition\BasilModel\Value\Value;
+use webignition\BasilModel\Identifier\Identifier;
+use webignition\BasilModel\Identifier\IdentifierTypes;
+use webignition\BasilModel\Value\ElementValue;
+use webignition\BasilModel\Value\ObjectValue;
 use webignition\BasilModel\Value\ValueInterface;
+use webignition\BasilModel\Value\ValueTypes;
 use webignition\BasilModelFactory\ValueFactory;
 use webignition\BasilModelValidator\Result\InvalidResult;
 use webignition\BasilModelValidator\Result\TypeInterface;
@@ -55,7 +59,7 @@ class ValueValidatorTest extends \PHPUnit\Framework\TestCase
 
         return [
             'invalid type' => [
-                'value' => new Value('foo', ''),
+                'value' => new ObjectValue('foo', '', '', ''),
                 'expectedReason' => ValueValidator::REASON_TYPE_INVALID,
             ],
             'invalid page object property name' => [
@@ -65,6 +69,20 @@ class ValueValidatorTest extends \PHPUnit\Framework\TestCase
             'invalid browser object property name' => [
                 'value' => $valueFactory->createFromValueString('$browser.foo'),
                 'expectedReason' => ValueValidator::REASON_PROPERTY_NAME_INVALID,
+            ],
+            'element value with wrong identifier type' => [
+                'value' => new ElementValue(
+                    new Identifier(
+                        IdentifierTypes::PAGE_ELEMENT_REFERENCE,
+                        new ObjectValue(
+                            ValueTypes::PAGE_ELEMENT_REFERENCE,
+                            'page_import_name.elements.element_name',
+                            'page_import_name',
+                            'element_name'
+                        )
+                    )
+                ),
+                'expectedReason' => ValueValidator::REASON_ELEMENT_VALUE_IDENTIFIER_INVALID,
             ],
         ];
     }
