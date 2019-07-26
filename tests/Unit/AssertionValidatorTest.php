@@ -7,10 +7,8 @@ namespace webignition\BasilModelValidator\Tests\Unit;
 use webignition\BasilModel\Assertion\Assertion;
 use webignition\BasilModel\Assertion\AssertionComparisons;
 use webignition\BasilModel\Assertion\AssertionInterface;
-use webignition\BasilModel\Identifier\Identifier;
-use webignition\BasilModel\Identifier\IdentifierTypes;
-use webignition\BasilModel\Value\ElementValue;
 use webignition\BasilModel\Value\LiteralValue;
+use webignition\BasilModel\Value\ObjectValue;
 use webignition\BasilModelFactory\AssertionFactory;
 use webignition\BasilModelFactory\ValueFactory;
 use webignition\BasilModelValidator\AssertionValidator;
@@ -63,17 +61,19 @@ class AssertionValidatorTest extends \PHPUnit\Framework\TestCase
 
         $emptyAssertion = $assertionFactory->createFromAssertionString('');
 
-        $invalidElementValue = new ElementValue(
-            new Identifier(
-                IdentifierTypes::PAGE_ELEMENT_REFERENCE,
-                LiteralValue::createStringValue('invalid')
-            )
-        );
+        $invalidValue = new ObjectValue('foo', '', '', '');
 
         $assertionWithInvalidExaminedValue = new Assertion(
             '',
-            $invalidElementValue,
+            $invalidValue,
             AssertionComparisons::EXISTS
+        );
+
+        $assertionWithCssSelectorLiteralExaminedValue = new Assertion(
+            '',
+            LiteralValue::createCssSelectorValue('.selector'),
+            AssertionComparisons::IS,
+            LiteralValue::createStringValue('value')
         );
 
         $assertionWithInvalidComparison = $assertionFactory->createFromAssertionString('".selector" foo');
@@ -83,10 +83,14 @@ class AssertionValidatorTest extends \PHPUnit\Framework\TestCase
             '',
             $valueFactory->createFromValueString('$page.url'),
             AssertionComparisons::IS,
-            $invalidElementValue
+            $invalidValue
         );
 
-        $assertionWithElementSelectorLiteralExpectedValue = new Assertion(
+        $assertionWithPageElementReferenceExaminedValue = $assertionFactory->createFromAssertionString(
+            'page_import_name.elements.element_name is "value"'
+        );
+
+        $assertionWithCssSelectorLiteralExpectedValue = new Assertion(
             '',
             $valueFactory->createFromValueString('$page.url'),
             AssertionComparisons::IS,
@@ -113,10 +117,26 @@ class AssertionValidatorTest extends \PHPUnit\Framework\TestCase
                     TypeInterface::ASSERTION,
                     AssertionValidator::REASON_EXAMINED_VALUE_INVALID,
                     new InvalidResult(
-                        $invalidElementValue,
+                        $invalidValue,
                         TypeInterface::VALUE,
-                        ValueValidator::REASON_ELEMENT_VALUE_IDENTIFIER_INVALID
+                        ValueValidator::REASON_TYPE_INVALID
                     )
+                ),
+            ],
+            'invalid examined value, element selector literal' => [
+                'assertion' => $assertionWithCssSelectorLiteralExaminedValue,
+                'expectedResult' => new InvalidResult(
+                    $assertionWithCssSelectorLiteralExaminedValue,
+                    TypeInterface::ASSERTION,
+                    AssertionValidator::REASON_EXAMINED_VALUE_INVALID
+                ),
+            ],
+            'invalid examined value, page element reference object value' => [
+                'assertion' => $assertionWithPageElementReferenceExaminedValue,
+                'expectedResult' => new InvalidResult(
+                    $assertionWithPageElementReferenceExaminedValue,
+                    TypeInterface::ASSERTION,
+                    AssertionValidator::REASON_EXAMINED_VALUE_INVALID
                 ),
             ],
             'invalid comparison' => [
@@ -135,28 +155,28 @@ class AssertionValidatorTest extends \PHPUnit\Framework\TestCase
                     AssertionValidator::REASON_EXPECTED_VALUE_MISSING
                 ),
             ],
-            'invalid examined value, expected value of correct type but invalid' => [
+            'invalid expected value, expected value of correct type but invalid' => [
                 'assertion' => $assertionWithInvalidExpectedValue,
                 'expectedResult' => new InvalidResult(
                     $assertionWithInvalidExpectedValue,
                     TypeInterface::ASSERTION,
                     AssertionValidator::REASON_EXPECTED_VALUE_INVALID,
                     new InvalidResult(
-                        $invalidElementValue,
+                        $invalidValue,
                         TypeInterface::VALUE,
-                        ValueValidator::REASON_ELEMENT_VALUE_IDENTIFIER_INVALID
+                        ValueValidator::REASON_TYPE_INVALID
                     )
                 ),
             ],
-            'invalid examined value, element selector literal' => [
-                'assertion' => $assertionWithElementSelectorLiteralExpectedValue,
+            'invalid expected value, element selector literal' => [
+                'assertion' => $assertionWithCssSelectorLiteralExpectedValue,
                 'expectedResult' => new InvalidResult(
-                    $assertionWithElementSelectorLiteralExpectedValue,
+                    $assertionWithCssSelectorLiteralExpectedValue,
                     TypeInterface::ASSERTION,
                     AssertionValidator::REASON_EXPECTED_VALUE_INVALID
                 ),
             ],
-            'invalid examined value, page element reference object value' => [
+            'invalid expected value, page element reference object value' => [
                 'assertion' => $assertionWithPageElementReferenceExpectedValue,
                 'expectedResult' => new InvalidResult(
                     $assertionWithPageElementReferenceExpectedValue,

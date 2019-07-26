@@ -24,7 +24,7 @@ class AssertionValidator implements ValidatorInterface
 
     const VALID_COMPARISONS = AssertionComparisons::ALL;
 
-    const REQUIRES_VALUE_COMPARISONS = [
+    const REQUIRES_EXPECTED_VALUE_COMPARISONS = [
         AssertionComparisons::IS,
         AssertionComparisons::IS_NOT,
         AssertionComparisons::INCLUDES,
@@ -74,13 +74,17 @@ class AssertionValidator implements ValidatorInterface
             );
         }
 
+        if (!$this->isValueValid($examinedValue)) {
+            return $this->createInvalidResult($model, self::REASON_EXAMINED_VALUE_INVALID);
+        }
+
         if (!in_array($model->getComparison(), self::VALID_COMPARISONS)) {
             return $this->createInvalidResult($model, self::REASON_COMPARISON_INVALID);
         }
 
-        $requiresValue = in_array($model->getComparison(), self::REQUIRES_VALUE_COMPARISONS);
+        $requiresExpectedValue = in_array($model->getComparison(), self::REQUIRES_EXPECTED_VALUE_COMPARISONS);
 
-        if ($requiresValue) {
+        if ($requiresExpectedValue) {
             $expectedValue = $model->getExpectedValue();
 
             if (null === $expectedValue) {
@@ -97,7 +101,7 @@ class AssertionValidator implements ValidatorInterface
                 );
             }
 
-            if (!$this->isExpectedValueValid($expectedValue)) {
+            if (!$this->isValueValid($expectedValue)) {
                 return $this->createInvalidResult($model, self::REASON_EXPECTED_VALUE_INVALID);
             }
         }
@@ -113,22 +117,23 @@ class AssertionValidator implements ValidatorInterface
         return new InvalidResult($model, TypeInterface::ASSERTION, $reason, $invalidResult);
     }
 
-    private function isExpectedValueValid(ValueInterface $expectedValue): bool
+    private function isValueValid(ValueInterface $value): bool
     {
-        $expectedValueType = $expectedValue->getType();
+        $expectedValueType = $value->getType();
 
-        if ($expectedValue instanceof LiteralValueInterface && $expectedValueType !== ValueTypes::STRING) {
+        if ($value instanceof LiteralValueInterface && $expectedValueType !== ValueTypes::STRING) {
             return false;
         }
 
-        if ($expectedValue instanceof ObjectValueInterface) {
+        if ($value instanceof ObjectValueInterface) {
             return in_array(
                 $expectedValueType,
                 [
+                    ValueTypes::BROWSER_OBJECT_PROPERTY,
                     ValueTypes::DATA_PARAMETER,
                     ValueTypes::ELEMENT_PARAMETER,
-                    ValueTypes::PAGE_OBJECT_PROPERTY,
                     ValueTypes::ENVIRONMENT_PARAMETER,
+                    ValueTypes::PAGE_OBJECT_PROPERTY,
                 ]
             );
         }
