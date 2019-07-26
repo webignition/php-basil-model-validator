@@ -2,8 +2,6 @@
 
 namespace webignition\BasilModelValidator;
 
-use webignition\BasilModel\Identifier\ElementIdentifierInterface;
-use webignition\BasilModel\Value\ElementValueInterface;
 use webignition\BasilModel\Value\ObjectValue;
 use webignition\BasilModel\Value\ValueInterface;
 use webignition\BasilModel\Value\ValueTypes;
@@ -16,7 +14,6 @@ class ValueValidator implements ValidatorInterface
 {
     const REASON_TYPE_INVALID = 'value-type-invalid';
     const REASON_PROPERTY_NAME_INVALID = 'value-property-name-invalid';
-    const REASON_ELEMENT_VALUE_IDENTIFIER_INVALID = 'value-element-value-identifier-invalid';
 
     const OBJECT_PROPERTY_NAME_WHITELIST = [
         ValueTypes::PAGE_OBJECT_PROPERTY => [
@@ -56,10 +53,6 @@ class ValueValidator implements ValidatorInterface
             if (!in_array($model->getObjectProperty(), $allowedKeys)) {
                 return new InvalidResult($model, TypeInterface::VALUE, self::REASON_PROPERTY_NAME_INVALID);
             }
-        }
-
-        if ($model instanceof ElementValueInterface && !$model->getIdentifier() instanceof ElementIdentifierInterface) {
-            return new InvalidResult($model, TypeInterface::VALUE, self::REASON_ELEMENT_VALUE_IDENTIFIER_INVALID);
         }
 
         return new ValidResult($model);
