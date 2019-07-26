@@ -5,7 +5,9 @@ namespace webignition\BasilModelValidator\Tests\Unit\Result;
 
 use webignition\BasilModel\Identifier\Identifier;
 use webignition\BasilModel\Identifier\IdentifierTypes;
-use webignition\BasilModel\Value\Value;
+use webignition\BasilModel\Value\LiteralValue;
+use webignition\BasilModel\Value\ObjectNames;
+use webignition\BasilModel\Value\ObjectValue;
 use webignition\BasilModel\Value\ValueTypes;
 use webignition\BasilModelFactory\ValueFactory;
 use webignition\BasilModelValidator\IdentifierValidator;
@@ -18,11 +20,8 @@ class InvalidResultTest extends \PHPUnit\Framework\TestCase
     public function testCreate()
     {
         $model = new Identifier(
-            IdentifierTypes::CSS_SELECTOR,
-            new Value(
-                ValueTypes::STRING,
-                ''
-            )
+            IdentifierTypes::ELEMENT_SELECTOR,
+            LiteralValue::createCssSelectorValue('')
         );
 
         $type = TypeInterface::IDENTIFIER;
@@ -60,12 +59,17 @@ class InvalidResultTest extends \PHPUnit\Framework\TestCase
             ValueValidator::REASON_PROPERTY_NAME_INVALID
         );
 
-        $invalidIdentifier = new Identifier(IdentifierTypes::PAGE_OBJECT_PARAMETER, $invalidValue);
+        $invalidPageObjectPropertyValue = new ObjectValue(
+            ValueTypes::PAGE_OBJECT_PROPERTY,
+            '$page.foo',
+            ObjectNames::PAGE,
+            'foo'
+        );
 
         $identifierValidationInvalidResult = new InvalidResult(
-            $invalidIdentifier,
-            TypeInterface::IDENTIFIER,
-            IdentifierValidator::REASON_VALUE_INVALID,
+            $invalidPageObjectPropertyValue,
+            TypeInterface::VALUE,
+            ValueValidator::REASON_PROPERTY_NAME_INVALID,
             $valueValidationInvalidResult
         );
 
