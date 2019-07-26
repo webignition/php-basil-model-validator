@@ -10,10 +10,9 @@ use webignition\BasilModel\Action\InteractionAction;
 use webignition\BasilModel\Action\NoArgumentsAction;
 use webignition\BasilModel\Action\UnrecognisedAction;
 use webignition\BasilModel\Action\WaitAction;
-use webignition\BasilModel\Value\Value;
-use webignition\BasilModel\Value\ValueTypes;
+use webignition\BasilModel\Identifier\Identifier;
+use webignition\BasilModel\Value\LiteralValue;
 use webignition\BasilModelFactory\Action\ActionFactory;
-use webignition\BasilModelFactory\IdentifierFactory;
 use webignition\BasilModelFactory\ValueFactory;
 use webignition\BasilModelValidator\Action\ActionValidator;
 use webignition\BasilModelValidator\Action\InputActionValidator;
@@ -66,7 +65,7 @@ class InputActionValidatorTest extends \PHPUnit\Framework\TestCase
                 'expectedHandles' => false,
             ],
             'wait action' => [
-                'action' => new WaitAction('wait 20', new Value(ValueTypes::STRING, '20')),
+                'action' => new WaitAction('wait 20', LiteralValue::createStringValue('20')),
                 'expectedHandles' => false,
             ],
         ];
@@ -93,16 +92,12 @@ class InputActionValidatorTest extends \PHPUnit\Framework\TestCase
     public function validateNotValidDataProvider(): array
     {
         $actionFactory = ActionFactory::createFactory();
-        $identifierFactory = IdentifierFactory::createFactory();
         $valueFactory = ValueFactory::createFactory();
 
         $inputActionMissingIdentifier = new InputAction(
             'set to "foo"',
             null,
-            new Value(
-                ValueTypes::STRING,
-                'foo'
-            ),
+            LiteralValue::createStringValue('foo'),
             ' to "foo"'
         );
 
@@ -116,15 +111,14 @@ class InputActionValidatorTest extends \PHPUnit\Framework\TestCase
             'set ".selector" "foo to value"'
         );
 
-        $inputActionWithUnactionableIdentifier = $actionFactory->createFromActionString(
-            'set $page.url to "value"'
-        );
-
-        $invalidIdentifier = $identifierFactory->create('$page.foo');
         $invalidValue = $valueFactory->createFromValueString('$page.foo');
+        $invalidIdentifier = new Identifier('foo', LiteralValue::createStringValue('value'));
 
-        $inputActionWithInvalidIdentifier = $actionFactory->createFromActionString(
-            'set $page.foo to "value"'
+        $inputActionWithInvalidIdentifier = new InputAction(
+            '',
+            $invalidIdentifier,
+            LiteralValue::createStringValue('value'),
+            ''
         );
 
         $inputActionWithInvalidValue = $actionFactory->createFromActionString(
@@ -176,14 +170,6 @@ class InputActionValidatorTest extends \PHPUnit\Framework\TestCase
                     ActionValidator::REASON_INPUT_ACTION_TO_KEYWORD_MISSING
                 ),
             ],
-            'input action with unactionable identifier' => [
-                'action' => $inputActionWithUnactionableIdentifier,
-                'expectedResult' => new InvalidResult(
-                    $inputActionWithUnactionableIdentifier,
-                    TypeInterface::ACTION,
-                    ActionValidator::REASON_UNACTIONABLE_IDENTIFIER
-                ),
-            ],
             'input action with invalid identifier' => [
                 'action' => $inputActionWithInvalidIdentifier,
                 'expectedResult' => new InvalidResult(
@@ -193,12 +179,7 @@ class InputActionValidatorTest extends \PHPUnit\Framework\TestCase
                     new InvalidResult(
                         $invalidIdentifier,
                         TypeInterface::IDENTIFIER,
-                        IdentifierValidator::REASON_VALUE_INVALID,
-                        new InvalidResult(
-                            $invalidValue,
-                            TypeInterface::VALUE,
-                            ValueValidator::REASON_PROPERTY_NAME_INVALID
-                        )
+                        IdentifierValidator::REASON_TYPE_INVALID
                     )
                 ),
             ],
@@ -241,11 +222,23 @@ class InputActionValidatorTest extends \PHPUnit\Framework\TestCase
     public function validateIsValidDataProvider(): array
     {
         return [
-            'set css css selector to string value' => [
+            'set css selector to string value' => [
                 'actionString' => 'set ".selector" to "foo"',
             ],
-            'set css css selector to environment parameter value' => [
+            'set css selector to data parameter value' => [
+                'actionString' => 'set ".selector" to $data.key',
+            ],
+            'set css selector to environment parameter value' => [
                 'actionString' => 'set ".selector" to $env.KEY',
+            ],
+            'set css selector to browser object parameter value' => [
+                'actionString' => 'set ".selector" to $browser.size',
+            ],
+            'set css selector to page object parameter value' => [
+                'actionString' => 'set ".selector" to $page.url',
+            ],
+            'set element parameter to string value' => [
+                'actionString' => 'set $elements.element_name to "foo"',
             ],
         ];
     }
