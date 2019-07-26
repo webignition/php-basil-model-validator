@@ -9,7 +9,8 @@ use webignition\BasilModel\Action\InteractionAction;
 use webignition\BasilModel\Action\NoArgumentsAction;
 use webignition\BasilModel\Action\UnrecognisedAction;
 use webignition\BasilModel\Action\WaitAction;
-use webignition\BasilModel\Value\Value;
+use webignition\BasilModel\Value\LiteralValue;
+use webignition\BasilModel\Value\ObjectValue;
 use webignition\BasilModel\Value\ValueTypes;
 use webignition\BasilModelFactory\Action\ActionFactory;
 use webignition\BasilModelValidator\Action\ActionValidator;
@@ -61,7 +62,7 @@ class WaitActionValidatorTest extends \PHPUnit\Framework\TestCase
                 'expectedHandles' => false,
             ],
             'wait action' => [
-                'action' => new WaitAction('wait 1', new Value(ValueTypes::STRING, '1')),
+                'action' => new WaitAction('wait 1', LiteralValue::createStringValue('1')),
                 'expectedHandles' => true,
             ],
         ];
@@ -87,12 +88,14 @@ class WaitActionValidatorTest extends \PHPUnit\Framework\TestCase
 
     public function validateNotValidDataProvider(): array
     {
-        $waitActionNoDuration = new WaitAction('wait', new Value(ValueTypes::STRING, ''));
+        $waitActionNoDuration = new WaitAction('wait', LiteralValue::createStringValue(''));
         $waitActionWithUnactionableDuration = new WaitAction(
             'wait page_import_name.elements.element_name',
-            new Value(
-                ValueTypes::PAGE_MODEL_REFERENCE,
-                'page_import_name.elements.element_name'
+            new ObjectValue(
+                ValueTypes::PAGE_ELEMENT_REFERENCE,
+                'page_import_name.elements.element_name',
+                'page_import_name',
+                'element_name'
             )
         );
 
@@ -134,6 +137,9 @@ class WaitActionValidatorTest extends \PHPUnit\Framework\TestCase
         return [
             'string value' => [
                 'actionString' => 'wait 5',
+            ],
+            'data parameter value' => [
+                'actionString' => 'wait $data.duration',
             ],
             'environment parameter value' => [
                 'actionString' => 'wait $env.DURATION',

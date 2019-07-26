@@ -3,7 +3,10 @@
 
 namespace webignition\BasilModelValidator\Tests\Unit;
 
-use webignition\BasilModel\Value\Value;
+use webignition\BasilModel\Identifier\ElementIdentifier;
+use webignition\BasilModel\Value\ElementValue;
+use webignition\BasilModel\Value\LiteralValue;
+use webignition\BasilModel\Value\ObjectValue;
 use webignition\BasilModel\Value\ValueInterface;
 use webignition\BasilModelFactory\ValueFactory;
 use webignition\BasilModelValidator\Result\InvalidResult;
@@ -55,7 +58,7 @@ class ValueValidatorTest extends \PHPUnit\Framework\TestCase
 
         return [
             'invalid type' => [
-                'value' => new Value('foo', ''),
+                'value' => new ObjectValue('foo', '', '', ''),
                 'expectedReason' => ValueValidator::REASON_TYPE_INVALID,
             ],
             'invalid page object property name' => [
@@ -104,6 +107,19 @@ class ValueValidatorTest extends \PHPUnit\Framework\TestCase
             ],
             'type: page model reference' => [
                 'value' => $valueFactory->createFromValueString('page_import_name.elements.element_name'),
+            ],
+            'type: css selector' => [
+                'value' => $valueFactory->createFromIdentifierString('".selector"'),
+            ],
+            'type: xpath expression' => [
+                'value' => $valueFactory->createFromIdentifierString('"//foo"'),
+            ],
+            'type: element value' => [
+                'value' => new ElementValue(
+                    new ElementIdentifier(
+                        LiteralValue::createCssSelectorValue('.selector')
+                    )
+                ),
             ],
         ];
     }

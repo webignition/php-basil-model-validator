@@ -4,6 +4,7 @@
 namespace webignition\BasilModelValidator\Tests\Unit;
 
 use Nyholm\Psr7\Uri;
+use webignition\BasilModel\Identifier\IdentifierCollection;
 use webignition\BasilModel\Page\Page;
 use webignition\BasilModel\Page\PageInterface;
 use webignition\BasilModelValidator\PageValidator;
@@ -41,7 +42,7 @@ class PageValidatorTest extends \PHPUnit\Framework\TestCase
 
     public function testValidateNotValid()
     {
-        $page = new Page(new Uri(''), []);
+        $page = new Page(new Uri(''), new IdentifierCollection());
         $expectedResult = new InvalidResult($page, TypeInterface::PAGE, PageValidator::REASON_URL_MISSING);
 
         $this->assertEquals($expectedResult, $this->pageValidator->validate($page));
@@ -49,7 +50,7 @@ class PageValidatorTest extends \PHPUnit\Framework\TestCase
 
     public function testValidateIsValid()
     {
-        $page = new Page(new Uri('http://example.com/'), []);
+        $page = new Page(new Uri('http://example.com/'), new IdentifierCollection());
 
         $this->assertEquals(new ValidResult($page), $this->pageValidator->validate($page));
     }

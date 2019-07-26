@@ -58,10 +58,6 @@ class InteractionActionValidator implements ValidatorInterface
             );
         }
 
-        if (false === $identifier->isActionable()) {
-            return $this->createInvalidResult($model, ActionValidator::REASON_UNACTIONABLE_IDENTIFIER);
-        }
-
         return new ValidResult($model);
     }
 

@@ -11,11 +11,9 @@ use webignition\BasilModel\Action\InteractionAction;
 use webignition\BasilModel\Action\NoArgumentsAction;
 use webignition\BasilModel\Action\UnrecognisedAction;
 use webignition\BasilModel\Action\WaitAction;
-use webignition\BasilModel\Value\Value;
-use webignition\BasilModel\Value\ValueTypes;
+use webignition\BasilModel\Identifier\Identifier;
+use webignition\BasilModel\Value\LiteralValue;
 use webignition\BasilModelFactory\Action\ActionFactory;
-use webignition\BasilModelFactory\IdentifierFactory;
-use webignition\BasilModelFactory\ValueFactory;
 use webignition\BasilModelValidator\Action\ActionValidator;
 use webignition\BasilModelValidator\Action\InteractionActionValidator;
 use webignition\BasilModelValidator\IdentifierValidator;
@@ -23,7 +21,6 @@ use webignition\BasilModelValidator\Result\InvalidResult;
 use webignition\BasilModelValidator\Result\ResultInterface;
 use webignition\BasilModelValidator\Result\TypeInterface;
 use webignition\BasilModelValidator\Result\ValidResult;
-use webignition\BasilModelValidator\ValueValidator;
 
 class InteractionActionValidatorTest extends \PHPUnit\Framework\TestCase
 {
@@ -75,7 +72,7 @@ class InteractionActionValidatorTest extends \PHPUnit\Framework\TestCase
                 'expectedHandles' => false,
             ],
             'wait action' => [
-                'action' => new WaitAction('wait 20', new Value(ValueTypes::STRING, '20')),
+                'action' => new WaitAction('wait 20', LiteralValue::createStringValue('20')),
                 'expectedHandles' => false,
             ],
         ];
@@ -102,18 +99,16 @@ class InteractionActionValidatorTest extends \PHPUnit\Framework\TestCase
     public function validateNotValidDataProvider(): array
     {
         $actionFactory = ActionFactory::createFactory();
-        $identifierFactory = IdentifierFactory::createFactory();
-        $valueFactory = ValueFactory::createFactory();
 
         $interactionActionWithoutIdentifier = $actionFactory->createFromActionString('click');
 
-        $interactionActionWithUnactionableIdentifier = $actionFactory->createFromActionString('click $page.url');
+        $invalidIdentifier = new Identifier('foo', LiteralValue::createStringValue('value'));
 
-        $invalidIdentifier = $identifierFactory->create('$page.foo');
-        $invalidValue = $valueFactory->createFromValueString('$page.foo');
-
-        $interactionActionWithInvalidIdentifier = $actionFactory->createFromActionString(
-            'click $page.foo'
+        $interactionActionWithInvalidIdentifier = new InteractionAction(
+            '',
+            ActionTypes::CLICK,
+            $invalidIdentifier,
+            ''
         );
 
         return [
@@ -125,14 +120,6 @@ class InteractionActionValidatorTest extends \PHPUnit\Framework\TestCase
                     ActionValidator::REASON_INTERACTION_ACTION_IDENTIFIER_MISSING
                 ),
             ],
-            'interaction action with unactionable identifier' => [
-                'action' => $interactionActionWithUnactionableIdentifier,
-                'expectedResult' => new InvalidResult(
-                    $interactionActionWithUnactionableIdentifier,
-                    TypeInterface::ACTION,
-                    ActionValidator::REASON_UNACTIONABLE_IDENTIFIER
-                ),
-            ],
             'interaction action with invalid identifier' => [
                 'action' => $interactionActionWithInvalidIdentifier,
                 'expectedResult' => new InvalidResult(
@@ -142,12 +129,7 @@ class InteractionActionValidatorTest extends \PHPUnit\Framework\TestCase
                     new InvalidResult(
                         $invalidIdentifier,
                         TypeInterface::IDENTIFIER,
-                        IdentifierValidator::REASON_VALUE_INVALID,
-                        new InvalidResult(
-                            $invalidValue,
-                            TypeInterface::VALUE,
-                            ValueValidator::REASON_PROPERTY_NAME_INVALID
-                        )
+                        IdentifierValidator::REASON_TYPE_INVALID
                     )
                 ),
             ],

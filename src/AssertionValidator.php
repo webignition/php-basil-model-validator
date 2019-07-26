@@ -4,6 +4,10 @@ namespace webignition\BasilModelValidator;
 
 use webignition\BasilModel\Assertion\AssertionComparisons;
 use webignition\BasilModel\Assertion\AssertionInterface;
+use webignition\BasilModel\Value\LiteralValueInterface;
+use webignition\BasilModel\Value\ObjectValueInterface;
+use webignition\BasilModel\Value\ValueInterface;
+use webignition\BasilModel\Value\ValueTypes;
 use webignition\BasilModelValidator\Result\InvalidResult;
 use webignition\BasilModelValidator\Result\InvalidResultInterface;
 use webignition\BasilModelValidator\Result\ResultInterface;
@@ -12,15 +16,15 @@ use webignition\BasilModelValidator\Result\ValidResult;
 
 class AssertionValidator implements ValidatorInterface
 {
-    const REASON_IDENTIFIER_MISSING = 'assertion-identifier-missing';
+    const REASON_EXAMINED_VALUE_MISSING = 'assertion-examined-value-missing';
+    const REASON_EXAMINED_VALUE_INVALID  = 'assertion-examined-value-invalid';
     const REASON_COMPARISON_INVALID = 'assertion-comparison-missing';
-    const REASON_VALUE_MISSING = 'assertion-value-missing';
-    const REASON_IDENTIFIER_INVALID = 'assertion-identifier-invalid';
-    const REASON_VALUE_INVALID = 'assertion-value-invalid';
+    const REASON_EXPECTED_VALUE_MISSING = 'assertion-expected-value-missing';
+    const REASON_EXPECTED_VALUE_INVALID  = 'assertion-expected-value-invalid';
 
     const VALID_COMPARISONS = AssertionComparisons::ALL;
 
-    const REQUIRES_VALUE_COMPARISONS = [
+    const REQUIRES_EXPECTED_VALUE_COMPARISONS = [
         AssertionComparisons::IS,
         AssertionComparisons::IS_NOT,
         AssertionComparisons::INCLUDES,
@@ -56,30 +60,49 @@ class AssertionValidator implements ValidatorInterface
             return InvalidResult::createUnhandledModelResult($model);
         }
 
-        if (null === $model->getIdentifier()) {
-            return $this->createInvalidResult($model, self::REASON_IDENTIFIER_MISSING);
+        $examinedValue = $model->getExaminedValue();
+        if (null === $examinedValue) {
+            return $this->createInvalidResult($model, self::REASON_EXAMINED_VALUE_MISSING);
         }
 
-        $identifierValidationResult = $this->identifierValidator->validate($model->getIdentifier());
-        if (false === $identifierValidationResult->getIsValid()) {
-            return $this->createInvalidResult($model, self::REASON_IDENTIFIER_INVALID);
+        $examinedValueValidationResult = $this->valueValidator->validate($examinedValue);
+        if ($examinedValueValidationResult instanceof InvalidResultInterface) {
+            return $this->createInvalidResult(
+                $model,
+                self::REASON_EXAMINED_VALUE_INVALID,
+                $examinedValueValidationResult
+            );
+        }
+
+        if (!$this->isValueValid($examinedValue)) {
+            return $this->createInvalidResult($model, self::REASON_EXAMINED_VALUE_INVALID);
         }
 
         if (!in_array($model->getComparison(), self::VALID_COMPARISONS)) {
             return $this->createInvalidResult($model, self::REASON_COMPARISON_INVALID);
         }
 
-        $requiresValue = in_array($model->getComparison(), self::REQUIRES_VALUE_COMPARISONS);
+        $requiresExpectedValue = in_array($model->getComparison(), self::REQUIRES_EXPECTED_VALUE_COMPARISONS);
 
-        if ($requiresValue) {
-            if (null === $model->getValue()) {
-                return $this->createInvalidResult($model, self::REASON_VALUE_MISSING);
+        if ($requiresExpectedValue) {
+            $expectedValue = $model->getExpectedValue();
+
+            if (null === $expectedValue) {
+                return $this->createInvalidResult($model, self::REASON_EXPECTED_VALUE_MISSING);
             }
 
-            $valueValidationResult = $this->valueValidator->validate($model->getValue());
+            $expectedValueValidationResult = $this->valueValidator->validate($expectedValue);
 
-            if ($valueValidationResult instanceof InvalidResultInterface) {
-                return $this->createInvalidResult($model, self::REASON_VALUE_INVALID, $valueValidationResult);
+            if ($expectedValueValidationResult instanceof InvalidResultInterface) {
+                return $this->createInvalidResult(
+                    $model,
+                    self::REASON_EXPECTED_VALUE_INVALID,
+                    $expectedValueValidationResult
+                );
+            }
+
+            if (!$this->isValueValid($expectedValue)) {
+                return $this->createInvalidResult($model, self::REASON_EXPECTED_VALUE_INVALID);
             }
         }
 
@@ -92,5 +115,29 @@ class AssertionValidator implements ValidatorInterface
         ?InvalidResultInterface $invalidResult = null
     ): ResultInterface {
         return new InvalidResult($model, TypeInterface::ASSERTION, $reason, $invalidResult);
+    }
+
+    private function isValueValid(ValueInterface $value): bool
+    {
+        $expectedValueType = $value->getType();
+
+        if ($value instanceof LiteralValueInterface && $expectedValueType !== ValueTypes::STRING) {
+            return false;
+        }
+
+        if ($value instanceof ObjectValueInterface) {
+            return in_array(
+                $expectedValueType,
+                [
+                    ValueTypes::BROWSER_OBJECT_PROPERTY,
+                    ValueTypes::DATA_PARAMETER,
+                    ValueTypes::ELEMENT_PARAMETER,
+                    ValueTypes::ENVIRONMENT_PARAMETER,
+                    ValueTypes::PAGE_OBJECT_PROPERTY,
+                ]
+            );
+        }
+
+        return true;
     }
 }

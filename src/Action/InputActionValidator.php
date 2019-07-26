@@ -64,10 +64,6 @@ class InputActionValidator implements ValidatorInterface
             );
         }
 
-        if (false === $identifier->isActionable()) {
-            return $this->createInvalidResult($model, ActionValidator::REASON_UNACTIONABLE_IDENTIFIER);
-        }
-
         $value = $model->getValue();
 
         if (!$value instanceof ValueInterface) {
