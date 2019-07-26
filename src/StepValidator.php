@@ -71,22 +71,30 @@ class StepValidator implements ValidatorInterface
             }
 
             if ($action instanceof InputActionInterface) {
-                $dataValueValidationResult = $this->validateDataValue($model, $action->getValue(), $action);
+                $actionValue = $action->getValue();
 
-                if ($dataValueValidationResult instanceof InvalidResultInterface) {
-                    return $dataValueValidationResult;
+                if ($actionValue instanceof ValueInterface) {
+                    $dataValueValidationResult = $this->validateDataValue($model, $actionValue, $action);
+
+                    if ($dataValueValidationResult instanceof InvalidResultInterface) {
+                        return $dataValueValidationResult;
+                    }
                 }
             }
 
             if ($action instanceof InteractionActionInterface) {
-                $identifierElementParameterValidationResult = $this->validateIdentifierElementParameter(
-                    $model,
-                    $action->getIdentifier(),
-                    $action
-                );
+                $actionIdentifier = $action->getIdentifier();
 
-                if ($identifierElementParameterValidationResult instanceof InvalidResultInterface) {
-                    return $identifierElementParameterValidationResult;
+                if ($actionIdentifier instanceof IdentifierInterface) {
+                    $identifierElementParameterValidationResult = $this->validateIdentifierElementParameter(
+                        $model,
+                        $actionIdentifier,
+                        $action
+                    );
+
+                    if ($identifierElementParameterValidationResult instanceof InvalidResultInterface) {
+                        return $identifierElementParameterValidationResult;
+                    }
                 }
             }
         }
@@ -105,14 +113,16 @@ class StepValidator implements ValidatorInterface
 
             $examinedValue = $assertion->getExaminedValue();
 
-            $examinedValueDataParameterValidationResult = $this->validateDataValue($model, $examinedValue, $assertion);
-            if ($examinedValueDataParameterValidationResult instanceof InvalidResultInterface) {
-                return $examinedValueDataParameterValidationResult;
-            }
+            if ($examinedValue instanceof ValueInterface) {
+                $examinedValueDataValueValidationResult = $this->validateDataValue($model, $examinedValue, $assertion);
+                if ($examinedValueDataValueValidationResult instanceof InvalidResultInterface) {
+                    return $examinedValueDataValueValidationResult;
+                }
 
-            $elementParameterValidationResult = $this->validateElementParameter($model, $examinedValue, $assertion);
-            if ($elementParameterValidationResult instanceof InvalidResultInterface) {
-                return $elementParameterValidationResult;
+                $elementParameterValidationResult = $this->validateElementParameter($model, $examinedValue, $assertion);
+                if ($elementParameterValidationResult instanceof InvalidResultInterface) {
+                    return $elementParameterValidationResult;
+                }
             }
 
             $expectedValue = $assertion->getExpectedValue();
