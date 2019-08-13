@@ -157,10 +157,30 @@ class PageValidatorTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    public function testValidateIsValid()
+    /**
+     * @dataProvider validateIsValidDataProvider
+     */
+    public function testValidateIsValid(PageInterface $page)
     {
-        $page = new Page(new Uri('http://example.com/'), new IdentifierCollection());
-
         $this->assertEquals(new ValidResult($page), $this->pageValidator->validate($page));
+    }
+
+    public function validateIsValidDataProvider(): array
+    {
+        return [
+            'empty identifier collection' => [
+                'page' => new Page(new Uri('http://example.com/'), new IdentifierCollection()),
+            ],
+            'non-empty identifier collection' => [
+                'page' => new Page(new Uri('http://example.com/'), new IdentifierCollection([
+                    new ElementIdentifier(
+                        LiteralValue::createCssSelectorValue('.selector')
+                    ),
+                    new ElementIdentifier(
+                        LiteralValue::createXpathExpressionValue('//h1')
+                    ),
+                ])),
+            ],
+        ];
     }
 }
