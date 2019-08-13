@@ -11,7 +11,7 @@ use webignition\BasilModel\Step\Step;
 use webignition\BasilModel\Step\StepInterface;
 use webignition\BasilModelFactory\Action\ActionFactory;
 use webignition\BasilModelFactory\AssertionFactory;
-use webignition\BasilModelFactory\IdentifierFactory;
+use webignition\BasilModelFactory\Identifier\IdentifierFactory;
 use webignition\BasilModelValidator\Action\ActionValidator;
 use webignition\BasilModelValidator\AssertionValidator;
 use webignition\BasilModelValidator\DataSetValidator;
@@ -455,8 +455,8 @@ class StepValidatorTest extends \PHPUnit\Framework\TestCase
                         $assertionFactory->createFromAssertionString('".selector" exists'),
                     ]
                 ))->withIdentifierCollection(new IdentifierCollection([
-                    $identifierFactory->create('".input1"', 'input1'),
-                    $identifierFactory->create('".input2"', 'input2'),
+                    $identifierFactory->create('".input1"')->withName('input1'),
+                    $identifierFactory->create('".input2"')->withName('input2'),
                 ])),
             ],
             'actions with element parameters, assertions with element parameters' => [
@@ -469,9 +469,9 @@ class StepValidatorTest extends \PHPUnit\Framework\TestCase
                         $assertionFactory->createFromAssertionString('$elements.heading exists'),
                     ]
                 ))->withIdentifierCollection(new IdentifierCollection([
-                    $identifierFactory->create('".input1"', 'input1'),
-                    $identifierFactory->create('".input2"', 'input2'),
-                    $identifierFactory->create('".heading"', 'heading'),
+                    $identifierFactory->create('".input1"')->withName('input1'),
+                    $identifierFactory->create('".input2"')->withName('input2'),
+                    $identifierFactory->create('".heading"')->withName('heading'),
                 ])),
             ],
         ];
