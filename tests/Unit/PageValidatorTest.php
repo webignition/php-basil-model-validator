@@ -9,6 +9,7 @@ use webignition\BasilModel\Page\Page;
 use webignition\BasilModel\Page\PageInterface;
 use webignition\BasilModelValidator\PageValidator;
 use webignition\BasilModelValidator\Result\InvalidResult;
+use webignition\BasilModelValidator\Result\InvalidResultInterface;
 use webignition\BasilModelValidator\Result\TypeInterface;
 use webignition\BasilModelValidator\Result\ValidResult;
 
@@ -40,12 +41,34 @@ class PageValidatorTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expectedResult, $this->pageValidator->validate($model));
     }
 
-    public function testValidateNotValid()
+    /**
+     * @dataProvider validateNotValidDataProvider
+     */
+    public function testValidateNotValid(PageInterface $page, InvalidResultInterface $expectedResult)
     {
-        $page = new Page(new Uri(''), new IdentifierCollection());
-        $expectedResult = new InvalidResult($page, TypeInterface::PAGE, PageValidator::REASON_URL_MISSING);
-
         $this->assertEquals($expectedResult, $this->pageValidator->validate($page));
+    }
+
+    public function validateNotValidDataProvider(): array
+    {
+        $emptyUriPage = new Page(
+            new Uri(''),
+            new IdentifierCollection()
+        );
+
+        return [
+            'empty uri' => [
+                'page' => new Page(
+                    new Uri(''),
+                    new IdentifierCollection()
+                ),
+                'expectedResult' => new InvalidResult(
+                    $emptyUriPage,
+                    TypeInterface::PAGE,
+                    PageValidator::REASON_URL_MISSING
+                ),
+            ],
+        ];
     }
 
     public function testValidateIsValid()
