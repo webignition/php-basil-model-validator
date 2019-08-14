@@ -253,6 +253,11 @@ class AssertionValidatorTest extends \PHPUnit\Framework\TestCase
             'css attribute selector, is comparison, scalar value' => [
                 'assertion' => $assertionFactory->createFromAssertionString('".selector".attribute_name is "value"'),
             ],
+            'css element selector, is comparison, attribute parameter value' => [
+                'assertion' => $assertionFactory->createFromAssertionString(
+                    '".selector" is $elements.element_name.attribute_name'
+                ),
+            ],
         ];
     }
 }
