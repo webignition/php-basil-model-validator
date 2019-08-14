@@ -222,20 +222,23 @@ class InputActionValidatorTest extends \PHPUnit\Framework\TestCase
     public function validateIsValidDataProvider(): array
     {
         return [
-            'set css selector to string value' => [
+            'set css element selector to string value' => [
                 'actionString' => 'set ".selector" to "foo"',
             ],
-            'set css selector to data parameter value' => [
+            'set css element selector to data parameter value' => [
                 'actionString' => 'set ".selector" to $data.key',
             ],
-            'set css selector to environment parameter value' => [
+            'set css element selector to environment parameter value' => [
                 'actionString' => 'set ".selector" to $env.KEY',
             ],
-            'set css selector to browser object parameter value' => [
+            'set css element selector to browser object parameter value' => [
                 'actionString' => 'set ".selector" to $browser.size',
             ],
-            'set css selector to page object parameter value' => [
+            'set css element selector to page object parameter value' => [
                 'actionString' => 'set ".selector" to $page.url',
+            ],
+            'set css element selector to attribute parameter value' => [
+                'actionString' => 'set ".selector" to $elements.element_name.attribute_name',
             ],
             'set element parameter to string value' => [
                 'actionString' => 'set $elements.element_name to "foo"',
