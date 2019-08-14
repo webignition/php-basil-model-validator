@@ -10,6 +10,8 @@ use webignition\BasilModel\Action\InteractionAction;
 use webignition\BasilModel\Action\NoArgumentsAction;
 use webignition\BasilModel\Action\UnrecognisedAction;
 use webignition\BasilModel\Action\WaitAction;
+use webignition\BasilModel\Identifier\AttributeIdentifier;
+use webignition\BasilModel\Identifier\ElementIdentifier;
 use webignition\BasilModel\Identifier\Identifier;
 use webignition\BasilModel\Value\LiteralValue;
 use webignition\BasilModelFactory\Action\ActionFactory;
@@ -129,6 +131,20 @@ class InputActionValidatorTest extends \PHPUnit\Framework\TestCase
             'set ".selector" to page_import_name.elements.element_name'
         );
 
+        $attributeIdentifier = new AttributeIdentifier(
+            new ElementIdentifier(
+                LiteralValue::createCssSelectorValue('.selector')
+            ),
+            'attribute_name'
+        );
+
+        $inputActionWithAttributeIdentifier = new InputAction(
+            '',
+            $attributeIdentifier,
+            LiteralValue::createStringValue('value'),
+            ''
+        );
+
         return [
             'input action missing identifier' => [
                 'action' => $inputActionMissingIdentifier,
@@ -202,6 +218,19 @@ class InputActionValidatorTest extends \PHPUnit\Framework\TestCase
                     $inputActionWithUnactionableValue,
                     TypeInterface::ACTION,
                     ActionValidator::REASON_INPUT_ACTION_UNACTIONABLE_VALUE
+                ),
+            ],
+            'input action with attribute identifier' => [
+                'action' => $inputActionWithAttributeIdentifier,
+                'expectedResult' => new InvalidResult(
+                    $inputActionWithAttributeIdentifier,
+                    TypeInterface::ACTION,
+                    ActionValidator::REASON_INVALID_IDENTIFIER,
+                    new InvalidResult(
+                        $attributeIdentifier,
+                        TypeInterface::IDENTIFIER,
+                        IdentifierValidator::REASON_TYPE_INVALID
+                    )
                 ),
             ],
         ];
