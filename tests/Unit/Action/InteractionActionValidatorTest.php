@@ -11,6 +11,8 @@ use webignition\BasilModel\Action\InteractionAction;
 use webignition\BasilModel\Action\NoArgumentsAction;
 use webignition\BasilModel\Action\UnrecognisedAction;
 use webignition\BasilModel\Action\WaitAction;
+use webignition\BasilModel\Identifier\AttributeIdentifier;
+use webignition\BasilModel\Identifier\ElementIdentifier;
 use webignition\BasilModel\Identifier\Identifier;
 use webignition\BasilModel\Value\LiteralValue;
 use webignition\BasilModelFactory\Action\ActionFactory;
@@ -111,6 +113,20 @@ class InteractionActionValidatorTest extends \PHPUnit\Framework\TestCase
             ''
         );
 
+        $attributeIdentifier = new AttributeIdentifier(
+            new ElementIdentifier(
+                LiteralValue::createCssSelectorValue('.selector')
+            ),
+            'attribute_name'
+        );
+
+        $interactionActionWithAttributeIdentifier = new InteractionAction(
+            '',
+            ActionTypes::CLICK,
+            $attributeIdentifier,
+            ''
+        );
+
         return [
             'interaction action without identifier' => [
                 'action' => $interactionActionWithoutIdentifier,
@@ -128,6 +144,19 @@ class InteractionActionValidatorTest extends \PHPUnit\Framework\TestCase
                     ActionValidator::REASON_INVALID_IDENTIFIER,
                     new InvalidResult(
                         $invalidIdentifier,
+                        TypeInterface::IDENTIFIER,
+                        IdentifierValidator::REASON_TYPE_INVALID
+                    )
+                ),
+            ],
+            'interaction action with attribute identifier' => [
+                'action' => $interactionActionWithAttributeIdentifier,
+                'expectedResult' => new InvalidResult(
+                    $interactionActionWithAttributeIdentifier,
+                    TypeInterface::ACTION,
+                    ActionValidator::REASON_INVALID_IDENTIFIER,
+                    new InvalidResult(
+                        $attributeIdentifier,
                         TypeInterface::IDENTIFIER,
                         IdentifierValidator::REASON_TYPE_INVALID
                     )
