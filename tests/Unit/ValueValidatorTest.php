@@ -3,11 +3,15 @@
 
 namespace webignition\BasilModelValidator\Tests\Unit;
 
+use webignition\BasilModel\Identifier\AttributeIdentifier;
 use webignition\BasilModel\Identifier\ElementIdentifier;
+use webignition\BasilModel\Value\AttributeValue;
 use webignition\BasilModel\Value\ElementValue;
 use webignition\BasilModel\Value\LiteralValue;
+use webignition\BasilModel\Value\ObjectNames;
 use webignition\BasilModel\Value\ObjectValue;
 use webignition\BasilModel\Value\ValueInterface;
+use webignition\BasilModel\Value\ValueTypes;
 use webignition\BasilModelFactory\ValueFactory;
 use webignition\BasilModelValidator\Result\InvalidResult;
 use webignition\BasilModelValidator\Result\TypeInterface;
@@ -119,6 +123,24 @@ class ValueValidatorTest extends \PHPUnit\Framework\TestCase
                     new ElementIdentifier(
                         LiteralValue::createCssSelectorValue('.selector')
                     )
+                ),
+            ],
+            'type: attribute value' => [
+                'value' => new AttributeValue(
+                    new AttributeIdentifier(
+                        new ElementIdentifier(
+                            LiteralValue::createCssSelectorValue('.selector')
+                        ),
+                        'attribute_name'
+                    )
+                ),
+            ],
+            'type: attribute parameter' => [
+                'value' => new ObjectValue(
+                    ValueTypes::ATTRIBUTE_PARAMETER,
+                    '$elements.element_name.attribute_name',
+                    ObjectNames::ELEMENT,
+                    'element_name.attribute_name'
                 ),
             ],
         ];

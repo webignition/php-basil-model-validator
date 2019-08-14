@@ -134,6 +134,7 @@ class AssertionValidator implements ValidatorInterface
                     ValueTypes::ELEMENT_PARAMETER,
                     ValueTypes::ENVIRONMENT_PARAMETER,
                     ValueTypes::PAGE_OBJECT_PROPERTY,
+                    ValueTypes::ATTRIBUTE_PARAMETER,
                 ]
             );
         }
