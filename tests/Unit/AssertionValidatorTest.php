@@ -202,25 +202,25 @@ class AssertionValidatorTest extends \PHPUnit\Framework\TestCase
         $assertionFactory = AssertionFactory::createFactory();
 
         return [
-            'css selector, is comparison' => [
+            'css element selector, is comparison' => [
                 'assertion' => $assertionFactory->createFromAssertionString('".selector" is "value"'),
             ],
-            'css selector, is-not comparison' => [
+            'css element selector, is-not comparison' => [
                 'assertion' => $assertionFactory->createFromAssertionString('".selector" is-not "value"'),
             ],
-            'css selector, exists comparison' => [
+            'css element selector, exists comparison' => [
                 'assertion' => $assertionFactory->createFromAssertionString('".selector" exists'),
             ],
-            'css selector, not-exists comparison' => [
+            'css element selector, not-exists comparison' => [
                 'assertion' => $assertionFactory->createFromAssertionString('".selector" not-exists'),
             ],
-            'css selector, includes comparison' => [
+            'css element selector, includes comparison' => [
                 'assertion' => $assertionFactory->createFromAssertionString('".selector" includes "value"'),
             ],
-            'css selector, excludes comparison' => [
+            'css element selector, excludes comparison' => [
                 'assertion' => $assertionFactory->createFromAssertionString('".selector" excludes "value"'),
             ],
-            'css selector, matches comparison' => [
+            'css element selector, matches comparison' => [
                 'assertion' => $assertionFactory->createFromAssertionString('".selector" matches "value"'),
             ],
             'browser object property, is comparison' => [
@@ -238,17 +238,20 @@ class AssertionValidatorTest extends \PHPUnit\Framework\TestCase
             'environment parameter, is comparison' => [
                 'assertion' => $assertionFactory->createFromAssertionString('$env.KEY is "value"'),
             ],
-            'css selector, is comparison, data parameter' => [
+            'css element selector, is comparison, data parameter' => [
                 'assertion' => $assertionFactory->createFromAssertionString('".selector" is $data.key'),
             ],
-            'css selector, is comparison, element parameter' => [
+            'css element selector, is comparison, element parameter' => [
                 'assertion' => $assertionFactory->createFromAssertionString('".selector" is $elements.element_name'),
             ],
-            'css selector, is comparison, page object property' => [
+            'css element selector, is comparison, page object property' => [
                 'assertion' => $assertionFactory->createFromAssertionString('".selector" is $page.title'),
             ],
-            'css selector, is comparison, environment parameter' => [
+            'css element selector, is comparison, environment parameter' => [
                 'assertion' => $assertionFactory->createFromAssertionString('".selector" is $env.KEY'),
+            ],
+            'css attribute selector, is comparison, scalar value' => [
+                'assertion' => $assertionFactory->createFromAssertionString('".selector".attribute_name is "value"'),
             ],
         ];
     }
