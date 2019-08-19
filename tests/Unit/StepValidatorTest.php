@@ -6,12 +6,10 @@ namespace webignition\BasilModelValidator\Tests\Unit;
 
 use webignition\BasilModel\DataSet\DataSet;
 use webignition\BasilModel\DataSet\DataSetCollection;
-use webignition\BasilModel\Identifier\IdentifierCollection;
 use webignition\BasilModel\Step\Step;
 use webignition\BasilModel\Step\StepInterface;
 use webignition\BasilModelFactory\Action\ActionFactory;
 use webignition\BasilModelFactory\AssertionFactory;
-use webignition\BasilModelFactory\Identifier\IdentifierFactory;
 use webignition\BasilModelValidator\Action\ActionValidator;
 use webignition\BasilModelValidator\AssertionValidator;
 use webignition\BasilModelValidator\DataSetValidator;
@@ -52,7 +50,6 @@ class StepValidatorTest extends \PHPUnit\Framework\TestCase
     /**
      * @dataProvider validateNotValidDataProvider
      * @dataProvider validateNotValidInvalidDataSetCollectionDataProvider
-     * @dataProvider validateNotValidInvalidIdentifierCollectionDataProvider
      */
     public function testValidateNotValid(StepInterface $step, InvalidResultInterface $expectedResult)
     {
@@ -222,127 +219,6 @@ class StepValidatorTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    public function validateNotValidInvalidIdentifierCollectionDataProvider(): array
-    {
-        $actionFactory = ActionFactory::createFactory();
-        $assertionFactory = AssertionFactory::createFactory();
-        $identifierFactory = IdentifierFactory::createFactory();
-
-        $actionWithElementParameterValue = $actionFactory->createFromActionString('click $elements.missing');
-
-        $elementIdentifier = $identifierFactory
-            ->create('$elements.element_name')
-            ->withName('element_name');
-
-        $assertionWithElementParameterExaminedValue = $assertionFactory->createFromAssertionString(
-            '$elements.missing exists'
-        );
-
-        $assertionWithElementParameterExpectedValue = $assertionFactory->createFromAssertionString(
-            '".selector" is $elements.missing'
-        );
-
-        $stepWithActionWithElementParameterValue = new Step([$actionWithElementParameterValue], []);
-        $stepWithAssertionWithElementParameterExaminedValue = new Step([], [
-            $assertionWithElementParameterExaminedValue
-        ]);
-
-
-        $stepWithAssertionWithElementParameterExpectedValue = new Step([], [
-            $assertionWithElementParameterExpectedValue
-        ]);
-
-        return [
-            'action has element parameter value, step has no element identifiers' => [
-                'step' => $stepWithActionWithElementParameterValue,
-                'expectedResult' => (new InvalidResult(
-                    $stepWithActionWithElementParameterValue,
-                    TypeInterface::STEP,
-                    StepValidator::REASON_ELEMENT_IDENTIFIER_MISSING
-                ))->withContext([
-                    StepValidator::CONTEXT_ELEMENT_IDENTIFIER_NAME => 'missing',
-                    StepValidator::CONTEXT_IDENTIFIER_CONTAINER => $actionWithElementParameterValue,
-                ]),
-            ],
-            'action has element parameter value, step has no matching element' => [
-                'step' => $stepWithActionWithElementParameterValue->withIdentifierCollection(new IdentifierCollection([
-                    $elementIdentifier,
-                ])),
-                'expectedResult' => (new InvalidResult(
-                    $stepWithActionWithElementParameterValue->withIdentifierCollection(new IdentifierCollection([
-                        $elementIdentifier,
-                    ])),
-                    TypeInterface::STEP,
-                    StepValidator::REASON_ELEMENT_IDENTIFIER_MISSING
-                ))->withContext([
-                    StepValidator::CONTEXT_ELEMENT_IDENTIFIER_NAME => 'missing',
-                    StepValidator::CONTEXT_IDENTIFIER_CONTAINER => $actionWithElementParameterValue,
-                ]),
-            ],
-            'assertion has element parameter examined value, step has no elements' => [
-                'step' => $stepWithAssertionWithElementParameterExaminedValue,
-                'expectedResult' => (new InvalidResult(
-                    $stepWithAssertionWithElementParameterExaminedValue,
-                    TypeInterface::STEP,
-                    StepValidator::REASON_ELEMENT_IDENTIFIER_MISSING
-                ))->withContext([
-                    StepValidator::CONTEXT_ELEMENT_IDENTIFIER_NAME => 'missing',
-                    StepValidator::CONTEXT_IDENTIFIER_CONTAINER => $assertionWithElementParameterExaminedValue,
-                ]),
-            ],
-            'assertion has element parameter expected value, step has no elements' => [
-                'step' => $stepWithAssertionWithElementParameterExpectedValue,
-                'expectedResult' => (new InvalidResult(
-                    $stepWithAssertionWithElementParameterExpectedValue,
-                    TypeInterface::STEP,
-                    StepValidator::REASON_ELEMENT_IDENTIFIER_MISSING
-                ))->withContext([
-                    StepValidator::CONTEXT_ELEMENT_IDENTIFIER_NAME => 'missing',
-                    StepValidator::CONTEXT_IDENTIFIER_CONTAINER => $assertionWithElementParameterExpectedValue,
-                ]),
-            ],
-            'assertion has element parameter examined value, step has no matching element' => [
-                'step' => $stepWithAssertionWithElementParameterExaminedValue->withIdentifierCollection(
-                    new IdentifierCollection([
-                        $elementIdentifier,
-                    ])
-                ),
-                'expectedResult' => (new InvalidResult(
-                    $stepWithAssertionWithElementParameterExaminedValue->withIdentifierCollection(
-                        new IdentifierCollection([
-                            $elementIdentifier,
-                        ])
-                    ),
-                    TypeInterface::STEP,
-                    StepValidator::REASON_ELEMENT_IDENTIFIER_MISSING
-                ))->withContext([
-                    StepValidator::CONTEXT_ELEMENT_IDENTIFIER_NAME => 'missing',
-                    StepValidator::CONTEXT_IDENTIFIER_CONTAINER => $assertionWithElementParameterExaminedValue,
-                ]),
-            ],
-            'assertion has element parameter expected value, step has no matching element' => [
-                'step' => $stepWithAssertionWithElementParameterExpectedValue->withIdentifierCollection(
-                    new IdentifierCollection([
-                        $elementIdentifier,
-                    ])
-                ),
-                'expectedResult' => (new InvalidResult(
-                    $stepWithAssertionWithElementParameterExpectedValue->withIdentifierCollection(
-                        new IdentifierCollection([
-                            $elementIdentifier,
-                        ])
-                    ),
-                    TypeInterface::STEP,
-                    StepValidator::REASON_ELEMENT_IDENTIFIER_MISSING
-                ))->withContext([
-                    StepValidator::CONTEXT_ELEMENT_IDENTIFIER_NAME => 'missing',
-                    StepValidator::CONTEXT_IDENTIFIER_CONTAINER => $assertionWithElementParameterExpectedValue,
-                ]),
-            ],
-        ];
-    }
-
-
     /**
      * @dataProvider validateIsValidDataProvider
      */
@@ -357,7 +233,6 @@ class StepValidatorTest extends \PHPUnit\Framework\TestCase
     {
         $actionFactory = ActionFactory::createFactory();
         $assertionFactory = AssertionFactory::createFactory();
-        $identifierFactory = IdentifierFactory::createFactory();
 
         return [
             'no actions' => [
@@ -443,35 +318,6 @@ class StepValidatorTest extends \PHPUnit\Framework\TestCase
                         'input2_parameter_name' => 'input 2 value 2',
                         'url' => 'http://example.com/',
                     ],
-                ])),
-            ],
-            'actions with element parameters, assertions' => [
-                'step' => (new Step(
-                    [
-                        $actionFactory->createFromActionString('set $elements.input1 to "input 1 value"'),
-                        $actionFactory->createFromActionString('set $elements.input2 to "input 2 value"'),
-                    ],
-                    [
-                        $assertionFactory->createFromAssertionString('".selector" exists'),
-                    ]
-                ))->withIdentifierCollection(new IdentifierCollection([
-                    $identifierFactory->create('".input1"')->withName('input1'),
-                    $identifierFactory->create('".input2"')->withName('input2'),
-                ])),
-            ],
-            'actions with element parameters, assertions with element parameters' => [
-                'step' => (new Step(
-                    [
-                        $actionFactory->createFromActionString('set $elements.input1 to "input 1 value"'),
-                        $actionFactory->createFromActionString('set $elements.input2 to "input 2 value"'),
-                    ],
-                    [
-                        $assertionFactory->createFromAssertionString('$elements.heading exists'),
-                    ]
-                ))->withIdentifierCollection(new IdentifierCollection([
-                    $identifierFactory->create('".input1"')->withName('input1'),
-                    $identifierFactory->create('".input2"')->withName('input2'),
-                    $identifierFactory->create('".heading"')->withName('heading'),
                 ])),
             ],
         ];
