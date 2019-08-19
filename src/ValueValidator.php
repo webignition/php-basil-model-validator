@@ -14,6 +14,7 @@ class ValueValidator implements ValidatorInterface
 {
     const REASON_TYPE_INVALID = 'value-type-invalid';
     const REASON_PROPERTY_NAME_INVALID = 'value-property-name-invalid';
+    const REASON_UNACTIONABLE = 'value-unactionable';
 
     const OBJECT_PROPERTY_NAME_WHITELIST = [
         ValueTypes::PAGE_OBJECT_PROPERTY => [
@@ -45,6 +46,10 @@ class ValueValidator implements ValidatorInterface
 
         if (!in_array($type, ValueTypes::ALL)) {
             return new InvalidResult($model, TypeInterface::VALUE, self::REASON_TYPE_INVALID);
+        }
+
+        if (!$model->isActionable()) {
+            return new InvalidResult($model, TypeInterface::VALUE, self::REASON_UNACTIONABLE);
         }
 
         if (array_key_exists($type, self::OBJECT_PROPERTY_NAME_WHITELIST) && $model instanceof ObjectValue) {

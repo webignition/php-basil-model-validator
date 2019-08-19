@@ -73,6 +73,23 @@ class ValueValidatorTest extends \PHPUnit\Framework\TestCase
                 'value' => $valueFactory->createFromValueString('$browser.foo'),
                 'expectedReason' => ValueValidator::REASON_PROPERTY_NAME_INVALID,
             ],
+            'element parameter is unactionable' => [
+                'value' => $valueFactory->createFromValueString('$elements.element_name'),
+                'expectedReason' => ValueValidator::REASON_UNACTIONABLE,
+            ],
+            'page model reference is unactionable' => [
+                'value' => $valueFactory->createFromValueString('page_import_name.elements.element_name'),
+                'expectedReason' => ValueValidator::REASON_UNACTIONABLE,
+            ],
+            'attribute parameter is unactionable' => [
+                'value' => new ObjectValue(
+                    ValueTypes::ATTRIBUTE_PARAMETER,
+                    '$elements.element_name.attribute_name',
+                    ObjectNames::ELEMENT,
+                    'element_name.attribute_name'
+                ),
+                'expectedReason' => ValueValidator::REASON_UNACTIONABLE,
+            ],
         ];
     }
 
@@ -97,9 +114,6 @@ class ValueValidatorTest extends \PHPUnit\Framework\TestCase
             'type: data parameter' => [
                 'value' => $valueFactory->createFromValueString('$data.value'),
             ],
-            'type: element parameter' => [
-                'value' => $valueFactory->createFromValueString('$elements.element_name'),
-            ],
             'type: page object property, url' => [
                 'value' => $valueFactory->createFromValueString('$page.url'),
             ],
@@ -108,9 +122,6 @@ class ValueValidatorTest extends \PHPUnit\Framework\TestCase
             ],
             'type: browser object property, size' => [
                 'value' => $valueFactory->createFromValueString('$browser.size'),
-            ],
-            'type: page model reference' => [
-                'value' => $valueFactory->createFromValueString('page_import_name.elements.element_name'),
             ],
             'type: css selector' => [
                 'value' => $valueFactory->createFromIdentifierString('".selector"'),
@@ -133,14 +144,6 @@ class ValueValidatorTest extends \PHPUnit\Framework\TestCase
                         ),
                         'attribute_name'
                     )
-                ),
-            ],
-            'type: attribute parameter' => [
-                'value' => new ObjectValue(
-                    ValueTypes::ATTRIBUTE_PARAMETER,
-                    '$elements.element_name.attribute_name',
-                    ObjectNames::ELEMENT,
-                    'element_name.attribute_name'
                 ),
             ],
         ];
