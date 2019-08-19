@@ -97,6 +97,8 @@ class AssertionValidatorTest extends \PHPUnit\Framework\TestCase
             LiteralValue::createCssSelectorValue('.selector')
         );
 
+        $pageElementReferenceValue = $valueFactory->createFromValueString('page_import_name.elements.element_name');
+
         $assertionWithPageElementReferenceExpectedValue = $assertionFactory->createFromAssertionString(
             '$page.url is page_import_name.elements.element_name'
         );
@@ -136,7 +138,12 @@ class AssertionValidatorTest extends \PHPUnit\Framework\TestCase
                 'expectedResult' => new InvalidResult(
                     $assertionWithPageElementReferenceExaminedValue,
                     TypeInterface::ASSERTION,
-                    AssertionValidator::REASON_EXAMINED_VALUE_INVALID
+                    AssertionValidator::REASON_EXAMINED_VALUE_INVALID,
+                    new InvalidResult(
+                        $pageElementReferenceValue,
+                        TypeInterface::VALUE,
+                        ValueValidator::REASON_UNACTIONABLE
+                    )
                 ),
             ],
             'invalid comparison' => [
@@ -181,7 +188,12 @@ class AssertionValidatorTest extends \PHPUnit\Framework\TestCase
                 'expectedResult' => new InvalidResult(
                     $assertionWithPageElementReferenceExpectedValue,
                     TypeInterface::ASSERTION,
-                    AssertionValidator::REASON_EXPECTED_VALUE_INVALID
+                    AssertionValidator::REASON_EXPECTED_VALUE_INVALID,
+                    new InvalidResult(
+                        $pageElementReferenceValue,
+                        TypeInterface::VALUE,
+                        ValueValidator::REASON_UNACTIONABLE
+                    )
                 ),
             ],
         ];
@@ -229,9 +241,6 @@ class AssertionValidatorTest extends \PHPUnit\Framework\TestCase
             'data parameter, is comparison' => [
                 'assertion' => $assertionFactory->createFromAssertionString('$data.key is "value"'),
             ],
-            'element parameter, is comparison' => [
-                'assertion' => $assertionFactory->createFromAssertionString('$elements.element_name is "value"'),
-            ],
             'page object property, is comparison' => [
                 'assertion' => $assertionFactory->createFromAssertionString('$page.url is "value"'),
             ],
@@ -241,9 +250,6 @@ class AssertionValidatorTest extends \PHPUnit\Framework\TestCase
             'css element selector, is comparison, data parameter' => [
                 'assertion' => $assertionFactory->createFromAssertionString('".selector" is $data.key'),
             ],
-            'css element selector, is comparison, element parameter' => [
-                'assertion' => $assertionFactory->createFromAssertionString('".selector" is $elements.element_name'),
-            ],
             'css element selector, is comparison, page object property' => [
                 'assertion' => $assertionFactory->createFromAssertionString('".selector" is $page.title'),
             ],
@@ -252,11 +258,6 @@ class AssertionValidatorTest extends \PHPUnit\Framework\TestCase
             ],
             'css attribute selector, is comparison, scalar value' => [
                 'assertion' => $assertionFactory->createFromAssertionString('".selector".attribute_name is "value"'),
-            ],
-            'css element selector, is comparison, attribute parameter value' => [
-                'assertion' => $assertionFactory->createFromAssertionString(
-                    '".selector" is $elements.element_name.attribute_name'
-                ),
             ],
         ];
     }

@@ -266,12 +266,6 @@ class InputActionValidatorTest extends \PHPUnit\Framework\TestCase
             'set css element selector to page object parameter value' => [
                 'actionString' => 'set ".selector" to $page.url',
             ],
-            'set css element selector to attribute parameter value' => [
-                'actionString' => 'set ".selector" to $elements.element_name.attribute_name',
-            ],
-            'set element parameter to string value' => [
-                'actionString' => 'set $elements.element_name to "foo"',
-            ],
         ];
     }
 }

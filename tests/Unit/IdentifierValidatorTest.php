@@ -207,9 +207,6 @@ class IdentifierValidatorTest extends \PHPUnit\Framework\TestCase
             'xpath expression' => [
                 'identifier' => $identifierFactory->create('"//h1"'),
             ],
-            'element parameter' => [
-                'identifier' => $identifierFactory->create('$elements.element_name'),
-            ],
         ];
     }
 }
