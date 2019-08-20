@@ -5,7 +5,6 @@ namespace webignition\BasilModelValidator;
 use webignition\BasilModel\Identifier\ElementIdentifierInterface;
 use webignition\BasilModel\Identifier\IdentifierInterface;
 use webignition\BasilModel\Identifier\IdentifierTypes;
-use webignition\BasilModel\Value\ObjectValueInterface;
 use webignition\BasilModel\Value\ValueTypes;
 use webignition\BasilModelValidator\Result\InvalidResult;
 use webignition\BasilModelValidator\Result\InvalidResultInterface;
@@ -22,11 +21,6 @@ class IdentifierValidator implements ValidatorInterface
     const REASON_TYPE_MISMATCH = 'identifier-type-mismatch';
     const REASON_VALUE_TYPE_MISMATCH = 'identifier-value-type-mismatch';
 
-    const VALID_TYPES = [
-        IdentifierTypes::ELEMENT_SELECTOR,
-        IdentifierTypes::ELEMENT_PARAMETER,
-    ];
-
     const TYPES_REQUIRING_STRING_VALUE = [
         IdentifierTypes::ELEMENT_SELECTOR,
     ];
@@ -35,18 +29,9 @@ class IdentifierValidator implements ValidatorInterface
         IdentifierTypes::PAGE_ELEMENT_REFERENCE,
     ];
 
-    private $valueValidator;
-
-    public function __construct(ValueValidator $valueValidator)
-    {
-        $this->valueValidator = $valueValidator;
-    }
-
     public static function create(): IdentifierValidator
     {
-        return new IdentifierValidator(
-            ValueValidator::create()
-        );
+        return new IdentifierValidator();
     }
 
     public function handles(object $model): bool
@@ -60,52 +45,31 @@ class IdentifierValidator implements ValidatorInterface
             return InvalidResult::createUnhandledModelResult($model);
         }
 
-        if (!in_array($model->getType(), self::VALID_TYPES)) {
+        if (!$model instanceof ElementIdentifierInterface) {
             return $this->createInvalidResult($model, self::REASON_TYPE_INVALID);
         }
 
         $value = $model->getValue();
-
         if ($value->isEmpty()) {
             return $this->createInvalidResult($model, self::REASON_VALUE_MISSING);
         }
 
-        $valueValidationResult = $this->valueValidator->validate($value);
-        if ($valueValidationResult instanceof InvalidResultInterface) {
-            return $this->createInvalidResult($model, self::REASON_VALUE_INVALID, $valueValidationResult);
+        $valueType = $value->getType();
+        if (!in_array($valueType, [ValueTypes::CSS_SELECTOR, ValueTypes::XPATH_EXPRESSION])) {
+            return $this->createInvalidResult($model, self::REASON_VALUE_TYPE_MISMATCH);
         }
 
-        $type = $model->getType();
+        $parentIdentifier = $model->getParentIdentifier();
 
-        if ($model instanceof ElementIdentifierInterface) {
-            $value = $model->getValue();
-            $valueType = $value->getType();
+        if ($parentIdentifier instanceof IdentifierInterface) {
+            $parentValidationResult = $this->validate($parentIdentifier);
 
-            if (!in_array($valueType, [ValueTypes::CSS_SELECTOR, ValueTypes::XPATH_EXPRESSION])) {
-                return $this->createInvalidResult($model, self::REASON_VALUE_TYPE_MISMATCH);
-            }
-
-            $parentIdentifier = $model->getParentIdentifier();
-
-            if ($parentIdentifier instanceof IdentifierInterface) {
-                $parentValidationResult = $this->validate($parentIdentifier);
-
-                if ($parentValidationResult instanceof InvalidResultInterface) {
-                    return $this->createInvalidResult(
-                        $model,
-                        self::REASON_INVALID_PARENT_IDENTIFIER,
-                        $parentValidationResult
-                    );
-                }
-            }
-        }
-
-        if (IdentifierTypes::ELEMENT_PARAMETER === $type) {
-            $value = $model->getValue();
-            $valueType = $value->getType();
-
-            if (!$value instanceof ObjectValueInterface || $valueType !== ValueTypes::ELEMENT_PARAMETER) {
-                return $this->createInvalidResult($model, self::REASON_VALUE_TYPE_MISMATCH);
+            if ($parentValidationResult instanceof InvalidResultInterface) {
+                return $this->createInvalidResult(
+                    $model,
+                    self::REASON_INVALID_PARENT_IDENTIFIER,
+                    $parentValidationResult
+                );
             }
         }
 

@@ -9,6 +9,7 @@ use webignition\BasilModel\Identifier\Identifier;
 use webignition\BasilModel\Identifier\IdentifierInterface;
 use webignition\BasilModel\Identifier\IdentifierTypes;
 use webignition\BasilModel\Value\LiteralValue;
+use webignition\BasilModel\Value\ObjectNames;
 use webignition\BasilModel\Value\ObjectValue;
 use webignition\BasilModel\Value\ValueTypes;
 use webignition\BasilModelFactory\Identifier\IdentifierFactory;
@@ -17,7 +18,6 @@ use webignition\BasilModelValidator\Result\InvalidResult;
 use webignition\BasilModelValidator\Result\ResultInterface;
 use webignition\BasilModelValidator\Result\TypeInterface;
 use webignition\BasilModelValidator\Result\ValidResult;
-use webignition\BasilModelValidator\ValueValidator;
 
 class IdentifierValidatorTest extends \PHPUnit\Framework\TestCase
 {
@@ -70,24 +70,18 @@ class IdentifierValidatorTest extends \PHPUnit\Framework\TestCase
             LiteralValue::createCssSelectorValue('.selector')
         ))->withParentIdentifier($invalidParentIdentifier);
 
-        $valueWithInvalidType = new ObjectValue('foo', 'bar', '', '');
-        $identifierWithValueWithInvalidType = new Identifier(
-            IdentifierTypes::ELEMENT_SELECTOR,
-            $valueWithInvalidType
-        );
-
         $identifierWithPageElementReference = $identifierFactory->create('page_import.elements.element_name');
-        $identifierWithEmptyElementParameter = new Identifier(
+        $identifierWithElementParameter = new Identifier(
             IdentifierTypes::ELEMENT_PARAMETER,
-            new ObjectValue(ValueTypes::ELEMENT_PARAMETER, '', '', '')
+            new ObjectValue(
+                ValueTypes::ELEMENT_PARAMETER,
+                '$elements.element_name',
+                ObjectNames::ELEMENT,
+                'element_name'
+            )
         );
 
         $elementIdentifierWithWrongValueType = new ElementIdentifier(
-            LiteralValue::createStringValue('foo')
-        );
-
-        $elementParameterIdentifierWithWrongValueType = new Identifier(
-            IdentifierTypes::ELEMENT_PARAMETER,
             LiteralValue::createStringValue('foo')
         );
 
@@ -108,6 +102,14 @@ class IdentifierValidatorTest extends \PHPUnit\Framework\TestCase
                     IdentifierValidator::REASON_TYPE_INVALID
                 ),
             ],
+            'invalid type, element parameter' => [
+                'identifier' => $identifierWithElementParameter,
+                'expectedResult' => new InvalidResult(
+                    $identifierWithElementParameter,
+                    TypeInterface::IDENTIFIER,
+                    IdentifierValidator::REASON_TYPE_INVALID
+                ),
+            ],
             'empty css selector' => [
                 'identifier' => new ElementIdentifier(LiteralValue::createCssSelectorValue('')),
                 'expectedResult' => new InvalidResult(
@@ -124,39 +126,10 @@ class IdentifierValidatorTest extends \PHPUnit\Framework\TestCase
                     IdentifierValidator::REASON_VALUE_MISSING
                 ),
             ],
-            'empty element parameter' => [
-                'identifier' => $identifierWithEmptyElementParameter,
-                'expectedResult' => new InvalidResult(
-                    $identifierWithEmptyElementParameter,
-                    TypeInterface::IDENTIFIER,
-                    IdentifierValidator::REASON_VALUE_MISSING
-                ),
-            ],
-            'invalid value' => [
-                'identifier' => $identifierWithValueWithInvalidType,
-                'expectedResult' => new InvalidResult(
-                    $identifierWithValueWithInvalidType,
-                    TypeInterface::IDENTIFIER,
-                    IdentifierValidator::REASON_VALUE_INVALID,
-                    new InvalidResult(
-                        $valueWithInvalidType,
-                        TypeInterface::VALUE,
-                        ValueValidator::REASON_TYPE_INVALID
-                    )
-                ),
-            ],
             'element identifier with wrong value type' => [
                 'identifier' => $elementIdentifierWithWrongValueType,
                 'expectedResult' => new InvalidResult(
                     $elementIdentifierWithWrongValueType,
-                    TypeInterface::IDENTIFIER,
-                    IdentifierValidator::REASON_VALUE_TYPE_MISMATCH
-                ),
-            ],
-            'element parameter with wrong value type' => [
-                'identifier' => $elementParameterIdentifierWithWrongValueType,
-                'expectedResult' => new InvalidResult(
-                    $elementParameterIdentifierWithWrongValueType,
                     TypeInterface::IDENTIFIER,
                     IdentifierValidator::REASON_VALUE_TYPE_MISMATCH
                 ),
