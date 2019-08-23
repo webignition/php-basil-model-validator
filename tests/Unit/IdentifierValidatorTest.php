@@ -4,6 +4,7 @@
 
 namespace webignition\BasilModelValidator\Tests\Unit;
 
+use webignition\BasilModel\Identifier\AttributeIdentifier;
 use webignition\BasilModel\Identifier\ElementIdentifier;
 use webignition\BasilModel\Identifier\Identifier;
 use webignition\BasilModel\Identifier\IdentifierInterface;
@@ -18,6 +19,7 @@ use webignition\BasilModelValidator\Result\InvalidResult;
 use webignition\BasilModelValidator\Result\ResultInterface;
 use webignition\BasilModelValidator\Result\TypeInterface;
 use webignition\BasilModelValidator\Result\ValidResult;
+use webignition\BasilTestIdentifierFactory\TestIdentifierFactory;
 
 class IdentifierValidatorTest extends \PHPUnit\Framework\TestCase
 {
@@ -162,23 +164,25 @@ class IdentifierValidatorTest extends \PHPUnit\Framework\TestCase
 
     public function validateIsValidDataProvider(): array
     {
-        $identifierFactory = IdentifierFactory::createFactory();
-
         $parentIdentifier = new ElementIdentifier(
             LiteralValue::createCssSelectorValue('.parent')
         );
 
         return [
-            ' css selector' => [
-                'identifier' => $identifierFactory->create('".selector"'),
+            'element identifier: css selector' => [
+                'identifier' => TestIdentifierFactory::createCssElementIdentifier('.selector')
             ],
-            'css selector with parent' => [
-                'identifier' => (new ElementIdentifier(
-                    LiteralValue::createCssSelectorValue('.selector')
-                ))->withParentIdentifier($parentIdentifier),
+            'element identifier: css selector with parent' => [
+                'identifier' => TestIdentifierFactory::createCssElementIdentifier('.selector', 1, $parentIdentifier)
             ],
-            'xpath expression' => [
-                'identifier' => $identifierFactory->create('"//h1"'),
+            'element identifier: xpath expression' => [
+                'identifier' => TestIdentifierFactory::createXpathElementIdentifier('//h1'),
+            ],
+            'attribute identifier' => [
+                'identifier' => new AttributeIdentifier(
+                    TestIdentifierFactory::createCssElementIdentifier('.selector'),
+                    'attribute_name'
+                ),
             ],
         ];
     }
