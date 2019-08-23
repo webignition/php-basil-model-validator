@@ -8,6 +8,7 @@ use webignition\BasilModel\Value\LiteralValueInterface;
 use webignition\BasilModel\Value\ObjectValueInterface;
 use webignition\BasilModel\Value\ValueInterface;
 use webignition\BasilModel\Value\ValueTypes;
+use webignition\BasilModelValidator\Identifier\IdentifierValidator;
 use webignition\BasilModelValidator\Result\InvalidResult;
 use webignition\BasilModelValidator\Result\InvalidResultInterface;
 use webignition\BasilModelValidator\Result\ResultInterface;

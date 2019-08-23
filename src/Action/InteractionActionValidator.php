@@ -6,7 +6,7 @@ use webignition\BasilModel\Action\ActionInterface;
 use webignition\BasilModel\Action\ActionTypes;
 use webignition\BasilModel\Action\InteractionActionInterface;
 use webignition\BasilModel\Identifier\IdentifierInterface;
-use webignition\BasilModelValidator\IdentifierValidator;
+use webignition\BasilModelValidator\Identifier\IdentifierValidator;
 use webignition\BasilModelValidator\Result\InvalidResult;
 use webignition\BasilModelValidator\Result\InvalidResultInterface;
 use webignition\BasilModelValidator\Result\ResultInterface;

@@ -18,7 +18,7 @@ use webignition\BasilModel\Value\LiteralValue;
 use webignition\BasilModelFactory\Action\ActionFactory;
 use webignition\BasilModelValidator\Action\ActionValidator;
 use webignition\BasilModelValidator\Action\InteractionActionValidator;
-use webignition\BasilModelValidator\IdentifierValidator;
+use webignition\BasilModelValidator\Identifier\IdentifierValidator;
 use webignition\BasilModelValidator\Result\InvalidResult;
 use webignition\BasilModelValidator\Result\ResultInterface;
 use webignition\BasilModelValidator\Result\TypeInterface;

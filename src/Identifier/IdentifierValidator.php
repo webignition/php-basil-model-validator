@@ -1,6 +1,6 @@
 <?php
 
-namespace webignition\BasilModelValidator;
+namespace webignition\BasilModelValidator\Identifier;
 
 use webignition\BasilModel\Identifier\ElementIdentifierInterface;
 use webignition\BasilModel\Identifier\IdentifierInterface;
@@ -11,6 +11,7 @@ use webignition\BasilModelValidator\Result\InvalidResultInterface;
 use webignition\BasilModelValidator\Result\ResultInterface;
 use webignition\BasilModelValidator\Result\TypeInterface;
 use webignition\BasilModelValidator\Result\ValidResult;
+use webignition\BasilModelValidator\ValidatorInterface;
 
 class IdentifierValidator implements ValidatorInterface
 {

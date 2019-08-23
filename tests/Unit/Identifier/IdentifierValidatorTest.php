@@ -2,7 +2,7 @@
 /** @noinspection PhpUnhandledExceptionInspection */
 /** @noinspection PhpDocSignatureInspection */
 
-namespace webignition\BasilModelValidator\Tests\Unit;
+namespace webignition\BasilModelValidator\Tests\Unit\Identifier;
 
 use webignition\BasilModel\Identifier\AttributeIdentifier;
 use webignition\BasilModel\Identifier\ElementIdentifier;
@@ -14,7 +14,7 @@ use webignition\BasilModel\Value\ObjectNames;
 use webignition\BasilModel\Value\ObjectValue;
 use webignition\BasilModel\Value\ValueTypes;
 use webignition\BasilModelFactory\Identifier\IdentifierFactory;
-use webignition\BasilModelValidator\IdentifierValidator;
+use webignition\BasilModelValidator\Identifier\IdentifierValidator;
 use webignition\BasilModelValidator\Result\InvalidResult;
 use webignition\BasilModelValidator\Result\ResultInterface;
 use webignition\BasilModelValidator\Result\TypeInterface;
@@ -178,12 +178,12 @@ class IdentifierValidatorTest extends \PHPUnit\Framework\TestCase
             'element identifier: xpath expression' => [
                 'identifier' => TestIdentifierFactory::createXpathElementIdentifier('//h1'),
             ],
-            'attribute identifier' => [
-                'identifier' => new AttributeIdentifier(
-                    TestIdentifierFactory::createCssElementIdentifier('.selector'),
-                    'attribute_name'
-                ),
-            ],
+//            'attribute identifier' => [
+//                'identifier' => new AttributeIdentifier(
+//                    TestIdentifierFactory::createCssElementIdentifier('.selector'),
+//                    'attribute_name'
+//                ),
+//            ],
         ];
     }
 }
