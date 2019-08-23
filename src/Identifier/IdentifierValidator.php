@@ -2,15 +2,11 @@
 
 namespace webignition\BasilModelValidator\Identifier;
 
-use webignition\BasilModel\Identifier\ElementIdentifierInterface;
 use webignition\BasilModel\Identifier\IdentifierInterface;
-use webignition\BasilModel\Identifier\IdentifierTypes;
-use webignition\BasilModel\Value\ValueTypes;
 use webignition\BasilModelValidator\Result\InvalidResult;
 use webignition\BasilModelValidator\Result\InvalidResultInterface;
 use webignition\BasilModelValidator\Result\ResultInterface;
 use webignition\BasilModelValidator\Result\TypeInterface;
-use webignition\BasilModelValidator\Result\ValidResult;
 use webignition\BasilModelValidator\ValidatorInterface;
 
 class IdentifierValidator implements ValidatorInterface
@@ -18,17 +14,17 @@ class IdentifierValidator implements ValidatorInterface
     const REASON_TYPE_INVALID = 'identifier-type-invalid';
     const REASON_VALUE_MISSING = 'identifier-value-missing';
     const REASON_INVALID_PARENT_IDENTIFIER = 'identifier-invalid-parent-identifier';
-    const REASON_VALUE_INVALID = 'identifier-value-invalid';
-    const REASON_TYPE_MISMATCH = 'identifier-type-mismatch';
     const REASON_VALUE_TYPE_MISMATCH = 'identifier-value-type-mismatch';
 
-    const TYPES_REQUIRING_STRING_VALUE = [
-        IdentifierTypes::ELEMENT_SELECTOR,
-    ];
+    /**
+     * @var ValidatorInterface[]
+     */
+    private $identifierTypeValidators = [];
 
-    const TYPES_REQUIRING_OBJECT_VALUE = [
-        IdentifierTypes::PAGE_ELEMENT_REFERENCE,
-    ];
+    public function __construct()
+    {
+        $this->identifierTypeValidators[] = ElementIdentifierValidator::create();
+    }
 
     public static function create(): IdentifierValidator
     {
@@ -46,35 +42,22 @@ class IdentifierValidator implements ValidatorInterface
             return InvalidResult::createUnhandledModelResult($model);
         }
 
-        if (!$model instanceof ElementIdentifierInterface) {
-            return $this->createInvalidResult($model, self::REASON_TYPE_INVALID);
-        }
+        $typeSpecificIdentifierValidator = $this->findIdentifierTypeValidator($model);
 
-        $value = $model->getValue();
-        if ($value->isEmpty()) {
-            return $this->createInvalidResult($model, self::REASON_VALUE_MISSING);
-        }
+        return null === $typeSpecificIdentifierValidator
+            ? $this->createInvalidResult($model, self::REASON_TYPE_INVALID)
+            : $typeSpecificIdentifierValidator->validate($model, $context);
+    }
 
-        $valueType = $value->getType();
-        if (!in_array($valueType, [ValueTypes::CSS_SELECTOR, ValueTypes::XPATH_EXPRESSION])) {
-            return $this->createInvalidResult($model, self::REASON_VALUE_TYPE_MISMATCH);
-        }
-
-        $parentIdentifier = $model->getParentIdentifier();
-
-        if ($parentIdentifier instanceof IdentifierInterface) {
-            $parentValidationResult = $this->validate($parentIdentifier);
-
-            if ($parentValidationResult instanceof InvalidResultInterface) {
-                return $this->createInvalidResult(
-                    $model,
-                    self::REASON_INVALID_PARENT_IDENTIFIER,
-                    $parentValidationResult
-                );
+    private function findIdentifierTypeValidator(IdentifierInterface $identifier): ?ValidatorInterface
+    {
+        foreach ($this->identifierTypeValidators as $identifierTypeValidator) {
+            if ($identifierTypeValidator->handles($identifier)) {
+                return $identifierTypeValidator;
             }
         }
 
-        return new ValidResult($model);
+        return null;
     }
 
     private function createInvalidResult(
