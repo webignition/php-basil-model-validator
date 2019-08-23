@@ -151,7 +151,7 @@ class InputActionValidatorTest extends \PHPUnit\Framework\TestCase
                 'expectedResult' => new InvalidResult(
                     $inputActionMissingIdentifier,
                     TypeInterface::ACTION,
-                    ActionValidator::REASON_INPUT_ACTION_IDENTIFIER_MISSING
+                    ActionValidator::REASON_IDENTIFIER_MISSING
                 ),
             ],
             'input action missing value' => [

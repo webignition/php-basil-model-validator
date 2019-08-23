@@ -133,7 +133,7 @@ class InteractionActionValidatorTest extends \PHPUnit\Framework\TestCase
                 'expectedResult' => new InvalidResult(
                     $interactionActionWithoutIdentifier,
                     TypeInterface::ACTION,
-                    ActionValidator::REASON_INTERACTION_ACTION_IDENTIFIER_MISSING
+                    ActionValidator::REASON_IDENTIFIER_MISSING
                 ),
             ],
             'interaction action with invalid identifier' => [

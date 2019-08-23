@@ -46,7 +46,7 @@ class InteractionActionValidator implements ValidatorInterface
         $identifier = $model->getIdentifier();
 
         if (!$identifier instanceof IdentifierInterface) {
-            return $this->createInvalidResult($model, ActionValidator::REASON_INTERACTION_ACTION_IDENTIFIER_MISSING);
+            return $this->createInvalidResult($model, ActionValidator::REASON_IDENTIFIER_MISSING);
         }
 
         if ($identifier instanceof AttributeIdentifierInterface) {
