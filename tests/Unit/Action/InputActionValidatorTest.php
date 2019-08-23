@@ -18,7 +18,7 @@ use webignition\BasilModelFactory\Action\ActionFactory;
 use webignition\BasilModelFactory\ValueFactory;
 use webignition\BasilModelValidator\Action\ActionValidator;
 use webignition\BasilModelValidator\Action\InputActionValidator;
-use webignition\BasilModelValidator\IdentifierValidator;
+use webignition\BasilModelValidator\Identifier\IdentifierValidator;
 use webignition\BasilModelValidator\Result\InvalidResult;
 use webignition\BasilModelValidator\Result\ResultInterface;
 use webignition\BasilModelValidator\Result\TypeInterface;
@@ -139,10 +139,10 @@ class InputActionValidatorTest extends \PHPUnit\Framework\TestCase
         );
 
         $inputActionWithAttributeIdentifier = new InputAction(
-            '',
+            'set ".selector":attribute_name to "value"',
             $attributeIdentifier,
             LiteralValue::createStringValue('value'),
-            ''
+            '".selector":attribute_name to "value"'
         );
 
         return [
@@ -151,7 +151,7 @@ class InputActionValidatorTest extends \PHPUnit\Framework\TestCase
                 'expectedResult' => new InvalidResult(
                     $inputActionMissingIdentifier,
                     TypeInterface::ACTION,
-                    ActionValidator::REASON_INPUT_ACTION_IDENTIFIER_MISSING
+                    ActionValidator::REASON_IDENTIFIER_MISSING
                 ),
             ],
             'input action missing value' => [
@@ -225,12 +225,7 @@ class InputActionValidatorTest extends \PHPUnit\Framework\TestCase
                 'expectedResult' => new InvalidResult(
                     $inputActionWithAttributeIdentifier,
                     TypeInterface::ACTION,
-                    ActionValidator::REASON_INVALID_IDENTIFIER,
-                    new InvalidResult(
-                        $attributeIdentifier,
-                        TypeInterface::IDENTIFIER,
-                        IdentifierValidator::REASON_TYPE_INVALID
-                    )
+                    ActionValidator::REASON_UNACTIONABLE_IDENTIFIER
                 ),
             ],
         ];

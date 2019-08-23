@@ -18,7 +18,7 @@ use webignition\BasilModel\Value\LiteralValue;
 use webignition\BasilModelFactory\Action\ActionFactory;
 use webignition\BasilModelValidator\Action\ActionValidator;
 use webignition\BasilModelValidator\Action\InteractionActionValidator;
-use webignition\BasilModelValidator\IdentifierValidator;
+use webignition\BasilModelValidator\Identifier\IdentifierValidator;
 use webignition\BasilModelValidator\Result\InvalidResult;
 use webignition\BasilModelValidator\Result\ResultInterface;
 use webignition\BasilModelValidator\Result\TypeInterface;
@@ -133,7 +133,7 @@ class InteractionActionValidatorTest extends \PHPUnit\Framework\TestCase
                 'expectedResult' => new InvalidResult(
                     $interactionActionWithoutIdentifier,
                     TypeInterface::ACTION,
-                    ActionValidator::REASON_INTERACTION_ACTION_IDENTIFIER_MISSING
+                    ActionValidator::REASON_IDENTIFIER_MISSING
                 ),
             ],
             'interaction action with invalid identifier' => [
@@ -154,12 +154,7 @@ class InteractionActionValidatorTest extends \PHPUnit\Framework\TestCase
                 'expectedResult' => new InvalidResult(
                     $interactionActionWithAttributeIdentifier,
                     TypeInterface::ACTION,
-                    ActionValidator::REASON_INVALID_IDENTIFIER,
-                    new InvalidResult(
-                        $attributeIdentifier,
-                        TypeInterface::IDENTIFIER,
-                        IdentifierValidator::REASON_TYPE_INVALID
-                    )
+                    ActionValidator::REASON_UNACTIONABLE_IDENTIFIER
                 ),
             ],
         ];

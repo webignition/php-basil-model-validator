@@ -5,9 +5,8 @@ namespace webignition\BasilModelValidator\Action;
 use webignition\BasilModel\Action\ActionInterface;
 use webignition\BasilModel\Action\ActionTypes;
 use webignition\BasilModel\Action\InputActionInterface;
-use webignition\BasilModel\Identifier\IdentifierInterface;
 use webignition\BasilModel\Value\ValueInterface;
-use webignition\BasilModelValidator\IdentifierValidator;
+use webignition\BasilModelValidator\Identifier\IdentifierValidator;
 use webignition\BasilModelValidator\Result\InvalidResult;
 use webignition\BasilModelValidator\Result\InvalidResultInterface;
 use webignition\BasilModelValidator\Result\ResultInterface;
@@ -20,25 +19,31 @@ class InputActionValidator implements ValidatorInterface
 {
     const IDENTIFIER_KEYWORD = ' to ';
 
+    private $identifierValidator;
+    private $valueValidator;
+    private $interactionActionValidator;
+
+    public function __construct(
+        IdentifierValidator $identifierValidator,
+        ValueValidator $valueValidator,
+        InteractionActionValidator $interactionActionValidator
+    ) {
+        $this->identifierValidator = $identifierValidator;
+        $this->valueValidator = $valueValidator;
+        $this->interactionActionValidator = $interactionActionValidator;
+    }
+
     public function handles(object $model): bool
     {
         return $model instanceof ActionInterface && ActionTypes::SET === $model->getType();
-    }
-
-    private $identifierValidator;
-    private $valueValidator;
-
-    public function __construct(IdentifierValidator $identifierValidator, ValueValidator $valueValidator)
-    {
-        $this->identifierValidator = $identifierValidator;
-        $this->valueValidator = $valueValidator;
     }
 
     public static function create(): InputActionValidator
     {
         return new InputActionValidator(
             IdentifierValidator::create(),
-            ValueValidator::create()
+            ValueValidator::create(),
+            InteractionActionValidator::create()
         );
     }
 
@@ -48,20 +53,9 @@ class InputActionValidator implements ValidatorInterface
             return InvalidResult::createUnhandledModelResult($model);
         }
 
-        $identifier = $model->getIdentifier();
-
-        if (!$identifier instanceof IdentifierInterface) {
-            return $this->createInvalidResult($model, ActionValidator::REASON_INPUT_ACTION_IDENTIFIER_MISSING);
-        }
-
-        $identifierValidationResult = $this->identifierValidator->validate($identifier);
-
-        if ($identifierValidationResult instanceof InvalidResultInterface) {
-            return $this->createInvalidResult(
-                $model,
-                ActionValidator::REASON_INVALID_IDENTIFIER,
-                $identifierValidationResult
-            );
+        $interactionActionValidatorResult = $this->interactionActionValidator->validate($model, $context);
+        if ($interactionActionValidatorResult instanceof InvalidResultInterface) {
+            return $interactionActionValidatorResult;
         }
 
         $value = $model->getValue();

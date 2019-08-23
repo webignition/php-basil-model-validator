@@ -2,8 +2,9 @@
 /** @noinspection PhpUnhandledExceptionInspection */
 /** @noinspection PhpDocSignatureInspection */
 
-namespace webignition\BasilModelValidator\Tests\Unit;
+namespace webignition\BasilModelValidator\Tests\Unit\Identifier;
 
+use webignition\BasilModel\Identifier\AttributeIdentifier;
 use webignition\BasilModel\Identifier\ElementIdentifier;
 use webignition\BasilModel\Identifier\Identifier;
 use webignition\BasilModel\Identifier\IdentifierInterface;
@@ -13,30 +14,31 @@ use webignition\BasilModel\Value\ObjectNames;
 use webignition\BasilModel\Value\ObjectValue;
 use webignition\BasilModel\Value\ValueTypes;
 use webignition\BasilModelFactory\Identifier\IdentifierFactory;
-use webignition\BasilModelValidator\IdentifierValidator;
+use webignition\BasilModelValidator\Identifier\IdentifierValidator;
 use webignition\BasilModelValidator\Result\InvalidResult;
 use webignition\BasilModelValidator\Result\ResultInterface;
 use webignition\BasilModelValidator\Result\TypeInterface;
 use webignition\BasilModelValidator\Result\ValidResult;
+use webignition\BasilTestIdentifierFactory\TestIdentifierFactory;
 
 class IdentifierValidatorTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var IdentifierValidator
      */
-    private $identifierValidator;
+    private $validator;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->identifierValidator = IdentifierValidator::create();
+        $this->validator = IdentifierValidator::create();
     }
 
     public function testHandles()
     {
-        $this->assertTrue($this->identifierValidator->handles(\Mockery::mock(IdentifierInterface::class)));
-        $this->assertFalse($this->identifierValidator->handles(new \stdClass()));
+        $this->assertTrue($this->validator->handles(\Mockery::mock(IdentifierInterface::class)));
+        $this->assertFalse($this->validator->handles(new \stdClass()));
     }
 
     public function testValidateWrongModelTypeIsNotValid()
@@ -45,7 +47,7 @@ class IdentifierValidatorTest extends \PHPUnit\Framework\TestCase
 
         $expectedResult = InvalidResult::createUnhandledModelResult($model);
 
-        $this->assertEquals($expectedResult, $this->identifierValidator->validate($model));
+        $this->assertEquals($expectedResult, $this->validator->validate($model));
     }
 
     /**
@@ -53,7 +55,7 @@ class IdentifierValidatorTest extends \PHPUnit\Framework\TestCase
      */
     public function testValidateNotValid(IdentifierInterface $identifier, ResultInterface $expectedResult)
     {
-        $this->assertEquals($expectedResult, $this->identifierValidator->validate($identifier));
+        $this->assertEquals($expectedResult, $this->validator->validate($identifier));
     }
 
     public function validateNotValidDataProvider(): array
@@ -83,6 +85,16 @@ class IdentifierValidatorTest extends \PHPUnit\Framework\TestCase
 
         $elementIdentifierWithWrongValueType = new ElementIdentifier(
             LiteralValue::createStringValue('foo')
+        );
+
+        $attributeIdentifierWithInvalidElementIdentifier = new AttributeIdentifier(
+            $elementIdentifierWithWrongValueType,
+            'attribute_name'
+        );
+
+        $attributeIdentifierWithEmptyAttributeName = new AttributeIdentifier(
+            TestIdentifierFactory::createCssElementIdentifier('.selector'),
+            ''
         );
 
         return [
@@ -147,6 +159,27 @@ class IdentifierValidatorTest extends \PHPUnit\Framework\TestCase
                     )
                 ),
             ],
+            'attribute identifier with invalid element identifier' => [
+                'identifier' => $attributeIdentifierWithInvalidElementIdentifier,
+                'expectedResult' => new InvalidResult(
+                    $attributeIdentifierWithInvalidElementIdentifier,
+                    TypeInterface::IDENTIFIER,
+                    IdentifierValidator::REASON_INVALID_ELEMENT_IDENTIFIER,
+                    new InvalidResult(
+                        $elementIdentifierWithWrongValueType,
+                        TypeInterface::IDENTIFIER,
+                        IdentifierValidator::REASON_VALUE_TYPE_MISMATCH
+                    )
+                ),
+            ],
+            'attribute identifier with empty attribute name' => [
+                'identifier' => $attributeIdentifierWithEmptyAttributeName,
+                'expectedResult' => new InvalidResult(
+                    $attributeIdentifierWithEmptyAttributeName,
+                    TypeInterface::IDENTIFIER,
+                    IdentifierValidator::REASON_ATTRIBUTE_NAME_MISSING
+                ),
+            ],
         ];
     }
 
@@ -157,28 +190,30 @@ class IdentifierValidatorTest extends \PHPUnit\Framework\TestCase
     {
         $expectedResult = new ValidResult($identifier);
 
-        $this->assertEquals($expectedResult, $this->identifierValidator->validate($identifier));
+        $this->assertEquals($expectedResult, $this->validator->validate($identifier));
     }
 
     public function validateIsValidDataProvider(): array
     {
-        $identifierFactory = IdentifierFactory::createFactory();
-
         $parentIdentifier = new ElementIdentifier(
             LiteralValue::createCssSelectorValue('.parent')
         );
 
         return [
-            ' css selector' => [
-                'identifier' => $identifierFactory->create('".selector"'),
+            'element identifier: css selector' => [
+                'identifier' => TestIdentifierFactory::createCssElementIdentifier('.selector')
             ],
-            'css selector with parent' => [
-                'identifier' => (new ElementIdentifier(
-                    LiteralValue::createCssSelectorValue('.selector')
-                ))->withParentIdentifier($parentIdentifier),
+            'element identifier: css selector with parent' => [
+                'identifier' => TestIdentifierFactory::createCssElementIdentifier('.selector', 1, $parentIdentifier)
             ],
-            'xpath expression' => [
-                'identifier' => $identifierFactory->create('"//h1"'),
+            'element identifier: xpath expression' => [
+                'identifier' => TestIdentifierFactory::createXpathElementIdentifier('//h1'),
+            ],
+            'attribute identifier' => [
+                'identifier' => new AttributeIdentifier(
+                    TestIdentifierFactory::createCssElementIdentifier('.selector'),
+                    'attribute_name'
+                ),
             ],
         ];
     }

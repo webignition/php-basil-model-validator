@@ -1,62 +1,43 @@
 <?php
 
-namespace webignition\BasilModelValidator;
+namespace webignition\BasilModelValidator\Identifier;
 
 use webignition\BasilModel\Identifier\ElementIdentifierInterface;
 use webignition\BasilModel\Identifier\IdentifierInterface;
-use webignition\BasilModel\Identifier\IdentifierTypes;
 use webignition\BasilModel\Value\ValueTypes;
 use webignition\BasilModelValidator\Result\InvalidResult;
 use webignition\BasilModelValidator\Result\InvalidResultInterface;
 use webignition\BasilModelValidator\Result\ResultInterface;
 use webignition\BasilModelValidator\Result\TypeInterface;
 use webignition\BasilModelValidator\Result\ValidResult;
+use webignition\BasilModelValidator\ValidatorInterface;
 
-class IdentifierValidator implements ValidatorInterface
+class ElementIdentifierValidator implements ValidatorInterface
 {
-    const REASON_TYPE_INVALID = 'identifier-type-invalid';
-    const REASON_VALUE_MISSING = 'identifier-value-missing';
-    const REASON_INVALID_PARENT_IDENTIFIER = 'identifier-invalid-parent-identifier';
-    const REASON_VALUE_INVALID = 'identifier-value-invalid';
-    const REASON_TYPE_MISMATCH = 'identifier-type-mismatch';
-    const REASON_VALUE_TYPE_MISMATCH = 'identifier-value-type-mismatch';
-
-    const TYPES_REQUIRING_STRING_VALUE = [
-        IdentifierTypes::ELEMENT_SELECTOR,
-    ];
-
-    const TYPES_REQUIRING_OBJECT_VALUE = [
-        IdentifierTypes::PAGE_ELEMENT_REFERENCE,
-    ];
-
-    public static function create(): IdentifierValidator
+    public static function create(): ElementIdentifierValidator
     {
-        return new IdentifierValidator();
+        return new ElementIdentifierValidator();
     }
 
     public function handles(object $model): bool
     {
-        return $model instanceof IdentifierInterface;
+        return $model instanceof ElementIdentifierInterface;
     }
 
     public function validate(object $model, ?array $context = []): ResultInterface
     {
-        if (!$model instanceof IdentifierInterface) {
-            return InvalidResult::createUnhandledModelResult($model);
-        }
-
         if (!$model instanceof ElementIdentifierInterface) {
-            return $this->createInvalidResult($model, self::REASON_TYPE_INVALID);
+            return InvalidResult::createUnhandledModelResult($model);
         }
 
         $value = $model->getValue();
         if ($value->isEmpty()) {
-            return $this->createInvalidResult($model, self::REASON_VALUE_MISSING);
+            return $this->createInvalidResult($model, IdentifierValidator::REASON_VALUE_MISSING);
         }
 
         $valueType = $value->getType();
         if (!in_array($valueType, [ValueTypes::CSS_SELECTOR, ValueTypes::XPATH_EXPRESSION])) {
-            return $this->createInvalidResult($model, self::REASON_VALUE_TYPE_MISMATCH);
+            return $this->createInvalidResult($model, IdentifierValidator::REASON_VALUE_TYPE_MISMATCH);
         }
 
         $parentIdentifier = $model->getParentIdentifier();
@@ -67,7 +48,7 @@ class IdentifierValidator implements ValidatorInterface
             if ($parentValidationResult instanceof InvalidResultInterface) {
                 return $this->createInvalidResult(
                     $model,
-                    self::REASON_INVALID_PARENT_IDENTIFIER,
+                    IdentifierValidator::REASON_INVALID_PARENT_IDENTIFIER,
                     $parentValidationResult
                 );
             }
