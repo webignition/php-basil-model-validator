@@ -5,6 +5,7 @@ namespace webignition\BasilModelValidator\Action;
 use webignition\BasilModel\Action\ActionInterface;
 use webignition\BasilModel\Action\ActionTypes;
 use webignition\BasilModel\Action\InputActionInterface;
+use webignition\BasilModel\Identifier\AttributeIdentifierInterface;
 use webignition\BasilModel\Identifier\IdentifierInterface;
 use webignition\BasilModel\Value\ValueInterface;
 use webignition\BasilModelValidator\Identifier\IdentifierValidator;
@@ -52,6 +53,10 @@ class InputActionValidator implements ValidatorInterface
 
         if (!$identifier instanceof IdentifierInterface) {
             return $this->createInvalidResult($model, ActionValidator::REASON_INPUT_ACTION_IDENTIFIER_MISSING);
+        }
+
+        if ($identifier instanceof AttributeIdentifierInterface) {
+            return $this->createInvalidResult($model, ActionValidator::REASON_UNACTIONABLE_IDENTIFIER);
         }
 
         $identifierValidationResult = $this->identifierValidator->validate($identifier);

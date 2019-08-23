@@ -154,12 +154,7 @@ class InteractionActionValidatorTest extends \PHPUnit\Framework\TestCase
                 'expectedResult' => new InvalidResult(
                     $interactionActionWithAttributeIdentifier,
                     TypeInterface::ACTION,
-                    ActionValidator::REASON_INVALID_IDENTIFIER,
-                    new InvalidResult(
-                        $attributeIdentifier,
-                        TypeInterface::IDENTIFIER,
-                        IdentifierValidator::REASON_TYPE_INVALID
-                    )
+                    ActionValidator::REASON_UNACTIONABLE_IDENTIFIER
                 ),
             ],
         ];

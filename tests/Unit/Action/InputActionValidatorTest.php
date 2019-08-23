@@ -139,10 +139,10 @@ class InputActionValidatorTest extends \PHPUnit\Framework\TestCase
         );
 
         $inputActionWithAttributeIdentifier = new InputAction(
-            '',
+            'set ".selector":attribute_name to "value"',
             $attributeIdentifier,
             LiteralValue::createStringValue('value'),
-            ''
+            '".selector":attribute_name to "value"'
         );
 
         return [
@@ -225,12 +225,7 @@ class InputActionValidatorTest extends \PHPUnit\Framework\TestCase
                 'expectedResult' => new InvalidResult(
                     $inputActionWithAttributeIdentifier,
                     TypeInterface::ACTION,
-                    ActionValidator::REASON_INVALID_IDENTIFIER,
-                    new InvalidResult(
-                        $attributeIdentifier,
-                        TypeInterface::IDENTIFIER,
-                        IdentifierValidator::REASON_TYPE_INVALID
-                    )
+                    ActionValidator::REASON_UNACTIONABLE_IDENTIFIER
                 ),
             ],
         ];
