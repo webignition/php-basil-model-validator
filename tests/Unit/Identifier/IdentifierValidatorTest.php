@@ -26,19 +26,19 @@ class IdentifierValidatorTest extends \PHPUnit\Framework\TestCase
     /**
      * @var IdentifierValidator
      */
-    private $identifierValidator;
+    private $validator;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->identifierValidator = IdentifierValidator::create();
+        $this->validator = IdentifierValidator::create();
     }
 
     public function testHandles()
     {
-        $this->assertTrue($this->identifierValidator->handles(\Mockery::mock(IdentifierInterface::class)));
-        $this->assertFalse($this->identifierValidator->handles(new \stdClass()));
+        $this->assertTrue($this->validator->handles(\Mockery::mock(IdentifierInterface::class)));
+        $this->assertFalse($this->validator->handles(new \stdClass()));
     }
 
     public function testValidateWrongModelTypeIsNotValid()
@@ -47,7 +47,7 @@ class IdentifierValidatorTest extends \PHPUnit\Framework\TestCase
 
         $expectedResult = InvalidResult::createUnhandledModelResult($model);
 
-        $this->assertEquals($expectedResult, $this->identifierValidator->validate($model));
+        $this->assertEquals($expectedResult, $this->validator->validate($model));
     }
 
     /**
@@ -55,7 +55,7 @@ class IdentifierValidatorTest extends \PHPUnit\Framework\TestCase
      */
     public function testValidateNotValid(IdentifierInterface $identifier, ResultInterface $expectedResult)
     {
-        $this->assertEquals($expectedResult, $this->identifierValidator->validate($identifier));
+        $this->assertEquals($expectedResult, $this->validator->validate($identifier));
     }
 
     public function validateNotValidDataProvider(): array
@@ -159,7 +159,7 @@ class IdentifierValidatorTest extends \PHPUnit\Framework\TestCase
     {
         $expectedResult = new ValidResult($identifier);
 
-        $this->assertEquals($expectedResult, $this->identifierValidator->validate($identifier));
+        $this->assertEquals($expectedResult, $this->validator->validate($identifier));
     }
 
     public function validateIsValidDataProvider(): array
