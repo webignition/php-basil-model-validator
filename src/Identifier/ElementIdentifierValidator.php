@@ -14,10 +14,6 @@ use webignition\BasilModelValidator\ValidatorInterface;
 
 class ElementIdentifierValidator implements ValidatorInterface
 {
-    const REASON_VALUE_MISSING = 'identifier-value-missing';
-    const REASON_INVALID_PARENT_IDENTIFIER = 'identifier-invalid-parent-identifier';
-    const REASON_VALUE_TYPE_MISMATCH = 'identifier-value-type-mismatch';
-
     public static function create(): ElementIdentifierValidator
     {
         return new ElementIdentifierValidator();
@@ -36,12 +32,12 @@ class ElementIdentifierValidator implements ValidatorInterface
 
         $value = $model->getValue();
         if ($value->isEmpty()) {
-            return $this->createInvalidResult($model, self::REASON_VALUE_MISSING);
+            return $this->createInvalidResult($model, IdentifierValidator::REASON_VALUE_MISSING);
         }
 
         $valueType = $value->getType();
         if (!in_array($valueType, [ValueTypes::CSS_SELECTOR, ValueTypes::XPATH_EXPRESSION])) {
-            return $this->createInvalidResult($model, self::REASON_VALUE_TYPE_MISMATCH);
+            return $this->createInvalidResult($model, IdentifierValidator::REASON_VALUE_TYPE_MISMATCH);
         }
 
         $parentIdentifier = $model->getParentIdentifier();
@@ -52,7 +48,7 @@ class ElementIdentifierValidator implements ValidatorInterface
             if ($parentValidationResult instanceof InvalidResultInterface) {
                 return $this->createInvalidResult(
                     $model,
-                    self::REASON_INVALID_PARENT_IDENTIFIER,
+                    IdentifierValidator::REASON_INVALID_PARENT_IDENTIFIER,
                     $parentValidationResult
                 );
             }

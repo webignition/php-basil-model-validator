@@ -87,6 +87,16 @@ class IdentifierValidatorTest extends \PHPUnit\Framework\TestCase
             LiteralValue::createStringValue('foo')
         );
 
+        $attributeIdentifierWithInvalidElementIdentifier = new AttributeIdentifier(
+            $elementIdentifierWithWrongValueType,
+            'attribute_name'
+        );
+
+        $attributeIdentifierWithEmptyAttributeName = new AttributeIdentifier(
+            TestIdentifierFactory::createCssElementIdentifier('.selector'),
+            ''
+        );
+
         return [
             'invalid type, unknown type' => [
                 'identifier' => $identifierWithInvalidType,
@@ -149,6 +159,27 @@ class IdentifierValidatorTest extends \PHPUnit\Framework\TestCase
                     )
                 ),
             ],
+            'attribute identifier with invalid element identifier' => [
+                'identifier' => $attributeIdentifierWithInvalidElementIdentifier,
+                'expectedResult' => new InvalidResult(
+                    $attributeIdentifierWithInvalidElementIdentifier,
+                    TypeInterface::IDENTIFIER,
+                    IdentifierValidator::REASON_INVALID_ELEMENT_IDENTIFIER,
+                    new InvalidResult(
+                        $elementIdentifierWithWrongValueType,
+                        TypeInterface::IDENTIFIER,
+                        IdentifierValidator::REASON_VALUE_TYPE_MISMATCH
+                    )
+                ),
+            ],
+            'attribute identifier with empty attribute name' => [
+                'identifier' => $attributeIdentifierWithEmptyAttributeName,
+                'expectedResult' => new InvalidResult(
+                    $attributeIdentifierWithEmptyAttributeName,
+                    TypeInterface::IDENTIFIER,
+                    IdentifierValidator::REASON_ATTRIBUTE_NAME_MISSING
+                ),
+            ],
         ];
     }
 
@@ -178,12 +209,12 @@ class IdentifierValidatorTest extends \PHPUnit\Framework\TestCase
             'element identifier: xpath expression' => [
                 'identifier' => TestIdentifierFactory::createXpathElementIdentifier('//h1'),
             ],
-//            'attribute identifier' => [
-//                'identifier' => new AttributeIdentifier(
-//                    TestIdentifierFactory::createCssElementIdentifier('.selector'),
-//                    'attribute_name'
-//                ),
-//            ],
+            'attribute identifier' => [
+                'identifier' => new AttributeIdentifier(
+                    TestIdentifierFactory::createCssElementIdentifier('.selector'),
+                    'attribute_name'
+                ),
+            ],
         ];
     }
 }

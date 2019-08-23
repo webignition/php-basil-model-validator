@@ -12,9 +12,11 @@ use webignition\BasilModelValidator\ValidatorInterface;
 class IdentifierValidator implements ValidatorInterface
 {
     const REASON_TYPE_INVALID = 'identifier-type-invalid';
-    const REASON_VALUE_MISSING = 'identifier-value-missing';
-    const REASON_INVALID_PARENT_IDENTIFIER = 'identifier-invalid-parent-identifier';
-    const REASON_VALUE_TYPE_MISMATCH = 'identifier-value-type-mismatch';
+    const REASON_VALUE_MISSING = 'element-identifier-value-missing';
+    const REASON_INVALID_PARENT_IDENTIFIER = 'element-identifier-invalid-parent-identifier';
+    const REASON_VALUE_TYPE_MISMATCH = 'element-identifier-value-type-mismatch';
+    const REASON_INVALID_ELEMENT_IDENTIFIER = 'attribute-identifier-invalid-element-identifier';
+    const REASON_ATTRIBUTE_NAME_MISSING = 'attribute-identifier-attribute-name-missing';
 
     /**
      * @var ValidatorInterface[]
@@ -24,6 +26,7 @@ class IdentifierValidator implements ValidatorInterface
     public function __construct()
     {
         $this->identifierTypeValidators[] = ElementIdentifierValidator::create();
+        $this->identifierTypeValidators[] = AttributeIdentifierValidator::create();
     }
 
     public static function create(): IdentifierValidator
