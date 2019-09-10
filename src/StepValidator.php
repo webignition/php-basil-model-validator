@@ -4,9 +4,8 @@ namespace webignition\BasilModelValidator;
 
 use webignition\BasilModel\Action\InputActionInterface;
 use webignition\BasilModel\Step\StepInterface;
-use webignition\BasilModel\Value\ObjectValueInterface;
+use webignition\BasilModel\Value\DataParameter;
 use webignition\BasilModel\Value\ValueInterface;
-use webignition\BasilModel\Value\ValueTypes;
 use webignition\BasilModelValidator\Action\ActionValidator;
 use webignition\BasilModelValidator\Result\InvalidResult;
 use webignition\BasilModelValidator\Result\InvalidResultInterface;
@@ -20,11 +19,8 @@ class StepValidator implements ValidatorInterface
     const REASON_ASSERTION_INVALID = 'step-assertion-invalid';
     const REASON_DATA_SET_INCOMPLETE = 'step-data-set-incomplete';
     const REASON_DATA_SET_EMPTY = 'step-data-set-empty';
-    const REASON_ELEMENT_IDENTIFIER_MISSING = 'step-element-identifier-missing';
     const REASON_NO_ASSERTIONS = 'no-assertions';
     const CONTEXT_VALUE_CONTAINER = 'value-container';
-    const CONTEXT_ELEMENT_IDENTIFIER_NAME = 'element-identifier-name';
-    const CONTEXT_IDENTIFIER_CONTAINER = 'identifier-container';
 
     private $actionValidator;
     private $assertionValidator;
@@ -124,8 +120,8 @@ class StepValidator implements ValidatorInterface
         ValueInterface $value,
         $valueContainer
     ): ?InvalidResultInterface {
-        if ($value instanceof ObjectValueInterface && ValueTypes::DATA_PARAMETER === $value->getType()) {
-            $parameterName = $value->getObjectProperty();
+        if ($value instanceof DataParameter) {
+            $parameterName = $value->getProperty();
             $dataSetCollection = $step->getDataSetCollection();
 
             if (count($dataSetCollection) === 0) {
