@@ -4,10 +4,6 @@ namespace webignition\BasilModelValidator;
 
 use webignition\BasilModel\Assertion\AssertionComparisons;
 use webignition\BasilModel\Assertion\AssertionInterface;
-use webignition\BasilModel\Value\LiteralValueInterface;
-use webignition\BasilModel\Value\ObjectValueInterface;
-use webignition\BasilModel\Value\ValueInterface;
-use webignition\BasilModel\Value\ValueTypes;
 use webignition\BasilModelValidator\Identifier\IdentifierValidator;
 use webignition\BasilModelValidator\Result\InvalidResult;
 use webignition\BasilModelValidator\Result\InvalidResultInterface;
@@ -75,10 +71,6 @@ class AssertionValidator implements ValidatorInterface
             );
         }
 
-        if (!$this->isValueValid($examinedValue)) {
-            return $this->createInvalidResult($model, self::REASON_EXAMINED_VALUE_INVALID);
-        }
-
         if (!in_array($model->getComparison(), self::VALID_COMPARISONS)) {
             return $this->createInvalidResult($model, self::REASON_COMPARISON_INVALID);
         }
@@ -101,10 +93,6 @@ class AssertionValidator implements ValidatorInterface
                     $expectedValueValidationResult
                 );
             }
-
-            if (!$this->isValueValid($expectedValue)) {
-                return $this->createInvalidResult($model, self::REASON_EXPECTED_VALUE_INVALID);
-            }
         }
 
         return new ValidResult($model);
@@ -116,30 +104,5 @@ class AssertionValidator implements ValidatorInterface
         ?InvalidResultInterface $invalidResult = null
     ): ResultInterface {
         return new InvalidResult($model, TypeInterface::ASSERTION, $reason, $invalidResult);
-    }
-
-    private function isValueValid(ValueInterface $value): bool
-    {
-        $expectedValueType = $value->getType();
-
-        if ($value instanceof LiteralValueInterface && $expectedValueType !== ValueTypes::STRING) {
-            return false;
-        }
-
-        if ($value instanceof ObjectValueInterface) {
-            return in_array(
-                $expectedValueType,
-                [
-                    ValueTypes::BROWSER_OBJECT_PROPERTY,
-                    ValueTypes::DATA_PARAMETER,
-                    ValueTypes::ELEMENT_PARAMETER,
-                    ValueTypes::ENVIRONMENT_PARAMETER,
-                    ValueTypes::PAGE_OBJECT_PROPERTY,
-                    ValueTypes::ATTRIBUTE_PARAMETER,
-                ]
-            );
-        }
-
-        return true;
     }
 }

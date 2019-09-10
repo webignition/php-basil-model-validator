@@ -2,8 +2,7 @@
 
 namespace webignition\BasilModelValidator;
 
-use webignition\BasilModel\Identifier\IdentifierInterface;
-use webignition\BasilModel\Identifier\IdentifierTypes;
+use webignition\BasilModel\Identifier\ElementIdentifierInterface;
 use webignition\BasilModel\Page\PageInterface;
 use webignition\BasilModelValidator\Result\InvalidResult;
 use webignition\BasilModelValidator\Result\ResultInterface;
@@ -16,10 +15,6 @@ class PageValidator implements ValidatorInterface
     const REASON_INVALID_IDENTIFIER_TYPE = 'page-invalid-identifier-type';
 
     const CONTEXT_IDENTIFIER_NAME = 'identifier';
-
-    const ALLOWED_IDENTIFIER_TYPES = [
-        IdentifierTypes::ELEMENT_SELECTOR,
-    ];
 
     public static function create(): PageValidator
     {
@@ -44,8 +39,7 @@ class PageValidator implements ValidatorInterface
         $identifierCollection = $model->getIdentifierCollection();
 
         foreach ($identifierCollection as $identifier) {
-            /* @var IdentifierInterface $identifier */
-            if (!in_array($identifier->getType(), self::ALLOWED_IDENTIFIER_TYPES)) {
+            if (!$identifier instanceof ElementIdentifierInterface) {
                 $invalidResult = new InvalidResult($model, TypeInterface::PAGE, self::REASON_INVALID_IDENTIFIER_TYPE);
                 $invalidResult = $invalidResult->withContext([
                     self::CONTEXT_IDENTIFIER_NAME => $identifier,

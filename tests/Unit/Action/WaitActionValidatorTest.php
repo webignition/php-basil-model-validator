@@ -10,8 +10,7 @@ use webignition\BasilModel\Action\NoArgumentsAction;
 use webignition\BasilModel\Action\UnrecognisedAction;
 use webignition\BasilModel\Action\WaitAction;
 use webignition\BasilModel\Value\LiteralValue;
-use webignition\BasilModel\Value\ObjectValue;
-use webignition\BasilModel\Value\ValueTypes;
+use webignition\BasilModel\Value\PageElementReference;
 use webignition\BasilModelFactory\Action\ActionFactory;
 use webignition\BasilModelValidator\Action\ActionValidator;
 use webignition\BasilModelValidator\Action\WaitActionValidator;
@@ -62,7 +61,7 @@ class WaitActionValidatorTest extends \PHPUnit\Framework\TestCase
                 'expectedHandles' => false,
             ],
             'wait action' => [
-                'action' => new WaitAction('wait 1', LiteralValue::createStringValue('1')),
+                'action' => new WaitAction('wait 1', new LiteralValue('1')),
                 'expectedHandles' => true,
             ],
         ];
@@ -88,11 +87,10 @@ class WaitActionValidatorTest extends \PHPUnit\Framework\TestCase
 
     public function validateNotValidDataProvider(): array
     {
-        $waitActionNoDuration = new WaitAction('wait', LiteralValue::createStringValue(''));
+        $waitActionNoDuration = new WaitAction('wait', new LiteralValue(''));
         $waitActionWithUnactionableDuration = new WaitAction(
             'wait page_import_name.elements.element_name',
-            new ObjectValue(
-                ValueTypes::PAGE_ELEMENT_REFERENCE,
+            new PageElementReference(
                 'page_import_name.elements.element_name',
                 'page_import_name',
                 'element_name'
