@@ -67,7 +67,7 @@ class NoArgumentsActionValidatorTest extends \PHPUnit\Framework\TestCase
                 'expectedHandles' => false,
             ],
             'wait action' => [
-                'action' => new WaitAction('wait 20', LiteralValue::createStringValue('20')),
+                'action' => new WaitAction('wait 20', new LiteralValue('20')),
                 'expectedHandles' => false,
             ],
         ];

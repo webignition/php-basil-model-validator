@@ -13,7 +13,9 @@ use webignition\BasilModel\Action\UnrecognisedAction;
 use webignition\BasilModel\Action\WaitAction;
 use webignition\BasilModel\Identifier\AttributeIdentifier;
 use webignition\BasilModel\Identifier\ElementIdentifier;
-use webignition\BasilModel\Identifier\Identifier;
+use webignition\BasilModel\Identifier\ReferenceIdentifier;
+use webignition\BasilModel\Value\CssSelector;
+use webignition\BasilModel\Value\ElementReference;
 use webignition\BasilModel\Value\LiteralValue;
 use webignition\BasilModelFactory\Action\ActionFactory;
 use webignition\BasilModelValidator\Action\ActionValidator;
@@ -74,7 +76,7 @@ class InteractionActionValidatorTest extends \PHPUnit\Framework\TestCase
                 'expectedHandles' => false,
             ],
             'wait action' => [
-                'action' => new WaitAction('wait 20', LiteralValue::createStringValue('20')),
+                'action' => new WaitAction('wait 20', new LiteralValue('20')),
                 'expectedHandles' => false,
             ],
         ];
@@ -104,7 +106,7 @@ class InteractionActionValidatorTest extends \PHPUnit\Framework\TestCase
 
         $interactionActionWithoutIdentifier = $actionFactory->createFromActionString('click');
 
-        $invalidIdentifier = new Identifier('foo', LiteralValue::createStringValue('value'));
+        $invalidIdentifier = new ReferenceIdentifier('foo', new ElementReference('$elements.foo', 'foo'));
 
         $interactionActionWithInvalidIdentifier = new InteractionAction(
             '',
@@ -115,7 +117,7 @@ class InteractionActionValidatorTest extends \PHPUnit\Framework\TestCase
 
         $attributeIdentifier = new AttributeIdentifier(
             new ElementIdentifier(
-                LiteralValue::createCssSelectorValue('.selector')
+                new CssSelector('.selector')
             ),
             'attribute_name'
         );

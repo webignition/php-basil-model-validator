@@ -12,7 +12,9 @@ use webignition\BasilModel\Action\UnrecognisedAction;
 use webignition\BasilModel\Action\WaitAction;
 use webignition\BasilModel\Identifier\AttributeIdentifier;
 use webignition\BasilModel\Identifier\ElementIdentifier;
-use webignition\BasilModel\Identifier\Identifier;
+use webignition\BasilModel\Identifier\ReferenceIdentifier;
+use webignition\BasilModel\Value\CssSelector;
+use webignition\BasilModel\Value\ElementReference;
 use webignition\BasilModel\Value\LiteralValue;
 use webignition\BasilModelFactory\Action\ActionFactory;
 use webignition\BasilModelFactory\ValueFactory;
@@ -67,7 +69,7 @@ class InputActionValidatorTest extends \PHPUnit\Framework\TestCase
                 'expectedHandles' => false,
             ],
             'wait action' => [
-                'action' => new WaitAction('wait 20', LiteralValue::createStringValue('20')),
+                'action' => new WaitAction('wait 20', new LiteralValue('20')),
                 'expectedHandles' => false,
             ],
         ];
@@ -99,7 +101,7 @@ class InputActionValidatorTest extends \PHPUnit\Framework\TestCase
         $inputActionMissingIdentifier = new InputAction(
             'set to "foo"',
             null,
-            LiteralValue::createStringValue('foo'),
+            new LiteralValue('foo'),
             ' to "foo"'
         );
 
@@ -114,12 +116,12 @@ class InputActionValidatorTest extends \PHPUnit\Framework\TestCase
         );
 
         $invalidValue = $valueFactory->createFromValueString('$page.foo');
-        $invalidIdentifier = new Identifier('foo', LiteralValue::createStringValue('value'));
+        $invalidIdentifier = new ReferenceIdentifier('foo', new ElementReference('$elements.foo', 'foo'));
 
         $inputActionWithInvalidIdentifier = new InputAction(
             '',
             $invalidIdentifier,
-            LiteralValue::createStringValue('value'),
+            new LiteralValue('value'),
             ''
         );
 
@@ -133,7 +135,7 @@ class InputActionValidatorTest extends \PHPUnit\Framework\TestCase
 
         $attributeIdentifier = new AttributeIdentifier(
             new ElementIdentifier(
-                LiteralValue::createCssSelectorValue('.selector')
+                new CssSelector('.selector')
             ),
             'attribute_name'
         );
@@ -141,7 +143,7 @@ class InputActionValidatorTest extends \PHPUnit\Framework\TestCase
         $inputActionWithAttributeIdentifier = new InputAction(
             'set ".selector":attribute_name to "value"',
             $attributeIdentifier,
-            LiteralValue::createStringValue('value'),
+            new LiteralValue('value'),
             '".selector":attribute_name to "value"'
         );
 
