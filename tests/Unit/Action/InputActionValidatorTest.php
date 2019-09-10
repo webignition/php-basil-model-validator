@@ -12,9 +12,7 @@ use webignition\BasilModel\Action\UnrecognisedAction;
 use webignition\BasilModel\Action\WaitAction;
 use webignition\BasilModel\Identifier\AttributeIdentifier;
 use webignition\BasilModel\Identifier\ElementIdentifier;
-use webignition\BasilModel\Identifier\ReferenceIdentifier;
 use webignition\BasilModel\Value\CssSelector;
-use webignition\BasilModel\Value\ElementReference;
 use webignition\BasilModel\Value\LiteralValue;
 use webignition\BasilModelFactory\Action\ActionFactory;
 use webignition\BasilModelFactory\ValueFactory;
@@ -116,7 +114,7 @@ class InputActionValidatorTest extends \PHPUnit\Framework\TestCase
         );
 
         $invalidValue = $valueFactory->createFromValueString('$page.foo');
-        $invalidIdentifier = new ReferenceIdentifier('foo', new ElementReference('$elements.foo', 'foo'));
+        $invalidIdentifier = new ElementIdentifier(new CssSelector(''));
 
         $inputActionWithInvalidIdentifier = new InputAction(
             '',
@@ -197,7 +195,7 @@ class InputActionValidatorTest extends \PHPUnit\Framework\TestCase
                     new InvalidResult(
                         $invalidIdentifier,
                         TypeInterface::IDENTIFIER,
-                        IdentifierValidator::REASON_TYPE_INVALID
+                        IdentifierValidator::REASON_ELEMENT_EXPRESSION_MISSING
                     )
                 ),
             ],
