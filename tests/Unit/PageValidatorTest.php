@@ -7,7 +7,6 @@ use Nyholm\Psr7\Uri;
 use webignition\BasilModel\Identifier\AttributeIdentifier;
 use webignition\BasilModel\Identifier\ElementIdentifier;
 use webignition\BasilModel\Identifier\IdentifierCollection;
-use webignition\BasilModel\Identifier\IdentifierTypes;
 use webignition\BasilModel\Identifier\ReferenceIdentifier;
 use webignition\BasilModel\Page\Page;
 use webignition\BasilModel\Page\PageInterface;
@@ -64,8 +63,7 @@ class PageValidatorTest extends \PHPUnit\Framework\TestCase
             new IdentifierCollection()
         );
 
-        $pageElementReferenceIdentifier = (new ReferenceIdentifier(
-            IdentifierTypes::PAGE_ELEMENT_REFERENCE,
+        $pageElementReferenceIdentifier = (ReferenceIdentifier::createPageElementReferenceIdentifier(
             new PageElementReference(
                 'page_import_name.elements.element_name',
                 'page_import_name',
@@ -80,8 +78,7 @@ class PageValidatorTest extends \PHPUnit\Framework\TestCase
             ])
         );
 
-        $elementParameterIdentifier = (new ReferenceIdentifier(
-            IdentifierTypes::ELEMENT_PARAMETER,
+        $elementParameterIdentifier = (ReferenceIdentifier::createElementReferenceIdentifier(
             new ElementReference('$elements.element_name', 'element_name')
         ))->withName('name');
 

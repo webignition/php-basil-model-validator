@@ -7,7 +7,6 @@ namespace webignition\BasilModelValidator\Tests\Unit\Identifier;
 use webignition\BasilModel\Identifier\AttributeIdentifier;
 use webignition\BasilModel\Identifier\ElementIdentifier;
 use webignition\BasilModel\Identifier\IdentifierInterface;
-use webignition\BasilModel\Identifier\IdentifierTypes;
 use webignition\BasilModel\Identifier\ReferenceIdentifier;
 use webignition\BasilModel\Value\CssSelector;
 use webignition\BasilModel\Value\ElementReference;
@@ -61,8 +60,6 @@ class IdentifierValidatorTest extends \PHPUnit\Framework\TestCase
     {
         $identifierFactory = IdentifierFactory::createFactory();
 
-        $identifierWithInvalidType = new ReferenceIdentifier('foo', new ElementReference('$elements.name', 'name'));
-
         $emptyCssSelectorIdentifier = new ElementIdentifier(
             new CssSelector('')
         );
@@ -76,8 +73,7 @@ class IdentifierValidatorTest extends \PHPUnit\Framework\TestCase
         ))->withParentIdentifier($emptyCssSelectorIdentifier);
 
         $identifierWithPageElementReference = $identifierFactory->create('page_import.elements.element_name');
-        $identifierWithElementParameter = new ReferenceIdentifier(
-            IdentifierTypes::ELEMENT_PARAMETER,
+        $identifierWithElementParameter = ReferenceIdentifier::createElementReferenceIdentifier(
             new ElementReference(
                 '$elements.element_name',
                 'element_name'
@@ -95,14 +91,14 @@ class IdentifierValidatorTest extends \PHPUnit\Framework\TestCase
         );
 
         return [
-            'invalid type, unknown type' => [
-                'identifier' => $identifierWithInvalidType,
-                'expectedResult' => new InvalidResult(
-                    $identifierWithInvalidType,
-                    TypeInterface::IDENTIFIER,
-                    IdentifierValidator::REASON_TYPE_INVALID
-                ),
-            ],
+//            'invalid type, unknown type' => [
+//                'identifier' => $identifierWithInvalidType,
+//                'expectedResult' => new InvalidResult(
+//                    $identifierWithInvalidType,
+//                    TypeInterface::IDENTIFIER,
+//                    IdentifierValidator::REASON_TYPE_INVALID
+//                ),
+//            ],
             'invalid type, page element reference' => [
                 'identifier' => $identifierWithPageElementReference,
                 'expectedResult' => new InvalidResult(
