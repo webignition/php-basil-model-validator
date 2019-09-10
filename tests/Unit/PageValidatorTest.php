@@ -6,15 +6,15 @@ namespace webignition\BasilModelValidator\Tests\Unit;
 use Nyholm\Psr7\Uri;
 use webignition\BasilModel\Identifier\AttributeIdentifier;
 use webignition\BasilModel\Identifier\ElementIdentifier;
-use webignition\BasilModel\Identifier\Identifier;
 use webignition\BasilModel\Identifier\IdentifierCollection;
 use webignition\BasilModel\Identifier\IdentifierTypes;
+use webignition\BasilModel\Identifier\ReferenceIdentifier;
 use webignition\BasilModel\Page\Page;
 use webignition\BasilModel\Page\PageInterface;
-use webignition\BasilModel\Value\LiteralValue;
-use webignition\BasilModel\Value\ObjectNames;
-use webignition\BasilModel\Value\ObjectValue;
-use webignition\BasilModel\Value\ValueTypes;
+use webignition\BasilModel\Value\CssSelector;
+use webignition\BasilModel\Value\ElementReference;
+use webignition\BasilModel\Value\PageElementReference;
+use webignition\BasilModel\Value\XpathExpression;
 use webignition\BasilModelValidator\PageValidator;
 use webignition\BasilModelValidator\Result\InvalidResult;
 use webignition\BasilModelValidator\Result\InvalidResultInterface;
@@ -64,12 +64,11 @@ class PageValidatorTest extends \PHPUnit\Framework\TestCase
             new IdentifierCollection()
         );
 
-        $pageElementReferenceIdentifier = (new Identifier(
+        $pageElementReferenceIdentifier = (new ReferenceIdentifier(
             IdentifierTypes::PAGE_ELEMENT_REFERENCE,
-            new ObjectValue(
-                ValueTypes::PAGE_ELEMENT_REFERENCE,
+            new PageElementReference(
                 'page_import_name.elements.element_name',
-                ObjectNames::PAGE,
+                'page_import_name',
                 'element_name'
             )
         ))->withName('name');
@@ -81,14 +80,9 @@ class PageValidatorTest extends \PHPUnit\Framework\TestCase
             ])
         );
 
-        $elementParameterIdentifier = (new Identifier(
+        $elementParameterIdentifier = (new ReferenceIdentifier(
             IdentifierTypes::ELEMENT_PARAMETER,
-            new ObjectValue(
-                ValueTypes::ELEMENT_PARAMETER,
-                '$elements.element_name',
-                ObjectNames::ELEMENT,
-                'element_name'
-            )
+            new ElementReference('$elements.element_name', 'element_name')
         ))->withName('name');
 
         $pageWithElementParameterIdentifier = new Page(
@@ -100,7 +94,7 @@ class PageValidatorTest extends \PHPUnit\Framework\TestCase
 
         $attributeIdentifier = (new AttributeIdentifier(
             new ElementIdentifier(
-                LiteralValue::createCssSelectorValue('.selector')
+                new CssSelector('.selector')
             ),
             'attribute_name'
         ))->withName('name');
@@ -114,10 +108,7 @@ class PageValidatorTest extends \PHPUnit\Framework\TestCase
 
         return [
             'empty uri' => [
-                'page' => new Page(
-                    new Uri(''),
-                    new IdentifierCollection()
-                ),
+                'page' => $emptyUriPage,
                 'expectedResult' => new InvalidResult(
                     $emptyUriPage,
                     TypeInterface::PAGE,
@@ -174,10 +165,10 @@ class PageValidatorTest extends \PHPUnit\Framework\TestCase
             'non-empty identifier collection' => [
                 'page' => new Page(new Uri('http://example.com/'), new IdentifierCollection([
                     new ElementIdentifier(
-                        LiteralValue::createCssSelectorValue('.selector')
+                        new CssSelector('.selector')
                     ),
                     new ElementIdentifier(
-                        LiteralValue::createXpathExpressionValue('//h1')
+                        new XpathExpression('//h1')
                     ),
                 ])),
             ],
