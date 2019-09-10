@@ -25,7 +25,7 @@ class InvalidResultTest extends \PHPUnit\Framework\TestCase
         );
 
         $type = TypeInterface::IDENTIFIER;
-        $reason = IdentifierValidator::REASON_VALUE_MISSING;
+        $reason = IdentifierValidator::REASON_ELEMENT_EXPRESSION_MISSING;
 
         $result = new InvalidResult($model, $type, $reason);
 

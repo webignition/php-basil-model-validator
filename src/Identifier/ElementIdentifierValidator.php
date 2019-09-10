@@ -4,7 +4,6 @@ namespace webignition\BasilModelValidator\Identifier;
 
 use webignition\BasilModel\Identifier\ElementIdentifierInterface;
 use webignition\BasilModel\Identifier\IdentifierInterface;
-use webignition\BasilModel\Value\ValueTypes;
 use webignition\BasilModelValidator\Result\InvalidResult;
 use webignition\BasilModelValidator\Result\InvalidResultInterface;
 use webignition\BasilModelValidator\Result\ResultInterface;
@@ -30,14 +29,9 @@ class ElementIdentifierValidator implements ValidatorInterface
             return InvalidResult::createUnhandledModelResult($model);
         }
 
-        $value = $model->getValue();
-        if ($value->isEmpty()) {
-            return $this->createInvalidResult($model, IdentifierValidator::REASON_VALUE_MISSING);
-        }
-
-        $valueType = $value->getType();
-        if (!in_array($valueType, [ValueTypes::CSS_SELECTOR, ValueTypes::XPATH_EXPRESSION])) {
-            return $this->createInvalidResult($model, IdentifierValidator::REASON_VALUE_TYPE_MISMATCH);
+        $elementExpression = trim($model->getElementExpression()->getExpression());
+        if ('' === $elementExpression) {
+            return $this->createInvalidResult($model, IdentifierValidator::REASON_ELEMENT_EXPRESSION_MISSING);
         }
 
         $parentIdentifier = $model->getParentIdentifier();
