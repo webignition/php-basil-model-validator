@@ -5,13 +5,11 @@ namespace webignition\BasilModelValidator\Tests\Unit;
 
 use webignition\BasilModel\Identifier\AttributeIdentifier;
 use webignition\BasilModel\Identifier\ElementIdentifier;
+use webignition\BasilModel\Value\AttributeReference;
 use webignition\BasilModel\Value\AttributeValue;
+use webignition\BasilModel\Value\CssSelector;
 use webignition\BasilModel\Value\ElementValue;
-use webignition\BasilModel\Value\LiteralValue;
-use webignition\BasilModel\Value\ObjectNames;
-use webignition\BasilModel\Value\ObjectValue;
 use webignition\BasilModel\Value\ValueInterface;
-use webignition\BasilModel\Value\ValueTypes;
 use webignition\BasilModelFactory\ValueFactory;
 use webignition\BasilModelValidator\Result\InvalidResult;
 use webignition\BasilModelValidator\Result\TypeInterface;
@@ -61,10 +59,6 @@ class ValueValidatorTest extends \PHPUnit\Framework\TestCase
         $valueFactory = ValueFactory::createFactory();
 
         return [
-            'invalid type' => [
-                'value' => new ObjectValue('foo', '', '', ''),
-                'expectedReason' => ValueValidator::REASON_TYPE_INVALID,
-            ],
             'invalid page object property name' => [
                 'value' => $valueFactory->createFromValueString('$page.foo'),
                 'expectedReason' => ValueValidator::REASON_PROPERTY_NAME_INVALID,
@@ -82,10 +76,8 @@ class ValueValidatorTest extends \PHPUnit\Framework\TestCase
                 'expectedReason' => ValueValidator::REASON_UNACTIONABLE,
             ],
             'attribute parameter is unactionable' => [
-                'value' => new ObjectValue(
-                    ValueTypes::ATTRIBUTE_PARAMETER,
+                'value' => new AttributeReference(
                     '$elements.element_name.attribute_name',
-                    ObjectNames::ELEMENT,
                     'element_name.attribute_name'
                 ),
                 'expectedReason' => ValueValidator::REASON_UNACTIONABLE,
@@ -132,7 +124,7 @@ class ValueValidatorTest extends \PHPUnit\Framework\TestCase
             'type: element value' => [
                 'value' => new ElementValue(
                     new ElementIdentifier(
-                        LiteralValue::createCssSelectorValue('.selector')
+                        new CssSelector('.selector')
                     )
                 ),
             ],
@@ -140,7 +132,7 @@ class ValueValidatorTest extends \PHPUnit\Framework\TestCase
                 'value' => new AttributeValue(
                     new AttributeIdentifier(
                         new ElementIdentifier(
-                            LiteralValue::createCssSelectorValue('.selector')
+                            new CssSelector('.selector')
                         ),
                         'attribute_name'
                     )
