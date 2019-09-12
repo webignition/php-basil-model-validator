@@ -75,6 +75,25 @@ class AssertionValidatorTest extends \PHPUnit\Framework\TestCase
             new AssertionExpectedValue($invalidValue)
         );
 
+        $examinationAssertionWithInvalidComparison = new ExaminationAssertion(
+            '$page.url foo',
+            new AssertionExaminedValue(
+                new PageProperty('$page.url', 'url')
+            ),
+            'foo'
+        );
+
+        $comparisonAssertionWithInvalidComparison = new ComparisonAssertion(
+            '$page.url foo $page.url',
+            new AssertionExaminedValue(
+                new PageProperty('$page.url', 'url')
+            ),
+            'foo',
+            new AssertionExpectedValue(
+                new PageProperty('$page.url', 'url')
+            )
+        );
+
         return [
             'invalid examined value, invalid element value' => [
                 'assertion' => $assertionWithInvalidExaminedValue,
@@ -100,6 +119,22 @@ class AssertionValidatorTest extends \PHPUnit\Framework\TestCase
                         TypeInterface::VALUE,
                         ValueValidator::REASON_PROPERTY_NAME_INVALID
                     )
+                ),
+            ],
+            'examination assertion with invalid comparison' => [
+                'assertion' => $examinationAssertionWithInvalidComparison,
+                'expectedResult' => new InvalidResult(
+                    $examinationAssertionWithInvalidComparison,
+                    TypeInterface::ASSERTION,
+                    AssertionValidator::REASON_COMPARISON_INVALID
+                ),
+            ],
+            'comparison assertion with invalid comparison' => [
+                'assertion' => $comparisonAssertionWithInvalidComparison,
+                'expectedResult' => new InvalidResult(
+                    $comparisonAssertionWithInvalidComparison,
+                    TypeInterface::ASSERTION,
+                    AssertionValidator::REASON_COMPARISON_INVALID
                 ),
             ],
         ];

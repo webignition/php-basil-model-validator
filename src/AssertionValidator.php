@@ -2,6 +2,7 @@
 
 namespace webignition\BasilModelValidator;
 
+use webignition\BasilModel\Assertion\AssertionComparison;
 use webignition\BasilModel\Assertion\AssertionInterface;
 use webignition\BasilModel\Assertion\ComparisonAssertionInterface;
 use webignition\BasilModel\Assertion\ExaminationAssertionInterface;
@@ -16,6 +17,7 @@ class AssertionValidator implements ValidatorInterface
 {
     const REASON_EXAMINED_VALUE_INVALID  = 'assertion-examined-value-invalid';
     const REASON_EXPECTED_VALUE_INVALID  = 'assertion-expected-value-invalid';
+    const REASON_COMPARISON_INVALID = 'assertion-comparison-invalid';
 
     private $identifierValidator;
     private $valueValidator;
@@ -56,6 +58,12 @@ class AssertionValidator implements ValidatorInterface
                     $examinedValueValidationResult
                 );
             }
+
+            if (!$model instanceof ComparisonAssertionInterface) {
+                if (!in_array($model->getComparison(), AssertionComparison::EXAMINATION_COMPARISONS)) {
+                    return $this->createInvalidResult($model, self::REASON_COMPARISON_INVALID);
+                }
+            }
         }
 
         if ($model instanceof ComparisonAssertionInterface) {
@@ -69,6 +77,10 @@ class AssertionValidator implements ValidatorInterface
                     self::REASON_EXPECTED_VALUE_INVALID,
                     $expectedValueValidationResult
                 );
+            }
+
+            if (!in_array($model->getComparison(), AssertionComparison::COMPARISON_COMPARISONS)) {
+                return $this->createInvalidResult($model, self::REASON_COMPARISON_INVALID);
             }
         }
 
