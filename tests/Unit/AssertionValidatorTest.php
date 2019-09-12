@@ -4,7 +4,6 @@
 
 namespace webignition\BasilModelValidator\Tests\Unit;
 
-use webignition\BasilModel\Assertion\AssertionComparison;
 use webignition\BasilModel\Assertion\AssertionInterface;
 use webignition\BasilModel\Assertion\ComparisonAssertion;
 use webignition\BasilModel\Assertion\ExaminationAssertion;
@@ -59,21 +58,11 @@ class AssertionValidatorTest extends \PHPUnit\Framework\TestCase
     public function validateNotValidDataProvider(): array
     {
         $valueFactory = ValueFactory::createFactory();
+        $assertionFactory = AssertionFactory::createFactory();
 
-        $invalidValue = new PageProperty('$page.foo', 'foo');
-
-        $assertionWithInvalidExaminedValue = new ExaminationAssertion(
-            '',
-            new AssertionExaminedValue($invalidValue),
-            AssertionComparison::EXISTS
-        );
-
-        $assertionWithInvalidExpectedValue = new ComparisonAssertion(
-            '',
-            new AssertionExaminedValue($valueFactory->createFromValueString('$page.url')),
-            AssertionComparison::IS,
-            new AssertionExpectedValue($invalidValue)
-        );
+        $invalidValue = $valueFactory->createFromValueString('$page.foo');
+        $assertionWithInvalidExaminedValue = $assertionFactory->createFromAssertionString('$page.foo exists');
+        $assertionWithInvalidExpectedValue = $assertionFactory->createFromAssertionString('$page.url is $page.foo');
 
         $examinationAssertionWithInvalidComparison = new ExaminationAssertion(
             '$page.url foo',
