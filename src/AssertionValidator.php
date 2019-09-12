@@ -2,7 +2,7 @@
 
 namespace webignition\BasilModelValidator;
 
-use webignition\BasilModel\Assertion\AssertionComparisons;
+use webignition\BasilModel\Assertion\AssertionComparison;
 use webignition\BasilModel\Assertion\AssertionInterface;
 use webignition\BasilModelValidator\Identifier\IdentifierValidator;
 use webignition\BasilModelValidator\Result\InvalidResult;
@@ -13,20 +13,15 @@ use webignition\BasilModelValidator\Result\ValidResult;
 
 class AssertionValidator implements ValidatorInterface
 {
-    const REASON_EXAMINED_VALUE_MISSING = 'assertion-examined-value-missing';
     const REASON_EXAMINED_VALUE_INVALID  = 'assertion-examined-value-invalid';
-    const REASON_COMPARISON_INVALID = 'assertion-comparison-missing';
-    const REASON_EXPECTED_VALUE_MISSING = 'assertion-expected-value-missing';
     const REASON_EXPECTED_VALUE_INVALID  = 'assertion-expected-value-invalid';
 
-    const VALID_COMPARISONS = AssertionComparisons::ALL;
-
     const REQUIRES_EXPECTED_VALUE_COMPARISONS = [
-        AssertionComparisons::IS,
-        AssertionComparisons::IS_NOT,
-        AssertionComparisons::INCLUDES,
-        AssertionComparisons::EXCLUDES,
-        AssertionComparisons::MATCHES,
+        AssertionComparison::IS,
+        AssertionComparison::IS_NOT,
+        AssertionComparison::INCLUDES,
+        AssertionComparison::EXCLUDES,
+        AssertionComparison::MATCHES,
     ];
 
     private $identifierValidator;
@@ -58,9 +53,6 @@ class AssertionValidator implements ValidatorInterface
         }
 
         $examinedValue = $model->getExaminedValue();
-        if (null === $examinedValue) {
-            return $this->createInvalidResult($model, self::REASON_EXAMINED_VALUE_MISSING);
-        }
 
         $examinedValueValidationResult = $this->valueValidator->validate($examinedValue);
         if ($examinedValueValidationResult instanceof InvalidResultInterface) {
@@ -71,18 +63,10 @@ class AssertionValidator implements ValidatorInterface
             );
         }
 
-        if (!in_array($model->getComparison(), self::VALID_COMPARISONS)) {
-            return $this->createInvalidResult($model, self::REASON_COMPARISON_INVALID);
-        }
-
         $requiresExpectedValue = in_array($model->getComparison(), self::REQUIRES_EXPECTED_VALUE_COMPARISONS);
 
         if ($requiresExpectedValue) {
             $expectedValue = $model->getExpectedValue();
-
-            if (null === $expectedValue) {
-                return $this->createInvalidResult($model, self::REASON_EXPECTED_VALUE_MISSING);
-            }
 
             $expectedValueValidationResult = $this->valueValidator->validate($expectedValue);
 
