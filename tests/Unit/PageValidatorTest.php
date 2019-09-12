@@ -10,10 +10,10 @@ use webignition\BasilModel\Identifier\IdentifierCollection;
 use webignition\BasilModel\Identifier\ReferenceIdentifier;
 use webignition\BasilModel\Page\Page;
 use webignition\BasilModel\Page\PageInterface;
-use webignition\BasilModel\Value\CssSelector;
+use webignition\BasilModel\Value\ElementExpression;
+use webignition\BasilModel\Value\ElementExpressionType;
 use webignition\BasilModel\Value\ElementReference;
 use webignition\BasilModel\Value\PageElementReference;
-use webignition\BasilModel\Value\XpathExpression;
 use webignition\BasilModelValidator\PageValidator;
 use webignition\BasilModelValidator\Result\InvalidResult;
 use webignition\BasilModelValidator\Result\InvalidResultInterface;
@@ -91,7 +91,7 @@ class PageValidatorTest extends \PHPUnit\Framework\TestCase
 
         $attributeIdentifier = (new AttributeIdentifier(
             new ElementIdentifier(
-                new CssSelector('.selector')
+                new ElementExpression('.selector', ElementExpressionType::CSS_SELECTOR)
             ),
             'attribute_name'
         ))->withName('name');
@@ -162,10 +162,10 @@ class PageValidatorTest extends \PHPUnit\Framework\TestCase
             'non-empty identifier collection' => [
                 'page' => new Page(new Uri('http://example.com/'), new IdentifierCollection([
                     new ElementIdentifier(
-                        new CssSelector('.selector')
+                        new ElementExpression('.selector', ElementExpressionType::CSS_SELECTOR)
                     ),
                     new ElementIdentifier(
-                        new XpathExpression('//h1')
+                        new ElementExpression('//h1', ElementExpressionType::XPATH_EXPRESSION)
                     ),
                 ])),
             ],

@@ -13,7 +13,8 @@ use webignition\BasilModel\Action\UnrecognisedAction;
 use webignition\BasilModel\Action\WaitAction;
 use webignition\BasilModel\Identifier\AttributeIdentifier;
 use webignition\BasilModel\Identifier\ElementIdentifier;
-use webignition\BasilModel\Value\CssSelector;
+use webignition\BasilModel\Value\ElementExpression;
+use webignition\BasilModel\Value\ElementExpressionType;
 use webignition\BasilModel\Value\LiteralValue;
 use webignition\BasilModelFactory\Action\ActionFactory;
 use webignition\BasilModelValidator\Action\ActionValidator;
@@ -104,7 +105,7 @@ class InteractionActionValidatorTest extends \PHPUnit\Framework\TestCase
 
         $interactionActionWithoutIdentifier = $actionFactory->createFromActionString('click');
 
-        $invalidIdentifier = new ElementIdentifier(new CssSelector(''));
+        $invalidIdentifier = new ElementIdentifier(new ElementExpression('', ElementExpressionType::CSS_SELECTOR));
 
         $interactionActionWithInvalidIdentifier = new InteractionAction(
             '',
@@ -115,7 +116,7 @@ class InteractionActionValidatorTest extends \PHPUnit\Framework\TestCase
 
         $attributeIdentifier = new AttributeIdentifier(
             new ElementIdentifier(
-                new CssSelector('.selector')
+                new ElementExpression('.selector', ElementExpressionType::CSS_SELECTOR)
             ),
             'attribute_name'
         );

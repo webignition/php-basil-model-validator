@@ -4,7 +4,8 @@
 namespace webignition\BasilModelValidator\Tests\Unit\Result;
 
 use webignition\BasilModel\Identifier\ElementIdentifier;
-use webignition\BasilModel\Value\CssSelector;
+use webignition\BasilModel\Value\ElementExpression;
+use webignition\BasilModel\Value\ElementExpressionType;
 use webignition\BasilModel\Value\PageProperty;
 use webignition\BasilModelFactory\ValueFactory;
 use webignition\BasilModelValidator\Identifier\IdentifierValidator;
@@ -17,7 +18,7 @@ class InvalidResultTest extends \PHPUnit\Framework\TestCase
     public function testCreate()
     {
         $model = new ElementIdentifier(
-            new CssSelector('.selector')
+            new ElementExpression('.selector', ElementExpressionType::CSS_SELECTOR)
         );
 
         $type = TypeInterface::IDENTIFIER;
