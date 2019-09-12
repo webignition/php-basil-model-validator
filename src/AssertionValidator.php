@@ -2,8 +2,8 @@
 
 namespace webignition\BasilModelValidator;
 
-use webignition\BasilModel\Assertion\AssertionComparison;
 use webignition\BasilModel\Assertion\AssertionInterface;
+use webignition\BasilModel\Assertion\ValueComparisonAssertionInterface;
 use webignition\BasilModelValidator\Identifier\IdentifierValidator;
 use webignition\BasilModelValidator\Result\InvalidResult;
 use webignition\BasilModelValidator\Result\InvalidResultInterface;
@@ -15,14 +15,6 @@ class AssertionValidator implements ValidatorInterface
 {
     const REASON_EXAMINED_VALUE_INVALID  = 'assertion-examined-value-invalid';
     const REASON_EXPECTED_VALUE_INVALID  = 'assertion-expected-value-invalid';
-
-    const REQUIRES_EXPECTED_VALUE_COMPARISONS = [
-        AssertionComparison::IS,
-        AssertionComparison::IS_NOT,
-        AssertionComparison::INCLUDES,
-        AssertionComparison::EXCLUDES,
-        AssertionComparison::MATCHES,
-    ];
 
     private $identifierValidator;
     private $valueValidator;
@@ -63,9 +55,7 @@ class AssertionValidator implements ValidatorInterface
             );
         }
 
-        $requiresExpectedValue = in_array($model->getComparison(), self::REQUIRES_EXPECTED_VALUE_COMPARISONS);
-
-        if ($requiresExpectedValue) {
+        if ($model instanceof ValueComparisonAssertionInterface) {
             $expectedValue = $model->getExpectedValue();
 
             $expectedValueValidationResult = $this->valueValidator->validate($expectedValue);
