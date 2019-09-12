@@ -1,15 +1,18 @@
 <?php
+/** @noinspection PhpUnhandledExceptionInspection */
 /** @noinspection PhpDocSignatureInspection */
 
 namespace webignition\BasilModelValidator\Tests\Unit;
 
 use webignition\BasilModel\Identifier\AttributeIdentifier;
 use webignition\BasilModel\Identifier\ElementIdentifier;
+use webignition\BasilModel\Value\AssertionExaminedValue;
 use webignition\BasilModel\Value\AttributeReference;
 use webignition\BasilModel\Value\AttributeValue;
 use webignition\BasilModel\Value\CssSelector;
 use webignition\BasilModel\Value\ElementValue;
 use webignition\BasilModel\Value\ValueInterface;
+use webignition\BasilModel\Value\WrappedValueInterface;
 use webignition\BasilModelFactory\ValueFactory;
 use webignition\BasilModelValidator\Result\InvalidResult;
 use webignition\BasilModelValidator\Result\TypeInterface;
@@ -49,7 +52,11 @@ class ValueValidatorTest extends \PHPUnit\Framework\TestCase
      */
     public function testValidateNotValid(ValueInterface $value, string $expectedReason)
     {
-        $expectedResult = new InvalidResult($value, TypeInterface::VALUE, $expectedReason);
+        $expectedResultValue = $value instanceof WrappedValueInterface
+            ? $value->getWrappedValue()
+            : $value;
+
+        $expectedResult = new InvalidResult($expectedResultValue, TypeInterface::VALUE, $expectedReason);
 
         $this->assertEquals($expectedResult, $this->valueValidator->validate($value));
     }
@@ -59,11 +66,17 @@ class ValueValidatorTest extends \PHPUnit\Framework\TestCase
         $valueFactory = ValueFactory::createFactory();
 
         return [
-            'invalid page object property name' => [
+            'invalid page property name' => [
                 'value' => $valueFactory->createFromValueString('$page.foo'),
                 'expectedReason' => ValueValidator::REASON_PROPERTY_NAME_INVALID,
             ],
-            'invalid browser object property name' => [
+            'invalid assertion examined value (invalid page property name)' => [
+                'value' => new AssertionExaminedValue(
+                    $valueFactory->createFromValueString('$page.foo')
+                ),
+                'expectedReason' => ValueValidator::REASON_PROPERTY_NAME_INVALID,
+            ],
+            'invalid browser property name' => [
                 'value' => $valueFactory->createFromValueString('$browser.foo'),
                 'expectedReason' => ValueValidator::REASON_PROPERTY_NAME_INVALID,
             ],
