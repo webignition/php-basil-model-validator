@@ -4,9 +4,11 @@
 
 namespace webignition\BasilModelValidator\Tests\Unit;
 
-use webignition\BasilModel\Assertion\Assertion;
-use webignition\BasilModel\Assertion\AssertionComparisons;
 use webignition\BasilModel\Assertion\AssertionInterface;
+use webignition\BasilModel\Assertion\ExistsAssertion;
+use webignition\BasilModel\Assertion\IsAssertion;
+use webignition\BasilModel\Value\AssertionExaminedValue;
+use webignition\BasilModel\Value\AssertionExpectedValue;
 use webignition\BasilModel\Value\PageProperty;
 use webignition\BasilModelFactory\AssertionFactory;
 use webignition\BasilModelFactory\ValueFactory;
@@ -55,48 +57,22 @@ class AssertionValidatorTest extends \PHPUnit\Framework\TestCase
 
     public function validateNotValidDataProvider(): array
     {
-        $assertionFactory = AssertionFactory::createFactory();
         $valueFactory = ValueFactory::createFactory();
-
-        $emptyAssertion = $assertionFactory->createFromAssertionString('');
 
         $invalidValue = new PageProperty('$page.foo', 'foo');
 
-        $assertionWithInvalidExaminedValue = new Assertion(
+        $assertionWithInvalidExaminedValue = new ExistsAssertion(
             '',
-            $invalidValue,
-            AssertionComparisons::EXISTS
+            new AssertionExaminedValue($invalidValue)
         );
 
-        $assertionWithInvalidComparison = $assertionFactory->createFromAssertionString('".selector" foo');
-        $isComparisonMissingExpectedValue = $assertionFactory->createFromAssertionString('".selector" is');
-
-        $assertionWithInvalidExpectedValue = new Assertion(
+        $assertionWithInvalidExpectedValue = new IsAssertion(
             '',
-            $valueFactory->createFromValueString('$page.url'),
-            AssertionComparisons::IS,
-            $invalidValue
-        );
-
-        $assertionWithPageElementReferenceExaminedValue = $assertionFactory->createFromAssertionString(
-            'page_import_name.elements.element_name is "value"'
-        );
-
-        $pageElementReferenceValue = $valueFactory->createFromValueString('page_import_name.elements.element_name');
-
-        $assertionWithPageElementReferenceExpectedValue = $assertionFactory->createFromAssertionString(
-            '$page.url is page_import_name.elements.element_name'
+            new AssertionExaminedValue($valueFactory->createFromValueString('$page.url')),
+            new AssertionExpectedValue($invalidValue)
         );
 
         return [
-            'missing examined value' => [
-                'assertion' => $emptyAssertion,
-                'expectedResult' => new InvalidResult(
-                    $emptyAssertion,
-                    TypeInterface::ASSERTION,
-                    AssertionValidator::REASON_EXAMINED_VALUE_MISSING
-                ),
-            ],
             'invalid examined value, invalid element value' => [
                 'assertion' => $assertionWithInvalidExaminedValue,
                 'expectedResult' => new InvalidResult(
@@ -110,35 +86,6 @@ class AssertionValidatorTest extends \PHPUnit\Framework\TestCase
                     )
                 ),
             ],
-            'invalid examined value, page element reference object value' => [
-                'assertion' => $assertionWithPageElementReferenceExaminedValue,
-                'expectedResult' => new InvalidResult(
-                    $assertionWithPageElementReferenceExaminedValue,
-                    TypeInterface::ASSERTION,
-                    AssertionValidator::REASON_EXAMINED_VALUE_INVALID,
-                    new InvalidResult(
-                        $pageElementReferenceValue,
-                        TypeInterface::VALUE,
-                        ValueValidator::REASON_UNACTIONABLE
-                    )
-                ),
-            ],
-            'invalid comparison' => [
-                'assertion' => $assertionWithInvalidComparison,
-                'expectedResult' => new InvalidResult(
-                    $assertionWithInvalidComparison,
-                    TypeInterface::ASSERTION,
-                    AssertionValidator::REASON_COMPARISON_INVALID
-                ),
-            ],
-            'is comparison missing expected value' => [
-                'assertion' => $isComparisonMissingExpectedValue,
-                'expectedResult' => new InvalidResult(
-                    $isComparisonMissingExpectedValue,
-                    TypeInterface::ASSERTION,
-                    AssertionValidator::REASON_EXPECTED_VALUE_MISSING
-                ),
-            ],
             'invalid expected value, expected value of correct type but invalid' => [
                 'assertion' => $assertionWithInvalidExpectedValue,
                 'expectedResult' => new InvalidResult(
@@ -149,19 +96,6 @@ class AssertionValidatorTest extends \PHPUnit\Framework\TestCase
                         $invalidValue,
                         TypeInterface::VALUE,
                         ValueValidator::REASON_PROPERTY_NAME_INVALID
-                    )
-                ),
-            ],
-            'invalid expected value, page element reference object value' => [
-                'assertion' => $assertionWithPageElementReferenceExpectedValue,
-                'expectedResult' => new InvalidResult(
-                    $assertionWithPageElementReferenceExpectedValue,
-                    TypeInterface::ASSERTION,
-                    AssertionValidator::REASON_EXPECTED_VALUE_INVALID,
-                    new InvalidResult(
-                        $pageElementReferenceValue,
-                        TypeInterface::VALUE,
-                        ValueValidator::REASON_UNACTIONABLE
                     )
                 ),
             ],
