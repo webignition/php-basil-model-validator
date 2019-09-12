@@ -5,8 +5,8 @@
 namespace webignition\BasilModelValidator\Tests\Unit;
 
 use webignition\BasilModel\Assertion\AssertionInterface;
-use webignition\BasilModel\Assertion\ExistsAssertion;
-use webignition\BasilModel\Assertion\IsAssertion;
+use webignition\BasilModel\Assertion\ComparisonAssertion;
+use webignition\BasilModel\Assertion\ExaminationAssertion;
 use webignition\BasilModel\Value\AssertionExaminedValue;
 use webignition\BasilModel\Value\AssertionExpectedValue;
 use webignition\BasilModel\Value\PageProperty;
@@ -58,18 +58,29 @@ class AssertionValidatorTest extends \PHPUnit\Framework\TestCase
     public function validateNotValidDataProvider(): array
     {
         $valueFactory = ValueFactory::createFactory();
+        $assertionFactory = AssertionFactory::createFactory();
 
-        $invalidValue = new PageProperty('$page.foo', 'foo');
+        $invalidValue = $valueFactory->createFromValueString('$page.foo');
+        $assertionWithInvalidExaminedValue = $assertionFactory->createFromAssertionString('$page.foo exists');
+        $assertionWithInvalidExpectedValue = $assertionFactory->createFromAssertionString('$page.url is $page.foo');
 
-        $assertionWithInvalidExaminedValue = new ExistsAssertion(
-            '',
-            new AssertionExaminedValue($invalidValue)
+        $examinationAssertionWithInvalidComparison = new ExaminationAssertion(
+            '$page.url foo',
+            new AssertionExaminedValue(
+                new PageProperty('$page.url', 'url')
+            ),
+            'foo'
         );
 
-        $assertionWithInvalidExpectedValue = new IsAssertion(
-            '',
-            new AssertionExaminedValue($valueFactory->createFromValueString('$page.url')),
-            new AssertionExpectedValue($invalidValue)
+        $comparisonAssertionWithInvalidComparison = new ComparisonAssertion(
+            '$page.url foo $page.url',
+            new AssertionExaminedValue(
+                new PageProperty('$page.url', 'url')
+            ),
+            'foo',
+            new AssertionExpectedValue(
+                new PageProperty('$page.url', 'url')
+            )
         );
 
         return [
@@ -97,6 +108,22 @@ class AssertionValidatorTest extends \PHPUnit\Framework\TestCase
                         TypeInterface::VALUE,
                         ValueValidator::REASON_PROPERTY_NAME_INVALID
                     )
+                ),
+            ],
+            'examination assertion with invalid comparison' => [
+                'assertion' => $examinationAssertionWithInvalidComparison,
+                'expectedResult' => new InvalidResult(
+                    $examinationAssertionWithInvalidComparison,
+                    TypeInterface::ASSERTION,
+                    AssertionValidator::REASON_COMPARISON_INVALID
+                ),
+            ],
+            'comparison assertion with invalid comparison' => [
+                'assertion' => $comparisonAssertionWithInvalidComparison,
+                'expectedResult' => new InvalidResult(
+                    $comparisonAssertionWithInvalidComparison,
+                    TypeInterface::ASSERTION,
+                    AssertionValidator::REASON_COMPARISON_INVALID
                 ),
             ],
         ];
