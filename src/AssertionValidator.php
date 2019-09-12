@@ -3,7 +3,8 @@
 namespace webignition\BasilModelValidator;
 
 use webignition\BasilModel\Assertion\AssertionInterface;
-use webignition\BasilModel\Assertion\ValueComparisonAssertionInterface;
+use webignition\BasilModel\Assertion\ComparisonAssertionInterface;
+use webignition\BasilModel\Assertion\ExaminationAssertionInterface;
 use webignition\BasilModelValidator\Identifier\IdentifierValidator;
 use webignition\BasilModelValidator\Result\InvalidResult;
 use webignition\BasilModelValidator\Result\InvalidResultInterface;
@@ -44,18 +45,20 @@ class AssertionValidator implements ValidatorInterface
             return InvalidResult::createUnhandledModelResult($model);
         }
 
-        $examinedValue = $model->getExaminedValue();
+        if ($model instanceof ExaminationAssertionInterface) {
+            $examinedValue = $model->getExaminedValue();
 
-        $examinedValueValidationResult = $this->valueValidator->validate($examinedValue);
-        if ($examinedValueValidationResult instanceof InvalidResultInterface) {
-            return $this->createInvalidResult(
-                $model,
-                self::REASON_EXAMINED_VALUE_INVALID,
-                $examinedValueValidationResult
-            );
+            $examinedValueValidationResult = $this->valueValidator->validate($examinedValue);
+            if ($examinedValueValidationResult instanceof InvalidResultInterface) {
+                return $this->createInvalidResult(
+                    $model,
+                    self::REASON_EXAMINED_VALUE_INVALID,
+                    $examinedValueValidationResult
+                );
+            }
         }
 
-        if ($model instanceof ValueComparisonAssertionInterface) {
+        if ($model instanceof ComparisonAssertionInterface) {
             $expectedValue = $model->getExpectedValue();
 
             $expectedValueValidationResult = $this->valueValidator->validate($expectedValue);

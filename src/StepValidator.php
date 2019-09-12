@@ -3,11 +3,13 @@
 namespace webignition\BasilModelValidator;
 
 use webignition\BasilModel\Action\InputActionInterface;
-use webignition\BasilModel\Assertion\ValueComparisonAssertionInterface;
+use webignition\BasilModel\Assertion\ComparisonAssertionInterface;
+use webignition\BasilModel\Assertion\ExaminationAssertionInterface;
+use webignition\BasilModel\Exception\InvalidAssertionExaminedValueException;
+use webignition\BasilModel\Exception\InvalidAssertionExpectedValueException;
 use webignition\BasilModel\Step\StepInterface;
 use webignition\BasilModel\Value\DataParameter;
 use webignition\BasilModel\Value\ValueInterface;
-use webignition\BasilModel\Value\WrappedValueInterface;
 use webignition\BasilModelValidator\Action\ActionValidator;
 use webignition\BasilModelValidator\Result\InvalidResult;
 use webignition\BasilModelValidator\Result\InvalidResultInterface;
@@ -52,6 +54,15 @@ class StepValidator implements ValidatorInterface
         return $model instanceof StepInterface;
     }
 
+    /**
+     * @param object $model
+     * @param array|null $context
+     *
+     * @return ResultInterface
+     *
+     * @throws InvalidAssertionExaminedValueException
+     * @throws InvalidAssertionExpectedValueException
+     */
     public function validate(object $model, ?array $context = []): ResultInterface
     {
         if (!$model instanceof StepInterface) {
@@ -90,25 +101,17 @@ class StepValidator implements ValidatorInterface
                 return $this->createInvalidResult($model, self::REASON_ASSERTION_INVALID, $assertionValidationResult);
             }
 
-            $examinedValue = $assertion->getExaminedValue();
+            if ($assertion instanceof ExaminationAssertionInterface) {
+                $examinedValue = $assertion->getExaminedValue()->getExaminedValue();
 
-            if ($examinedValue instanceof WrappedValueInterface) {
-                $examinedValue = $examinedValue->getWrappedValue();
-            }
-
-            if ($examinedValue instanceof ValueInterface) {
                 $examinedValueDataValueValidationResult = $this->validateDataValue($model, $examinedValue, $assertion);
                 if ($examinedValueDataValueValidationResult instanceof InvalidResultInterface) {
                     return $examinedValueDataValueValidationResult;
                 }
             }
 
-            if ($assertion instanceof ValueComparisonAssertionInterface) {
-                $expectedValue = $assertion->getExpectedValue();
-
-                if ($expectedValue instanceof WrappedValueInterface) {
-                    $expectedValue = $expectedValue->getWrappedValue();
-                }
+            if ($assertion instanceof ComparisonAssertionInterface) {
+                $expectedValue = $assertion->getExpectedValue()->getExpectedValue();
 
                 if ($expectedValue instanceof ValueInterface) {
                     $expectedValueDataParameterValidationResult = $this->validateDataValue(

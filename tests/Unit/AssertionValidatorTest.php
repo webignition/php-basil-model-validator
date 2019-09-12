@@ -4,9 +4,10 @@
 
 namespace webignition\BasilModelValidator\Tests\Unit;
 
+use webignition\BasilModel\Assertion\AssertionComparison;
 use webignition\BasilModel\Assertion\AssertionInterface;
-use webignition\BasilModel\Assertion\ExistsAssertion;
-use webignition\BasilModel\Assertion\IsAssertion;
+use webignition\BasilModel\Assertion\ComparisonAssertion;
+use webignition\BasilModel\Assertion\ExaminationAssertion;
 use webignition\BasilModel\Value\AssertionExaminedValue;
 use webignition\BasilModel\Value\AssertionExpectedValue;
 use webignition\BasilModel\Value\PageProperty;
@@ -61,14 +62,16 @@ class AssertionValidatorTest extends \PHPUnit\Framework\TestCase
 
         $invalidValue = new PageProperty('$page.foo', 'foo');
 
-        $assertionWithInvalidExaminedValue = new ExistsAssertion(
+        $assertionWithInvalidExaminedValue = new ExaminationAssertion(
             '',
-            new AssertionExaminedValue($invalidValue)
+            new AssertionExaminedValue($invalidValue),
+            AssertionComparison::EXISTS
         );
 
-        $assertionWithInvalidExpectedValue = new IsAssertion(
+        $assertionWithInvalidExpectedValue = new ComparisonAssertion(
             '',
             new AssertionExaminedValue($valueFactory->createFromValueString('$page.url')),
+            AssertionComparison::IS,
             new AssertionExpectedValue($invalidValue)
         );
 
