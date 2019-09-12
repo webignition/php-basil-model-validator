@@ -9,7 +9,8 @@ use webignition\BasilModel\Identifier\ElementIdentifier;
 use webignition\BasilModel\Value\AssertionExaminedValue;
 use webignition\BasilModel\Value\AttributeReference;
 use webignition\BasilModel\Value\AttributeValue;
-use webignition\BasilModel\Value\CssSelector;
+use webignition\BasilModel\Value\ElementExpression;
+use webignition\BasilModel\Value\ElementExpressionType;
 use webignition\BasilModel\Value\ElementValue;
 use webignition\BasilModel\Value\ValueInterface;
 use webignition\BasilModel\Value\WrappedValueInterface;
@@ -137,7 +138,7 @@ class ValueValidatorTest extends \PHPUnit\Framework\TestCase
             'type: element value' => [
                 'value' => new ElementValue(
                     new ElementIdentifier(
-                        new CssSelector('.selector')
+                        new ElementExpression('.selector', ElementExpressionType::CSS_SELECTOR)
                     )
                 ),
             ],
@@ -145,7 +146,7 @@ class ValueValidatorTest extends \PHPUnit\Framework\TestCase
                 'value' => new AttributeValue(
                     new AttributeIdentifier(
                         new ElementIdentifier(
-                            new CssSelector('.selector')
+                            new ElementExpression('.selector', ElementExpressionType::CSS_SELECTOR)
                         ),
                         'attribute_name'
                     )
