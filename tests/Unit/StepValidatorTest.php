@@ -8,6 +8,7 @@ use webignition\BasilModel\DataSet\DataSet;
 use webignition\BasilModel\DataSet\DataSetCollection;
 use webignition\BasilModel\Step\Step;
 use webignition\BasilModel\Step\StepInterface;
+use webignition\BasilModel\Value\PageProperty;
 use webignition\BasilModelFactory\Action\ActionFactory;
 use webignition\BasilModelFactory\AssertionFactory;
 use webignition\BasilModelValidator\Action\ActionValidator;
@@ -18,6 +19,7 @@ use webignition\BasilModelValidator\Result\InvalidResultInterface;
 use webignition\BasilModelValidator\Result\TypeInterface;
 use webignition\BasilModelValidator\Result\ValidResult;
 use webignition\BasilModelValidator\StepValidator;
+use webignition\BasilModelValidator\ValueValidator;
 
 class StepValidatorTest extends \PHPUnit\Framework\TestCase
 {
@@ -61,8 +63,10 @@ class StepValidatorTest extends \PHPUnit\Framework\TestCase
         $actionFactory = ActionFactory::createFactory();
         $assertionFactory = AssertionFactory::createFactory();
 
+        $invalidValue = new PageProperty('$page.foo', 'foo');
+
         $inputActionMissingValue = $actionFactory->createFromActionString('set ".selector" to');
-        $assertionWithInvalidComparison = $assertionFactory->createFromAssertionString('".selector" foo');
+        $assertionWithInvalidValue = $assertionFactory->createFromAssertionString('$page.foo exists');
 
         return [
             'invalid action: input action missing value' => [
@@ -78,16 +82,21 @@ class StepValidatorTest extends \PHPUnit\Framework\TestCase
                     )
                 ),
             ],
-            'invalid assertion: assertion with invalid comparison' => [
-                'step' => new Step([], [$assertionWithInvalidComparison]),
+            'invalid assertion: assertion with invalid examined value' => [
+                'step' => new Step([], [$assertionWithInvalidValue]),
                 'expectedResult' => new InvalidResult(
-                    new Step([], [$assertionWithInvalidComparison]),
+                    new Step([], [$assertionWithInvalidValue]),
                     TypeInterface::STEP,
                     StepValidator::REASON_ASSERTION_INVALID,
                     new InvalidResult(
-                        $assertionWithInvalidComparison,
+                        $assertionWithInvalidValue,
                         TypeInterface::ASSERTION,
-                        AssertionValidator::REASON_COMPARISON_INVALID
+                        AssertionValidator::REASON_EXAMINED_VALUE_INVALID,
+                        new InvalidResult(
+                            $invalidValue,
+                            TypeInterface::VALUE,
+                            ValueValidator::REASON_PROPERTY_NAME_INVALID
+                        )
                     )
                 ),
             ],

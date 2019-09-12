@@ -6,6 +6,7 @@ use webignition\BasilModel\Action\InputActionInterface;
 use webignition\BasilModel\Step\StepInterface;
 use webignition\BasilModel\Value\DataParameter;
 use webignition\BasilModel\Value\ValueInterface;
+use webignition\BasilModel\Value\WrappedValueInterface;
 use webignition\BasilModelValidator\Action\ActionValidator;
 use webignition\BasilModelValidator\Result\InvalidResult;
 use webignition\BasilModelValidator\Result\InvalidResultInterface;
@@ -90,6 +91,10 @@ class StepValidator implements ValidatorInterface
 
             $examinedValue = $assertion->getExaminedValue();
 
+            if ($examinedValue instanceof WrappedValueInterface) {
+                $examinedValue = $examinedValue->getWrappedValue();
+            }
+
             if ($examinedValue instanceof ValueInterface) {
                 $examinedValueDataValueValidationResult = $this->validateDataValue($model, $examinedValue, $assertion);
                 if ($examinedValueDataValueValidationResult instanceof InvalidResultInterface) {
@@ -98,6 +103,10 @@ class StepValidator implements ValidatorInterface
             }
 
             $expectedValue = $assertion->getExpectedValue();
+
+            if ($expectedValue instanceof WrappedValueInterface) {
+                $expectedValue = $expectedValue->getWrappedValue();
+            }
 
             if ($expectedValue instanceof ValueInterface) {
                 $expectedValueDataParameterValidationResult = $this->validateDataValue(
