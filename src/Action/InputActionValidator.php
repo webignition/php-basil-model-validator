@@ -5,7 +5,6 @@ namespace webignition\BasilModelValidator\Action;
 use webignition\BasilModel\Action\ActionInterface;
 use webignition\BasilModel\Action\ActionTypes;
 use webignition\BasilModel\Action\InputActionInterface;
-use webignition\BasilModel\Value\ValueInterface;
 use webignition\BasilModelValidator\Identifier\IdentifierValidator;
 use webignition\BasilModelValidator\Result\InvalidResult;
 use webignition\BasilModelValidator\Result\InvalidResultInterface;
@@ -60,10 +59,6 @@ class InputActionValidator implements ValidatorInterface
 
         $value = $model->getValue();
 
-        if (!$value instanceof ValueInterface) {
-            return $this->createInvalidResult($model, ActionValidator::REASON_INPUT_ACTION_VALUE_MISSING);
-        }
-
         if (!$value->isActionable()) {
             return $this->createInvalidResult($model, ActionValidator::REASON_INPUT_ACTION_UNACTIONABLE_VALUE);
         }
@@ -88,10 +83,6 @@ class InputActionValidator implements ValidatorInterface
     private function hasToKeyword(InputActionInterface $action): bool
     {
         $arguments = $action->getArguments();
-
-        if (mb_substr_count($arguments, self::IDENTIFIER_KEYWORD) === 0) {
-            return false;
-        }
 
         $argumentsWithoutSelector = mb_substr($arguments, mb_strlen((string) $action->getIdentifier()));
 

@@ -6,7 +6,7 @@ namespace webignition\BasilModelValidator\Tests\Unit;
 
 use webignition\BasilModel\Identifier\AttributeIdentifier;
 use webignition\BasilModel\Identifier\ElementIdentifier;
-use webignition\BasilModel\Value\AssertionExaminedValue;
+use webignition\BasilModel\Value\Assertion\AssertableExaminedValue;
 use webignition\BasilModel\Value\AttributeReference;
 use webignition\BasilModel\Value\AttributeValue;
 use webignition\BasilModel\Value\ElementExpression;
@@ -72,7 +72,7 @@ class ValueValidatorTest extends \PHPUnit\Framework\TestCase
                 'expectedReason' => ValueValidator::REASON_PROPERTY_NAME_INVALID,
             ],
             'invalid assertion examined value (invalid page property name)' => [
-                'value' => new AssertionExaminedValue(
+                'value' => new AssertableExaminedValue(
                     $valueFactory->createFromValueString('$page.foo')
                 ),
                 'expectedReason' => ValueValidator::REASON_PROPERTY_NAME_INVALID,

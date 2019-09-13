@@ -51,19 +51,47 @@ class InteractionActionValidatorTest extends \PHPUnit\Framework\TestCase
     {
         return [
             'input action' => [
-                'action' => new InputAction('set', null, null, ''),
+                'action' => new InputAction(
+                    'set ".selector" to ""',
+                    new ElementIdentifier(
+                        new ElementExpression('.selector', ElementExpressionType::CSS_SELECTOR)
+                    ),
+                    new LiteralValue(''),
+                    ''
+                ),
                 'expectedHandles' => false,
             ],
             'interaction action: click' => [
-                'action' => new InteractionAction('click', ActionTypes::CLICK, null, ''),
+                'action' => new InteractionAction(
+                    'click ".selector"',
+                    ActionTypes::CLICK,
+                    new ElementIdentifier(
+                        new ElementExpression('.selector', ElementExpressionType::CSS_SELECTOR)
+                    ),
+                    '".selector"'
+                ),
                 'expectedHandles' => true,
             ],
             'interaction action: submit' => [
-                'action' => new InteractionAction('submit', ActionTypes::SUBMIT, null, ''),
+                'action' => new InteractionAction(
+                    'submit ".selector"',
+                    ActionTypes::SUBMIT,
+                    new ElementIdentifier(
+                        new ElementExpression('.selector', ElementExpressionType::CSS_SELECTOR)
+                    ),
+                    '".selector"'
+                ),
                 'expectedHandles' => true,
             ],
             'interaction action: wait-for' => [
-                'action' => new InteractionAction('wait-for', ActionTypes::WAIT_FOR, null, ''),
+                'action' => new InteractionAction(
+                    'wait-for ".selector"',
+                    ActionTypes::WAIT_FOR,
+                    new ElementIdentifier(
+                        new ElementExpression('.selector', ElementExpressionType::CSS_SELECTOR)
+                    ),
+                    '".selector"'
+                ),
                 'expectedHandles' => true,
             ],
             'no arguments action' => [
@@ -101,10 +129,6 @@ class InteractionActionValidatorTest extends \PHPUnit\Framework\TestCase
 
     public function validateNotValidDataProvider(): array
     {
-        $actionFactory = ActionFactory::createFactory();
-
-        $interactionActionWithoutIdentifier = $actionFactory->createFromActionString('click');
-
         $invalidIdentifier = new ElementIdentifier(new ElementExpression('', ElementExpressionType::CSS_SELECTOR));
 
         $interactionActionWithInvalidIdentifier = new InteractionAction(
@@ -129,14 +153,6 @@ class InteractionActionValidatorTest extends \PHPUnit\Framework\TestCase
         );
 
         return [
-            'interaction action without identifier' => [
-                'action' => $interactionActionWithoutIdentifier,
-                'expectedResult' => new InvalidResult(
-                    $interactionActionWithoutIdentifier,
-                    TypeInterface::ACTION,
-                    ActionValidator::REASON_IDENTIFIER_MISSING
-                ),
-            ],
             'interaction action with invalid identifier' => [
                 'action' => $interactionActionWithInvalidIdentifier,
                 'expectedResult' => new InvalidResult(

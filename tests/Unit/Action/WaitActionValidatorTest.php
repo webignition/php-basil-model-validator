@@ -4,11 +4,15 @@
 namespace webignition\BasilModelValidator\Tests\Unit\Action;
 
 use webignition\BasilModel\Action\ActionInterface;
+use webignition\BasilModel\Action\ActionTypes;
 use webignition\BasilModel\Action\InputAction;
 use webignition\BasilModel\Action\InteractionAction;
 use webignition\BasilModel\Action\NoArgumentsAction;
 use webignition\BasilModel\Action\UnrecognisedAction;
 use webignition\BasilModel\Action\WaitAction;
+use webignition\BasilModel\Identifier\ElementIdentifier;
+use webignition\BasilModel\Value\ElementExpression;
+use webignition\BasilModel\Value\ElementExpressionType;
 use webignition\BasilModel\Value\LiteralValue;
 use webignition\BasilModel\Value\PageElementReference;
 use webignition\BasilModelFactory\Action\ActionFactory;
@@ -45,11 +49,25 @@ class WaitActionValidatorTest extends \PHPUnit\Framework\TestCase
     {
         return [
             'input action' => [
-                'action' => new InputAction('set', null, null, ''),
+                'action' => new InputAction(
+                    'set ".selector" to ""',
+                    new ElementIdentifier(
+                        new ElementExpression('.selector', ElementExpressionType::CSS_SELECTOR)
+                    ),
+                    new LiteralValue(''),
+                    ''
+                ),
                 'expectedHandles' => false,
             ],
             'interaction action' => [
-                'action' => new InteractionAction('click', '', null, ''),
+                'action' => new InteractionAction(
+                    'click ".selector"',
+                    ActionTypes::CLICK,
+                    new ElementIdentifier(
+                        new ElementExpression('.selector', ElementExpressionType::CSS_SELECTOR)
+                    ),
+                    '".selector"'
+                ),
                 'expectedHandles' => false,
             ],
             'no arguments action' => [
