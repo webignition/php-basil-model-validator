@@ -10,6 +10,9 @@ use webignition\BasilModel\Action\InteractionAction;
 use webignition\BasilModel\Action\NoArgumentsAction;
 use webignition\BasilModel\Action\UnrecognisedAction;
 use webignition\BasilModel\Action\WaitAction;
+use webignition\BasilModel\Identifier\ElementIdentifier;
+use webignition\BasilModel\Value\ElementExpression;
+use webignition\BasilModel\Value\ElementExpressionType;
 use webignition\BasilModel\Value\LiteralValue;
 use webignition\BasilModelFactory\Action\ActionFactory;
 use webignition\BasilModelValidator\Action\NoArgumentsActionValidator;
@@ -43,11 +46,25 @@ class NoArgumentsActionValidatorTest extends \PHPUnit\Framework\TestCase
     {
         return [
             'input action' => [
-                'action' => new InputAction('set', null, null, ''),
+                'action' => new InputAction(
+                    'set ".selector" to ""',
+                    new ElementIdentifier(
+                        new ElementExpression('.selector', ElementExpressionType::CSS_SELECTOR)
+                    ),
+                    new LiteralValue(''),
+                    ''
+                ),
                 'expectedHandles' => false,
             ],
             'interaction action' => [
-                'action' => new InteractionAction('click', '', null, ''),
+                'action' => new InteractionAction(
+                    'click ".selector"',
+                    ActionTypes::CLICK,
+                    new ElementIdentifier(
+                        new ElementExpression('.selector', ElementExpressionType::CSS_SELECTOR)
+                    ),
+                    '".selector"'
+                ),
                 'expectedHandles' => false,
             ],
             'no arguments action: reload' => [

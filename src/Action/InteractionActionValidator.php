@@ -6,7 +6,6 @@ use webignition\BasilModel\Action\ActionInterface;
 use webignition\BasilModel\Action\ActionTypes;
 use webignition\BasilModel\Action\InteractionActionInterface;
 use webignition\BasilModel\Identifier\AttributeIdentifierInterface;
-use webignition\BasilModel\Identifier\IdentifierInterface;
 use webignition\BasilModelValidator\Identifier\IdentifierValidator;
 use webignition\BasilModelValidator\Result\InvalidResult;
 use webignition\BasilModelValidator\Result\InvalidResultInterface;
@@ -44,10 +43,6 @@ class InteractionActionValidator implements ValidatorInterface
         }
 
         $identifier = $model->getIdentifier();
-
-        if (!$identifier instanceof IdentifierInterface) {
-            return $this->createInvalidResult($model, ActionValidator::REASON_IDENTIFIER_MISSING);
-        }
 
         if ($identifier instanceof AttributeIdentifierInterface) {
             return $this->createInvalidResult($model, ActionValidator::REASON_UNACTIONABLE_IDENTIFIER);

@@ -5,6 +5,7 @@
 namespace webignition\BasilModelValidator\Tests\Unit\Action;
 
 use webignition\BasilModel\Action\ActionInterface;
+use webignition\BasilModel\Action\ActionTypes;
 use webignition\BasilModel\Action\InputAction;
 use webignition\BasilModel\Action\InteractionAction;
 use webignition\BasilModel\Action\NoArgumentsAction;
@@ -52,11 +53,25 @@ class InputActionValidatorTest extends \PHPUnit\Framework\TestCase
     {
         return [
             'input action' => [
-                'action' => new InputAction('set', null, null, ''),
+                'action' => new InputAction(
+                    'set ".selector" to ""',
+                    new ElementIdentifier(
+                        new ElementExpression('.selector', ElementExpressionType::CSS_SELECTOR)
+                    ),
+                    new LiteralValue(''),
+                    ''
+                ),
                 'expectedHandles' => true,
             ],
             'interaction action' => [
-                'action' => new InteractionAction('click', '', null, ''),
+                'action' => new InteractionAction(
+                    'click ".selector"',
+                    ActionTypes::CLICK,
+                    new ElementIdentifier(
+                        new ElementExpression('.selector', ElementExpressionType::CSS_SELECTOR)
+                    ),
+                    '".selector"'
+                ),
                 'expectedHandles' => false,
             ],
             'no arguments action' => [
@@ -97,14 +112,6 @@ class InputActionValidatorTest extends \PHPUnit\Framework\TestCase
         $actionFactory = ActionFactory::createFactory();
         $valueFactory = ValueFactory::createFactory();
 
-        $inputActionMissingIdentifier = new InputAction(
-            'set to "foo"',
-            null,
-            new LiteralValue('foo'),
-            ' to "foo"'
-        );
-
-        $inputActionMissingValue = $actionFactory->createFromActionString('set ".selector" to');
         $inputActionMissingToKeyword = $actionFactory->createFromActionString('set ".selector" "foo"');
         $inputActionWithIdentifierContainingToKeywordMissingToKeyword = $actionFactory->createFromActionString(
             'set ".selector to value" "foo"'
@@ -147,22 +154,6 @@ class InputActionValidatorTest extends \PHPUnit\Framework\TestCase
         );
 
         return [
-            'input action missing identifier' => [
-                'action' => $inputActionMissingIdentifier,
-                'expectedResult' => new InvalidResult(
-                    $inputActionMissingIdentifier,
-                    TypeInterface::ACTION,
-                    ActionValidator::REASON_IDENTIFIER_MISSING
-                ),
-            ],
-            'input action missing value' => [
-                'action' => $inputActionMissingValue,
-                'expectedResult' => new InvalidResult(
-                    $inputActionMissingValue,
-                    TypeInterface::ACTION,
-                    ActionValidator::REASON_INPUT_ACTION_VALUE_MISSING
-                ),
-            ],
             'input action with identifier and value, missing "to" keyword' => [
                 'action' => $inputActionMissingToKeyword,
                 'expectedResult' => new InvalidResult(

@@ -4,10 +4,12 @@
 
 namespace webignition\BasilModelValidator\Tests\Unit;
 
+use webignition\BasilModel\Action\WaitAction;
 use webignition\BasilModel\DataSet\DataSet;
 use webignition\BasilModel\DataSet\DataSetCollection;
 use webignition\BasilModel\Step\Step;
 use webignition\BasilModel\Step\StepInterface;
+use webignition\BasilModel\Value\LiteralValue;
 use webignition\BasilModel\Value\PageProperty;
 use webignition\BasilModelFactory\Action\ActionFactory;
 use webignition\BasilModelFactory\AssertionFactory;
@@ -60,25 +62,25 @@ class StepValidatorTest extends \PHPUnit\Framework\TestCase
 
     public function validateNotValidDataProvider(): array
     {
-        $actionFactory = ActionFactory::createFactory();
         $assertionFactory = AssertionFactory::createFactory();
 
         $invalidValue = new PageProperty('$page.foo', 'foo');
 
-        $inputActionMissingValue = $actionFactory->createFromActionString('set ".selector" to');
         $assertionWithInvalidValue = $assertionFactory->createFromAssertionString('$page.foo exists');
 
+        $waitActionNoDuration = new WaitAction('wait', new LiteralValue(''));
+
         return [
-            'invalid action: input action missing value' => [
-                'step' => new Step([$inputActionMissingValue], []),
+            'invalid action: wait action missing duration' => [
+                'step' => new Step([$waitActionNoDuration], []),
                 'expectedResult' => new InvalidResult(
-                    new Step([$inputActionMissingValue], []),
+                    new Step([$waitActionNoDuration], []),
                     TypeInterface::STEP,
                     StepValidator::REASON_ACTION_INVALID,
                     new InvalidResult(
-                        $inputActionMissingValue,
+                        $waitActionNoDuration,
                         TypeInterface::ACTION,
-                        ActionValidator::REASON_INPUT_ACTION_VALUE_MISSING
+                        ActionValidator::REASON_WAIT_ACTION_DURATION_MISSING
                     )
                 ),
             ],
