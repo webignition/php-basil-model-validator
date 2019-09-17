@@ -5,7 +5,7 @@ namespace webignition\BasilModelValidator\Action;
 use webignition\BasilModel\Action\ActionInterface;
 use webignition\BasilModel\Action\ActionTypes;
 use webignition\BasilModel\Action\InteractionActionInterface;
-use webignition\BasilModel\Identifier\AttributeIdentifierInterface;
+use webignition\BasilModel\Identifier\DomIdentifierInterface;
 use webignition\BasilModelValidator\Identifier\IdentifierValidator;
 use webignition\BasilModelValidator\Result\InvalidResult;
 use webignition\BasilModelValidator\Result\InvalidResultInterface;
@@ -44,7 +44,7 @@ class InteractionActionValidator implements ValidatorInterface
 
         $identifier = $model->getIdentifier();
 
-        if ($identifier instanceof AttributeIdentifierInterface) {
+        if ($identifier instanceof DomIdentifierInterface && null !== $identifier->getAttributeName()) {
             return $this->createInvalidResult($model, ActionValidator::REASON_UNACTIONABLE_IDENTIFIER);
         }
 

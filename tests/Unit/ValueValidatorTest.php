@@ -4,14 +4,11 @@
 
 namespace webignition\BasilModelValidator\Tests\Unit;
 
-use webignition\BasilModel\Identifier\AttributeIdentifier;
-use webignition\BasilModel\Identifier\ElementIdentifier;
+use webignition\BasilModel\Identifier\DomIdentifier;
 use webignition\BasilModel\Value\Assertion\AssertableExaminedValue;
-use webignition\BasilModel\Value\AttributeReference;
-use webignition\BasilModel\Value\AttributeValue;
+use webignition\BasilModel\Value\DomIdentifierValue;
 use webignition\BasilModel\Value\ElementExpression;
 use webignition\BasilModel\Value\ElementExpressionType;
-use webignition\BasilModel\Value\ElementValue;
 use webignition\BasilModel\Value\ValueInterface;
 use webignition\BasilModel\Value\WrappedValueInterface;
 use webignition\BasilModelFactory\ValueFactory;
@@ -89,11 +86,8 @@ class ValueValidatorTest extends \PHPUnit\Framework\TestCase
                 'value' => $valueFactory->createFromValueString('page_import_name.elements.element_name'),
                 'expectedReason' => ValueValidator::REASON_UNACTIONABLE,
             ],
-            'attribute parameter is unactionable' => [
-                'value' => new AttributeReference(
-                    '$elements.element_name.attribute_name',
-                    'element_name.attribute_name'
-                ),
+            'attribute reference is unactionable' => [
+                'value' => $valueFactory->createFromValueString('$elements.element_name.attribute_name'),
                 'expectedReason' => ValueValidator::REASON_UNACTIONABLE,
             ],
         ];
@@ -136,20 +130,17 @@ class ValueValidatorTest extends \PHPUnit\Framework\TestCase
                 'value' => $valueFactory->createFromIdentifierString('"//foo"'),
             ],
             'type: element value' => [
-                'value' => new ElementValue(
-                    new ElementIdentifier(
+                'value' => new DomIdentifierValue(
+                    new DomIdentifier(
                         new ElementExpression('.selector', ElementExpressionType::CSS_SELECTOR)
                     )
                 ),
             ],
             'type: attribute value' => [
-                'value' => new AttributeValue(
-                    new AttributeIdentifier(
-                        new ElementIdentifier(
-                            new ElementExpression('.selector', ElementExpressionType::CSS_SELECTOR)
-                        ),
-                        'attribute_name'
-                    )
+                'value' => new DomIdentifierValue(
+                    (new DomIdentifier(
+                        new ElementExpression('.selector', ElementExpressionType::CSS_SELECTOR)
+                    ))->withAttributeName('attribute_name')
                 ),
             ],
         ];

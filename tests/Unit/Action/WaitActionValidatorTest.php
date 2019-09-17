@@ -1,4 +1,5 @@
 <?php
+/** @noinspection PhpUnhandledExceptionInspection */
 /** @noinspection PhpDocSignatureInspection */
 
 namespace webignition\BasilModelValidator\Tests\Unit\Action;
@@ -10,7 +11,7 @@ use webignition\BasilModel\Action\InteractionAction;
 use webignition\BasilModel\Action\NoArgumentsAction;
 use webignition\BasilModel\Action\UnrecognisedAction;
 use webignition\BasilModel\Action\WaitAction;
-use webignition\BasilModel\Identifier\ElementIdentifier;
+use webignition\BasilModel\Identifier\DomIdentifier;
 use webignition\BasilModel\Value\ElementExpression;
 use webignition\BasilModel\Value\ElementExpressionType;
 use webignition\BasilModel\Value\LiteralValue;
@@ -51,7 +52,7 @@ class WaitActionValidatorTest extends \PHPUnit\Framework\TestCase
             'input action' => [
                 'action' => new InputAction(
                     'set ".selector" to ""',
-                    new ElementIdentifier(
+                    new DomIdentifier(
                         new ElementExpression('.selector', ElementExpressionType::CSS_SELECTOR)
                     ),
                     new LiteralValue(''),
@@ -63,7 +64,7 @@ class WaitActionValidatorTest extends \PHPUnit\Framework\TestCase
                 'action' => new InteractionAction(
                     'click ".selector"',
                     ActionTypes::CLICK,
-                    new ElementIdentifier(
+                    new DomIdentifier(
                         new ElementExpression('.selector', ElementExpressionType::CSS_SELECTOR)
                     ),
                     '".selector"'

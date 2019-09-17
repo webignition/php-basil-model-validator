@@ -3,10 +3,11 @@
 
 namespace webignition\BasilModelValidator\Tests\Unit\Result;
 
-use webignition\BasilModel\Identifier\ElementIdentifier;
+use webignition\BasilModel\Identifier\DomIdentifier;
 use webignition\BasilModel\Value\ElementExpression;
 use webignition\BasilModel\Value\ElementExpressionType;
-use webignition\BasilModel\Value\PageProperty;
+use webignition\BasilModel\Value\ObjectValue;
+use webignition\BasilModel\Value\ObjectValueType;
 use webignition\BasilModelFactory\ValueFactory;
 use webignition\BasilModelValidator\Identifier\IdentifierValidator;
 use webignition\BasilModelValidator\Result\InvalidResult;
@@ -17,7 +18,7 @@ class InvalidResultTest extends \PHPUnit\Framework\TestCase
 {
     public function testCreate()
     {
-        $model = new ElementIdentifier(
+        $model = new DomIdentifier(
             new ElementExpression('.selector', ElementExpressionType::CSS_SELECTOR)
         );
 
@@ -56,7 +57,7 @@ class InvalidResultTest extends \PHPUnit\Framework\TestCase
             ValueValidator::REASON_PROPERTY_NAME_INVALID
         );
 
-        $invalidPageObjectPropertyValue = new PageProperty('$page.foo', 'foo');
+        $invalidPageObjectPropertyValue = new ObjectValue(ObjectValueType::PAGE_PROPERTY, '$page.foo', 'foo');
 
         $identifierValidationInvalidResult = new InvalidResult(
             $invalidPageObjectPropertyValue,

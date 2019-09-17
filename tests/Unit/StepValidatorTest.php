@@ -10,7 +10,8 @@ use webignition\BasilModel\DataSet\DataSetCollection;
 use webignition\BasilModel\Step\Step;
 use webignition\BasilModel\Step\StepInterface;
 use webignition\BasilModel\Value\LiteralValue;
-use webignition\BasilModel\Value\PageProperty;
+use webignition\BasilModel\Value\ObjectValue;
+use webignition\BasilModel\Value\ObjectValueType;
 use webignition\BasilModelFactory\Action\ActionFactory;
 use webignition\BasilModelFactory\AssertionFactory;
 use webignition\BasilModelValidator\Action\ActionValidator;
@@ -64,7 +65,7 @@ class StepValidatorTest extends \PHPUnit\Framework\TestCase
     {
         $assertionFactory = AssertionFactory::createFactory();
 
-        $invalidValue = new PageProperty('$page.foo', 'foo');
+        $invalidValue = new ObjectValue(ObjectValueType::PAGE_PROPERTY, '$page.foo', 'foo');
 
         $assertionWithInvalidValue = $assertionFactory->createFromAssertionString('$page.foo exists');
 

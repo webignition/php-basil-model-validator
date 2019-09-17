@@ -2,7 +2,7 @@
 
 namespace webignition\BasilModelValidator;
 
-use webignition\BasilModel\Identifier\ElementIdentifierInterface;
+use webignition\BasilModel\Identifier\DomIdentifierInterface;
 use webignition\BasilModel\Page\PageInterface;
 use webignition\BasilModelValidator\Result\InvalidResult;
 use webignition\BasilModelValidator\Result\ResultInterface;
@@ -39,7 +39,8 @@ class PageValidator implements ValidatorInterface
         $identifierCollection = $model->getIdentifierCollection();
 
         foreach ($identifierCollection as $identifier) {
-            if (!$identifier instanceof ElementIdentifierInterface) {
+            if (!$identifier instanceof DomIdentifierInterface ||
+                ($identifier instanceof DomIdentifierInterface && null !== $identifier->getAttributeName())) {
                 $invalidResult = new InvalidResult($model, TypeInterface::PAGE, self::REASON_INVALID_IDENTIFIER_TYPE);
                 $invalidResult = $invalidResult->withContext([
                     self::CONTEXT_IDENTIFIER_NAME => $identifier,

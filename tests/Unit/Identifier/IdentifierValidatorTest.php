@@ -4,13 +4,13 @@
 
 namespace webignition\BasilModelValidator\Tests\Unit\Identifier;
 
-use webignition\BasilModel\Identifier\AttributeIdentifier;
-use webignition\BasilModel\Identifier\ElementIdentifier;
+use webignition\BasilModel\Identifier\DomIdentifier;
 use webignition\BasilModel\Identifier\IdentifierInterface;
 use webignition\BasilModel\Identifier\ReferenceIdentifier;
+use webignition\BasilModel\Value\DomIdentifierReference;
+use webignition\BasilModel\Value\DomIdentifierReferenceType;
 use webignition\BasilModel\Value\ElementExpression;
 use webignition\BasilModel\Value\ElementExpressionType;
-use webignition\BasilModel\Value\ElementReference;
 use webignition\BasilModelFactory\Identifier\IdentifierFactory;
 use webignition\BasilModelValidator\Identifier\IdentifierValidator;
 use webignition\BasilModelValidator\Result\InvalidResult;
@@ -60,37 +60,28 @@ class IdentifierValidatorTest extends \PHPUnit\Framework\TestCase
     {
         $identifierFactory = IdentifierFactory::createFactory();
 
-        $emptyCssSelectorIdentifier = new ElementIdentifier(
-            new ElementExpression('', ElementExpressionType::CSS_SELECTOR)
-        );
+        $cssElementExpression = new ElementExpression('.selector', ElementExpressionType::CSS_SELECTOR);
+        $emptyCssElementExpression = new ElementExpression('', ElementExpressionType::CSS_SELECTOR);
+        $emptyXpathElementExpression = new ElementExpression('', ElementExpressionType::XPATH_EXPRESSION);
 
-        $emptyXpathExpressionIdentifier = new ElementIdentifier(
-            new ElementExpression('', ElementExpressionType::XPATH_EXPRESSION)
-        );
+        $emptyCssSelectorIdentifier = new DomIdentifier($emptyCssElementExpression);
+        $emptyXpathExpressionIdentifier = new DomIdentifier($emptyXpathElementExpression);
 
-        $identifierWithInvalidParent = (new ElementIdentifier(
-            new ElementExpression('.selector', ElementExpressionType::CSS_SELECTOR)
-        ))->withParentIdentifier($emptyCssSelectorIdentifier);
+        $identifierWithInvalidParent =
+            (new DomIdentifier($cssElementExpression))->withParentIdentifier($emptyCssSelectorIdentifier);
 
         $identifierWithPageElementReference = $identifierFactory->create('page_import.elements.element_name');
         $identifierWithElementParameter = ReferenceIdentifier::createElementReferenceIdentifier(
-            new ElementReference(
+            new DomIdentifierReference(
+                DomIdentifierReferenceType::ELEMENT,
                 '$elements.element_name',
                 'element_name'
             )
         );
 
-        $attributeIdentifierWithInvalidElementIdentifier = new AttributeIdentifier(
-            $emptyCssSelectorIdentifier,
-            'attribute_name'
-        );
-
-        $attributeIdentifierWithEmptyAttributeName = new AttributeIdentifier(
-            TestIdentifierFactory::createElementIdentifier(
-                new ElementExpression('.selector', ElementExpressionType::CSS_SELECTOR)
-            ),
-            ''
-        );
+        $attributeIdentifierWithEmptyAttributeName = (new DomIdentifier(
+            $cssElementExpression
+        ))->withAttributeName('');
 
         return [
             'invalid type, page element reference' => [
@@ -138,25 +129,12 @@ class IdentifierValidatorTest extends \PHPUnit\Framework\TestCase
                     )
                 ),
             ],
-            'attribute identifier with invalid element identifier' => [
-                'identifier' => $attributeIdentifierWithInvalidElementIdentifier,
-                'expectedResult' => new InvalidResult(
-                    $attributeIdentifierWithInvalidElementIdentifier,
-                    TypeInterface::IDENTIFIER,
-                    IdentifierValidator::REASON_INVALID_ELEMENT_IDENTIFIER,
-                    new InvalidResult(
-                        $emptyCssSelectorIdentifier,
-                        TypeInterface::IDENTIFIER,
-                        IdentifierValidator::REASON_ELEMENT_EXPRESSION_MISSING
-                    )
-                ),
-            ],
             'attribute identifier with empty attribute name' => [
                 'identifier' => $attributeIdentifierWithEmptyAttributeName,
                 'expectedResult' => new InvalidResult(
                     $attributeIdentifierWithEmptyAttributeName,
                     TypeInterface::IDENTIFIER,
-                    IdentifierValidator::REASON_ATTRIBUTE_NAME_MISSING
+                    IdentifierValidator::REASON_ATTRIBUTE_NAME_EMPTY
                 ),
             ],
         ];
@@ -176,27 +154,27 @@ class IdentifierValidatorTest extends \PHPUnit\Framework\TestCase
     {
         $cssSelector = new ElementExpression('.selector', ElementExpressionType::CSS_SELECTOR);
 
-        $parentIdentifier = new ElementIdentifier(
+        $cssElementIdentifier = TestIdentifierFactory::createElementIdentifier($cssSelector);
+        $attributeIdentifier = $cssElementIdentifier->withAttributeName('attribute_name');
+
+        $parentIdentifier = new DomIdentifier(
             new ElementExpression('.parent', ElementExpressionType::CSS_SELECTOR)
         );
 
         return [
             'element identifier: css selector' => [
-                'identifier' => TestIdentifierFactory::createElementIdentifier($cssSelector)
+                'identifier' => $cssElementIdentifier,
             ],
             'element identifier: css selector with parent' => [
-                'identifier' => TestIdentifierFactory::createElementIdentifier($cssSelector, 1, $parentIdentifier)
+                'identifier' => $cssElementIdentifier->withParentIdentifier($parentIdentifier),
             ],
             'element identifier: xpath expression' => [
-                'identifier' => TestIdentifierFactory::createElementIdentifier(
+                'identifier' => new DomIdentifier(
                     new ElementExpression('//h1', ElementExpressionType::XPATH_EXPRESSION)
                 ),
             ],
             'attribute identifier' => [
-                'identifier' => new AttributeIdentifier(
-                    TestIdentifierFactory::createElementIdentifier($cssSelector),
-                    'attribute_name'
-                ),
+                'identifier' => $attributeIdentifier,
             ],
         ];
     }
