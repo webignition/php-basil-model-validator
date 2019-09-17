@@ -4,21 +4,22 @@
 namespace webignition\BasilModelValidator\Tests\Unit;
 
 use Nyholm\Psr7\Uri;
-use webignition\BasilModel\Identifier\AttributeIdentifier;
-use webignition\BasilModel\Identifier\ElementIdentifier;
+use webignition\BasilModel\Identifier\DomIdentifier;
 use webignition\BasilModel\Identifier\IdentifierCollection;
 use webignition\BasilModel\Identifier\ReferenceIdentifier;
 use webignition\BasilModel\Page\Page;
 use webignition\BasilModel\Page\PageInterface;
+use webignition\BasilModel\Value\DomIdentifierReference;
+use webignition\BasilModel\Value\DomIdentifierReferenceType;
 use webignition\BasilModel\Value\ElementExpression;
 use webignition\BasilModel\Value\ElementExpressionType;
-use webignition\BasilModel\Value\ElementReference;
 use webignition\BasilModel\Value\PageElementReference;
 use webignition\BasilModelValidator\PageValidator;
 use webignition\BasilModelValidator\Result\InvalidResult;
 use webignition\BasilModelValidator\Result\InvalidResultInterface;
 use webignition\BasilModelValidator\Result\TypeInterface;
 use webignition\BasilModelValidator\Result\ValidResult;
+use webignition\BasilTestIdentifierFactory\TestIdentifierFactory;
 
 class PageValidatorTest extends \PHPUnit\Framework\TestCase
 {
@@ -79,7 +80,7 @@ class PageValidatorTest extends \PHPUnit\Framework\TestCase
         );
 
         $elementParameterIdentifier = (ReferenceIdentifier::createElementReferenceIdentifier(
-            new ElementReference('$elements.element_name', 'element_name')
+            new DomIdentifierReference(DomIdentifierReferenceType::ELEMENT, '$elements.element_name', 'element_name')
         ))->withName('name');
 
         $pageWithElementParameterIdentifier = new Page(
@@ -89,12 +90,11 @@ class PageValidatorTest extends \PHPUnit\Framework\TestCase
             ])
         );
 
-        $attributeIdentifier = (new AttributeIdentifier(
-            new ElementIdentifier(
-                new ElementExpression('.selector', ElementExpressionType::CSS_SELECTOR)
-            ),
-            'attribute_name'
-        ))->withName('name');
+        $attributeIdentifier = (TestIdentifierFactory::createElementIdentifier(
+            new ElementExpression('.selector', ElementExpressionType::CSS_SELECTOR),
+            null,
+            'name'
+        ))->withAttributeName('attribute_name');
 
         $pageWithAttributeIdentifier = new Page(
             new Uri('http://example.com/'),
@@ -161,10 +161,10 @@ class PageValidatorTest extends \PHPUnit\Framework\TestCase
             ],
             'non-empty identifier collection' => [
                 'page' => new Page(new Uri('http://example.com/'), new IdentifierCollection([
-                    new ElementIdentifier(
+                    new DomIdentifier(
                         new ElementExpression('.selector', ElementExpressionType::CSS_SELECTOR)
                     ),
-                    new ElementIdentifier(
+                    new DomIdentifier(
                         new ElementExpression('//h1', ElementExpressionType::XPATH_EXPRESSION)
                     ),
                 ])),
