@@ -8,7 +8,8 @@ use webignition\BasilModel\Assertion\ExaminationAssertionInterface;
 use webignition\BasilModel\Exception\InvalidAssertionExaminedValueException;
 use webignition\BasilModel\Exception\InvalidAssertionExpectedValueException;
 use webignition\BasilModel\Step\StepInterface;
-use webignition\BasilModel\Value\DataParameter;
+use webignition\BasilModel\Value\ObjectValue;
+use webignition\BasilModel\Value\ObjectValueType;
 use webignition\BasilModel\Value\ValueInterface;
 use webignition\BasilModelValidator\Action\ActionValidator;
 use webignition\BasilModelValidator\Result\InvalidResult;
@@ -135,7 +136,7 @@ class StepValidator implements ValidatorInterface
         ValueInterface $value,
         $valueContainer
     ): ?InvalidResultInterface {
-        if ($value instanceof DataParameter) {
+        if ($value instanceof ObjectValue && ObjectValueType::DATA_PARAMETER === $value->getType()) {
             $parameterName = $value->getProperty();
             $dataSetCollection = $step->getDataSetCollection();
 
