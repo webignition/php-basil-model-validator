@@ -23,7 +23,7 @@ class InvalidResultTest extends \PHPUnit\Framework\TestCase
         );
 
         $type = TypeInterface::IDENTIFIER;
-        $reason = IdentifierValidator::REASON_ELEMENT_EXPRESSION_MISSING;
+        $reason = IdentifierValidator::REASON_ELEMENT_LOCATOR_MISSING;
 
         $result = new InvalidResult($model, $type, $reason);
 

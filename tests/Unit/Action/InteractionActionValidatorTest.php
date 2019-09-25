@@ -158,7 +158,7 @@ class InteractionActionValidatorTest extends \PHPUnit\Framework\TestCase
                     new InvalidResult(
                         $invalidIdentifier,
                         TypeInterface::IDENTIFIER,
-                        IdentifierValidator::REASON_ELEMENT_EXPRESSION_MISSING
+                        IdentifierValidator::REASON_ELEMENT_LOCATOR_MISSING
                     )
                 ),
             ],
