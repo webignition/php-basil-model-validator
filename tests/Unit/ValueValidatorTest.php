@@ -7,8 +7,6 @@ namespace webignition\BasilModelValidator\Tests\Unit;
 use webignition\BasilModel\Identifier\DomIdentifier;
 use webignition\BasilModel\Value\Assertion\AssertableExaminedValue;
 use webignition\BasilModel\Value\DomIdentifierValue;
-use webignition\BasilModel\Value\ElementExpression;
-use webignition\BasilModel\Value\ElementExpressionType;
 use webignition\BasilModel\Value\ValueInterface;
 use webignition\BasilModel\Value\WrappedValueInterface;
 use webignition\BasilModelFactory\ValueFactory;
@@ -123,24 +121,14 @@ class ValueValidatorTest extends \PHPUnit\Framework\TestCase
             'type: browser object property, size' => [
                 'value' => $valueFactory->createFromValueString('$browser.size'),
             ],
-            'type: css selector' => [
-                'value' => $valueFactory->createFromIdentifierString('".selector"'),
-            ],
-            'type: xpath expression' => [
-                'value' => $valueFactory->createFromIdentifierString('"//foo"'),
-            ],
             'type: element value' => [
                 'value' => new DomIdentifierValue(
-                    new DomIdentifier(
-                        new ElementExpression('.selector', ElementExpressionType::CSS_SELECTOR)
-                    )
+                    new DomIdentifier('.selector')
                 ),
             ],
             'type: attribute value' => [
                 'value' => new DomIdentifierValue(
-                    (new DomIdentifier(
-                        new ElementExpression('.selector', ElementExpressionType::CSS_SELECTOR)
-                    ))->withAttributeName('attribute_name')
+                    (new DomIdentifier('.selector'))->withAttributeName('attribute_name')
                 ),
             ],
         ];

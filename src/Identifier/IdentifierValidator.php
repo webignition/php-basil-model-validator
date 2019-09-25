@@ -12,7 +12,7 @@ use webignition\BasilModelValidator\ValidatorInterface;
 class IdentifierValidator implements ValidatorInterface
 {
     const REASON_TYPE_INVALID = 'identifier-type-invalid';
-    const REASON_ELEMENT_EXPRESSION_MISSING = 'identifier-element-expression-missing';
+    const REASON_ELEMENT_LOCATOR_MISSING = 'identifier-element-locator-missing';
     const REASON_INVALID_PARENT_IDENTIFIER = 'identifier-invalid-parent-identifier';
     const REASON_ATTRIBUTE_NAME_EMPTY = 'identifier-attribute-name-empty';
 

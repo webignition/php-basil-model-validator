@@ -9,8 +9,6 @@ use webignition\BasilModel\Identifier\IdentifierInterface;
 use webignition\BasilModel\Identifier\ReferenceIdentifier;
 use webignition\BasilModel\Value\DomIdentifierReference;
 use webignition\BasilModel\Value\DomIdentifierReferenceType;
-use webignition\BasilModel\Value\ElementExpression;
-use webignition\BasilModel\Value\ElementExpressionType;
 use webignition\BasilModelFactory\Identifier\IdentifierFactory;
 use webignition\BasilModelValidator\Identifier\IdentifierValidator;
 use webignition\BasilModelValidator\Result\InvalidResult;
@@ -60,15 +58,13 @@ class IdentifierValidatorTest extends \PHPUnit\Framework\TestCase
     {
         $identifierFactory = IdentifierFactory::createFactory();
 
-        $cssElementExpression = new ElementExpression('.selector', ElementExpressionType::CSS_SELECTOR);
-        $emptyCssElementExpression = new ElementExpression('', ElementExpressionType::CSS_SELECTOR);
-        $emptyXpathElementExpression = new ElementExpression('', ElementExpressionType::XPATH_EXPRESSION);
+        $elementLocator = '.selector';
+        $emptyElementLocator = '';
 
-        $emptyCssSelectorIdentifier = new DomIdentifier($emptyCssElementExpression);
-        $emptyXpathExpressionIdentifier = new DomIdentifier($emptyXpathElementExpression);
+        $emptyLocatorIdentifier = new DomIdentifier($emptyElementLocator);
 
         $identifierWithInvalidParent =
-            (new DomIdentifier($cssElementExpression))->withParentIdentifier($emptyCssSelectorIdentifier);
+            (new DomIdentifier($elementLocator))->withParentIdentifier($emptyLocatorIdentifier);
 
         $identifierWithPageElementReference = $identifierFactory->create('page_import.elements.element_name');
         $identifierWithElementParameter = ReferenceIdentifier::createElementReferenceIdentifier(
@@ -80,7 +76,7 @@ class IdentifierValidatorTest extends \PHPUnit\Framework\TestCase
         );
 
         $attributeIdentifierWithEmptyAttributeName = (new DomIdentifier(
-            $cssElementExpression
+            $elementLocator
         ))->withAttributeName('');
 
         return [
@@ -100,20 +96,12 @@ class IdentifierValidatorTest extends \PHPUnit\Framework\TestCase
                     IdentifierValidator::REASON_TYPE_INVALID
                 ),
             ],
-            'empty css selector' => [
-                'identifier' => $emptyCssSelectorIdentifier,
+            'empty element locator' => [
+                'identifier' => $emptyLocatorIdentifier,
                 'expectedResult' => new InvalidResult(
-                    $emptyCssSelectorIdentifier,
+                    $emptyLocatorIdentifier,
                     TypeInterface::IDENTIFIER,
-                    IdentifierValidator::REASON_ELEMENT_EXPRESSION_MISSING
-                ),
-            ],
-            'empty xpath expression' => [
-                'identifier' => $emptyXpathExpressionIdentifier,
-                'expectedResult' => new InvalidResult(
-                    $emptyXpathExpressionIdentifier,
-                    TypeInterface::IDENTIFIER,
-                    IdentifierValidator::REASON_ELEMENT_EXPRESSION_MISSING
+                    IdentifierValidator::REASON_ELEMENT_LOCATOR_MISSING
                 ),
             ],
             'invalid parent identifier' => [
@@ -123,9 +111,9 @@ class IdentifierValidatorTest extends \PHPUnit\Framework\TestCase
                     TypeInterface::IDENTIFIER,
                     IdentifierValidator::REASON_INVALID_PARENT_IDENTIFIER,
                     new InvalidResult(
-                        $emptyCssSelectorIdentifier,
+                        $emptyLocatorIdentifier,
                         TypeInterface::IDENTIFIER,
-                        IdentifierValidator::REASON_ELEMENT_EXPRESSION_MISSING
+                        IdentifierValidator::REASON_ELEMENT_LOCATOR_MISSING
                     )
                 ),
             ],
@@ -152,28 +140,21 @@ class IdentifierValidatorTest extends \PHPUnit\Framework\TestCase
 
     public function validateIsValidDataProvider(): array
     {
-        $cssSelector = new ElementExpression('.selector', ElementExpressionType::CSS_SELECTOR);
+        $elementLocator = '.selector';
 
-        $cssElementIdentifier = TestIdentifierFactory::createElementIdentifier($cssSelector);
-        $attributeIdentifier = $cssElementIdentifier->withAttributeName('attribute_name');
+        $elementIdentifier = TestIdentifierFactory::createElementIdentifier($elementLocator);
+        $attributeIdentifier = $elementIdentifier->withAttributeName('attribute_name');
 
-        $parentIdentifier = new DomIdentifier(
-            new ElementExpression('.parent', ElementExpressionType::CSS_SELECTOR)
-        );
+        $parentIdentifier = new DomIdentifier('.parent');
 
         return [
-            'element identifier: css selector' => [
-                'identifier' => $cssElementIdentifier,
+            'dom identifier: non-empty element locator' => [
+                'identifier' => $elementIdentifier,
             ],
-            'element identifier: css selector with parent' => [
-                'identifier' => $cssElementIdentifier->withParentIdentifier($parentIdentifier),
+            'dom identifier: non-empty element locator with parent' => [
+                'identifier' => $elementIdentifier->withParentIdentifier($parentIdentifier),
             ],
-            'element identifier: xpath expression' => [
-                'identifier' => new DomIdentifier(
-                    new ElementExpression('//h1', ElementExpressionType::XPATH_EXPRESSION)
-                ),
-            ],
-            'attribute identifier' => [
+            'dom identifier: with attriute name' => [
                 'identifier' => $attributeIdentifier,
             ],
         ];

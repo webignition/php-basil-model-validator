@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "cf69b395dcf0b3ede19b9877db447fdd",
+    "content-hash": "7f3548196578c4885778d25c065f5c3d",
     "packages": [
         {
             "name": "psr/http-message",
@@ -100,16 +100,16 @@
         },
         {
             "name": "webignition/php-basil-models",
-            "version": "0.82",
+            "version": "0.83",
             "source": {
                 "type": "git",
                 "url": "https://github.com/webignition/php-basil-models.git",
-                "reference": "f06ee89cbaabac8113bee9eab87335e772283071"
+                "reference": "ed838e7259d68efd41735c8cce07dce66929b0c7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/webignition/php-basil-models/zipball/f06ee89cbaabac8113bee9eab87335e772283071",
-                "reference": "f06ee89cbaabac8113bee9eab87335e772283071",
+                "url": "https://api.github.com/repos/webignition/php-basil-models/zipball/ed838e7259d68efd41735c8cce07dce66929b0c7",
+                "reference": "ed838e7259d68efd41735c8cce07dce66929b0c7",
                 "shasum": ""
             },
             "require": {
@@ -142,7 +142,7 @@
             ],
             "description": "Models for basil language objects",
             "homepage": "https://github.com/webignition/php-basil-models",
-            "time": "2019-09-16T16:44:28+00:00"
+            "time": "2019-09-24T18:09:37+00:00"
         }
     ],
     "packages-dev": [
@@ -3276,16 +3276,16 @@
         },
         {
             "name": "webignition/php-basil-model-factory",
-            "version": "0.29",
+            "version": "0.30",
             "source": {
                 "type": "git",
                 "url": "https://github.com/webignition/php-basil-model-factory.git",
-                "reference": "ef9a4a98bef2264bb198d47a00ba0c2a4dc59128"
+                "reference": "fa2ed00520ecfad4786cf42d9b4f2efbaee6cd46"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/webignition/php-basil-model-factory/zipball/ef9a4a98bef2264bb198d47a00ba0c2a4dc59128",
-                "reference": "ef9a4a98bef2264bb198d47a00ba0c2a4dc59128",
+                "url": "https://api.github.com/repos/webignition/php-basil-model-factory/zipball/fa2ed00520ecfad4786cf42d9b4f2efbaee6cd46",
+                "reference": "fa2ed00520ecfad4786cf42d9b4f2efbaee6cd46",
                 "shasum": ""
             },
             "require": {
@@ -3294,7 +3294,7 @@
                 "php": ">=7.2",
                 "webignition/php-basil-context-aware-exception": "^0.1.0",
                 "webignition/php-basil-data-structures": ">=0.2,<1",
-                "webignition/php-basil-models": ">=0.82,<1"
+                "webignition/php-basil-models": ">=0.83,<1"
             },
             "require-dev": {
                 "mockery/mockery": "^1.2",
@@ -3303,7 +3303,7 @@
                 "phpstan/phpstan-mockery": "^0.11.3",
                 "phpunit/phpunit": "~8.0",
                 "squizlabs/php_codesniffer": "3.*",
-                "webignition/php-basil-test-identifier-factory": ">=0.4,<1"
+                "webignition/php-basil-test-identifier-factory": ">=0.5,<1"
             },
             "type": "library",
             "autoload": {
@@ -3323,25 +3323,25 @@
             ],
             "description": "Factories to create basil models",
             "homepage": "https://github.com/webignition/php-basil-model-factory",
-            "time": "2019-09-17T09:27:09+00:00"
+            "time": "2019-09-25T09:08:20+00:00"
         },
         {
             "name": "webignition/php-basil-test-identifier-factory",
-            "version": "0.4",
+            "version": "0.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/webignition/php-basil-test-identifier-factory.git",
-                "reference": "fa3b8953206f44a882236c76f2eb6c6a28cd674e"
+                "reference": "1a29b17841be39a38c0100ac85a67a4eba2b04df"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/webignition/php-basil-test-identifier-factory/zipball/fa3b8953206f44a882236c76f2eb6c6a28cd674e",
-                "reference": "fa3b8953206f44a882236c76f2eb6c6a28cd674e",
+                "url": "https://api.github.com/repos/webignition/php-basil-test-identifier-factory/zipball/1a29b17841be39a38c0100ac85a67a4eba2b04df",
+                "reference": "1a29b17841be39a38c0100ac85a67a4eba2b04df",
                 "shasum": ""
             },
             "require": {
                 "php": ">=7.2",
-                "webignition/php-basil-models": ">=0.81,<1"
+                "webignition/php-basil-models": ">=0.83,<1"
             },
             "require-dev": {
                 "phpstan/phpstan": "^0.11.5",
@@ -3366,7 +3366,7 @@
             ],
             "description": "Factory for creating webignition/php-basil-models::IdentifierInterface instances for tests",
             "homepage": "https://github.com/webignition/php-basil-test-identifier-factory",
-            "time": "2019-09-16T16:30:08+00:00"
+            "time": "2019-09-25T08:33:24+00:00"
         },
         {
             "name": "webmozart/assert",

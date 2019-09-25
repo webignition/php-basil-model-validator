@@ -29,9 +29,9 @@ class DomIdentifierValidator implements ValidatorInterface
             return InvalidResult::createUnhandledModelResult($model);
         }
 
-        $elementExpression = trim($model->getElementExpression()->getExpression());
-        if ('' === $elementExpression) {
-            return $this->createInvalidResult($model, IdentifierValidator::REASON_ELEMENT_EXPRESSION_MISSING);
+        $locator = trim($model->getLocator());
+        if ('' === $locator) {
+            return $this->createInvalidResult($model, IdentifierValidator::REASON_ELEMENT_LOCATOR_MISSING);
         }
 
         if ('' === $model->getAttributeName()) {

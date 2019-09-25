@@ -4,8 +4,6 @@
 namespace webignition\BasilModelValidator\Tests\Unit\Result;
 
 use webignition\BasilModel\Identifier\DomIdentifier;
-use webignition\BasilModel\Value\ElementExpression;
-use webignition\BasilModel\Value\ElementExpressionType;
 use webignition\BasilModel\Value\ObjectValue;
 use webignition\BasilModel\Value\ObjectValueType;
 use webignition\BasilModelFactory\ValueFactory;
@@ -18,12 +16,10 @@ class InvalidResultTest extends \PHPUnit\Framework\TestCase
 {
     public function testCreate()
     {
-        $model = new DomIdentifier(
-            new ElementExpression('.selector', ElementExpressionType::CSS_SELECTOR)
-        );
+        $model = new DomIdentifier('.selector');
 
         $type = TypeInterface::IDENTIFIER;
-        $reason = IdentifierValidator::REASON_ELEMENT_EXPRESSION_MISSING;
+        $reason = IdentifierValidator::REASON_ELEMENT_LOCATOR_MISSING;
 
         $result = new InvalidResult($model, $type, $reason);
 
