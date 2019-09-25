@@ -11,8 +11,6 @@ use webignition\BasilModel\Page\Page;
 use webignition\BasilModel\Page\PageInterface;
 use webignition\BasilModel\Value\DomIdentifierReference;
 use webignition\BasilModel\Value\DomIdentifierReferenceType;
-use webignition\BasilModel\Value\ElementExpression;
-use webignition\BasilModel\Value\ElementExpressionType;
 use webignition\BasilModel\Value\PageElementReference;
 use webignition\BasilModelValidator\PageValidator;
 use webignition\BasilModelValidator\Result\InvalidResult;
@@ -91,7 +89,7 @@ class PageValidatorTest extends \PHPUnit\Framework\TestCase
         );
 
         $attributeIdentifier = (TestIdentifierFactory::createElementIdentifier(
-            new ElementExpression('.selector', ElementExpressionType::CSS_SELECTOR),
+            '.selector',
             null,
             'name'
         ))->withAttributeName('attribute_name');
@@ -161,12 +159,7 @@ class PageValidatorTest extends \PHPUnit\Framework\TestCase
             ],
             'non-empty identifier collection' => [
                 'page' => new Page(new Uri('http://example.com/'), new IdentifierCollection([
-                    new DomIdentifier(
-                        new ElementExpression('.selector', ElementExpressionType::CSS_SELECTOR)
-                    ),
-                    new DomIdentifier(
-                        new ElementExpression('//h1', ElementExpressionType::XPATH_EXPRESSION)
-                    ),
+                    new DomIdentifier('.selector'),
                 ])),
             ],
         ];

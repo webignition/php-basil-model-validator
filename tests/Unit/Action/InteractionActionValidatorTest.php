@@ -12,8 +12,6 @@ use webignition\BasilModel\Action\NoArgumentsAction;
 use webignition\BasilModel\Action\UnrecognisedAction;
 use webignition\BasilModel\Action\WaitAction;
 use webignition\BasilModel\Identifier\DomIdentifier;
-use webignition\BasilModel\Value\ElementExpression;
-use webignition\BasilModel\Value\ElementExpressionType;
 use webignition\BasilModel\Value\LiteralValue;
 use webignition\BasilModelFactory\Action\ActionFactory;
 use webignition\BasilModelValidator\Action\ActionValidator;
@@ -52,9 +50,7 @@ class InteractionActionValidatorTest extends \PHPUnit\Framework\TestCase
             'input action' => [
                 'action' => new InputAction(
                     'set ".selector" to ""',
-                    new DomIdentifier(
-                        new ElementExpression('.selector', ElementExpressionType::CSS_SELECTOR)
-                    ),
+                    new DomIdentifier('.selector'),
                     new LiteralValue(''),
                     ''
                 ),
@@ -64,9 +60,7 @@ class InteractionActionValidatorTest extends \PHPUnit\Framework\TestCase
                 'action' => new InteractionAction(
                     'click ".selector"',
                     ActionTypes::CLICK,
-                    new DomIdentifier(
-                        new ElementExpression('.selector', ElementExpressionType::CSS_SELECTOR)
-                    ),
+                    new DomIdentifier('.selector'),
                     '".selector"'
                 ),
                 'expectedHandles' => true,
@@ -75,9 +69,7 @@ class InteractionActionValidatorTest extends \PHPUnit\Framework\TestCase
                 'action' => new InteractionAction(
                     'submit ".selector"',
                     ActionTypes::SUBMIT,
-                    new DomIdentifier(
-                        new ElementExpression('.selector', ElementExpressionType::CSS_SELECTOR)
-                    ),
+                    new DomIdentifier('.selector'),
                     '".selector"'
                 ),
                 'expectedHandles' => true,
@@ -86,9 +78,7 @@ class InteractionActionValidatorTest extends \PHPUnit\Framework\TestCase
                 'action' => new InteractionAction(
                     'wait-for ".selector"',
                     ActionTypes::WAIT_FOR,
-                    new DomIdentifier(
-                        new ElementExpression('.selector', ElementExpressionType::CSS_SELECTOR)
-                    ),
+                    new DomIdentifier('.selector'),
                     '".selector"'
                 ),
                 'expectedHandles' => true,
@@ -128,7 +118,7 @@ class InteractionActionValidatorTest extends \PHPUnit\Framework\TestCase
 
     public function validateNotValidDataProvider(): array
     {
-        $invalidIdentifier = new DomIdentifier(new ElementExpression('', ElementExpressionType::CSS_SELECTOR));
+        $invalidIdentifier = new DomIdentifier('');
 
         $interactionActionWithInvalidIdentifier = new InteractionAction(
             '',
@@ -138,7 +128,7 @@ class InteractionActionValidatorTest extends \PHPUnit\Framework\TestCase
         );
 
         $attributeIdentifier = (new DomIdentifier(
-            new ElementExpression('.selector', ElementExpressionType::CSS_SELECTOR)
+            '.selector'
         ))->withAttributeName('attribute_name');
 
         $interactionActionWithAttributeIdentifier = new InteractionAction(

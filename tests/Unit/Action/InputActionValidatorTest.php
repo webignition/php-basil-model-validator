@@ -12,8 +12,6 @@ use webignition\BasilModel\Action\NoArgumentsAction;
 use webignition\BasilModel\Action\UnrecognisedAction;
 use webignition\BasilModel\Action\WaitAction;
 use webignition\BasilModel\Identifier\DomIdentifier;
-use webignition\BasilModel\Value\ElementExpression;
-use webignition\BasilModel\Value\ElementExpressionType;
 use webignition\BasilModel\Value\LiteralValue;
 use webignition\BasilModelFactory\Action\ActionFactory;
 use webignition\BasilModelFactory\ValueFactory;
@@ -54,9 +52,7 @@ class InputActionValidatorTest extends \PHPUnit\Framework\TestCase
             'input action' => [
                 'action' => new InputAction(
                     'set ".selector" to ""',
-                    new DomIdentifier(
-                        new ElementExpression('.selector', ElementExpressionType::CSS_SELECTOR)
-                    ),
+                    new DomIdentifier('.selector'),
                     new LiteralValue(''),
                     ''
                 ),
@@ -66,9 +62,7 @@ class InputActionValidatorTest extends \PHPUnit\Framework\TestCase
                 'action' => new InteractionAction(
                     'click ".selector"',
                     ActionTypes::CLICK,
-                    new DomIdentifier(
-                        new ElementExpression('.selector', ElementExpressionType::CSS_SELECTOR)
-                    ),
+                    new DomIdentifier('.selector'),
                     '".selector"'
                 ),
                 'expectedHandles' => false,
@@ -87,16 +81,6 @@ class InputActionValidatorTest extends \PHPUnit\Framework\TestCase
             ],
         ];
     }
-
-//    public function testValidateNotValidWrongObjectType()
-//    {
-//        $object = new \stdClass();
-//
-//        $this->assertEquals(
-//            InvalidResult::createUnhandledModelResult($object),
-//            $this->inputActionValidator->validate($object)
-//        );
-//    }
 
     /**
      * @dataProvider validateNotValidDataProvider
@@ -121,7 +105,7 @@ class InputActionValidatorTest extends \PHPUnit\Framework\TestCase
         );
 
         $invalidValue = $valueFactory->createFromValueString('$page.foo');
-        $invalidIdentifier = new DomIdentifier(new ElementExpression('', ElementExpressionType::CSS_SELECTOR));
+        $invalidIdentifier = new DomIdentifier('');
 
         $inputActionWithInvalidIdentifier = new InputAction(
             '',
@@ -138,9 +122,7 @@ class InputActionValidatorTest extends \PHPUnit\Framework\TestCase
             'set ".selector" to page_import_name.elements.element_name'
         );
 
-        $attributeIdentifier = (new DomIdentifier(
-            new ElementExpression('.selector', ElementExpressionType::CSS_SELECTOR)
-        ))->withAttributeName('attribute_name');
+        $attributeIdentifier = (new DomIdentifier('.selector'))->withAttributeName('attribute_name');
 
         $inputActionWithAttributeIdentifier = new InputAction(
             'set ".selector".attribute_name to "value"',
