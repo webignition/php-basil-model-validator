@@ -5,7 +5,6 @@ namespace webignition\BasilModelValidator;
 use webignition\BasilModel\Value\ObjectValueInterface;
 use webignition\BasilModel\Value\ObjectValueType;
 use webignition\BasilModel\Value\ValueInterface;
-use webignition\BasilModel\Value\WrappedValueInterface;
 use webignition\BasilModelValidator\Result\InvalidResult;
 use webignition\BasilModelValidator\Result\ResultInterface;
 use webignition\BasilModelValidator\Result\TypeInterface;
@@ -38,10 +37,6 @@ class ValueValidator implements ValidatorInterface
 
     public function validate(object $model, ?array $context = []): ResultInterface
     {
-        if ($model instanceof WrappedValueInterface) {
-            $model = $model->getWrappedValue();
-        }
-
         if (!$model instanceof ValueInterface) {
             return InvalidResult::createUnhandledModelResult($model);
         }

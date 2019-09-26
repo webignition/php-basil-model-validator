@@ -5,10 +5,8 @@
 namespace webignition\BasilModelValidator\Tests\Unit;
 
 use webignition\BasilModel\Identifier\DomIdentifier;
-use webignition\BasilModel\Value\Assertion\AssertableExaminedValue;
 use webignition\BasilModel\Value\DomIdentifierValue;
 use webignition\BasilModel\Value\ValueInterface;
-use webignition\BasilModel\Value\WrappedValueInterface;
 use webignition\BasilModelFactory\ValueFactory;
 use webignition\BasilModelValidator\Result\InvalidResult;
 use webignition\BasilModelValidator\Result\TypeInterface;
@@ -48,11 +46,7 @@ class ValueValidatorTest extends \PHPUnit\Framework\TestCase
      */
     public function testValidateNotValid(ValueInterface $value, string $expectedReason)
     {
-        $expectedResultValue = $value instanceof WrappedValueInterface
-            ? $value->getWrappedValue()
-            : $value;
-
-        $expectedResult = new InvalidResult($expectedResultValue, TypeInterface::VALUE, $expectedReason);
+        $expectedResult = new InvalidResult($value, TypeInterface::VALUE, $expectedReason);
 
         $this->assertEquals($expectedResult, $this->valueValidator->validate($value));
     }
@@ -67,9 +61,7 @@ class ValueValidatorTest extends \PHPUnit\Framework\TestCase
                 'expectedReason' => ValueValidator::REASON_PROPERTY_NAME_INVALID,
             ],
             'invalid assertion examined value (invalid page property name)' => [
-                'value' => new AssertableExaminedValue(
-                    $valueFactory->createFromValueString('$page.foo')
-                ),
+                'value' => $valueFactory->createFromValueString('$page.foo'),
                 'expectedReason' => ValueValidator::REASON_PROPERTY_NAME_INVALID,
             ],
             'invalid browser property name' => [

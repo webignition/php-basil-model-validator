@@ -4,11 +4,9 @@
 
 namespace webignition\BasilModelValidator\Tests\Unit;
 
-use webignition\BasilModel\Assertion\AssertableComparisonAssertion;
-use webignition\BasilModel\Assertion\AssertableExaminationAssertion;
 use webignition\BasilModel\Assertion\AssertionInterface;
-use webignition\BasilModel\Value\Assertion\AssertableExaminedValue;
-use webignition\BasilModel\Value\Assertion\AssertableExpectedValue;
+use webignition\BasilModel\Assertion\ComparisonAssertion;
+use webignition\BasilModel\Assertion\ExaminationAssertion;
 use webignition\BasilModel\Value\ObjectValue;
 use webignition\BasilModel\Value\ObjectValueType;
 use webignition\BasilModelFactory\AssertionFactory;
@@ -67,17 +65,17 @@ class AssertionValidatorTest extends \PHPUnit\Framework\TestCase
 
         $pageUrlProperty = new ObjectValue(ObjectValueType::PAGE_PROPERTY, '$page.url', 'url');
 
-        $examinationAssertionWithInvalidComparison = new AssertableExaminationAssertion(
+        $examinationAssertionWithInvalidComparison = new ExaminationAssertion(
             '$page.url foo',
-            new AssertableExaminedValue($pageUrlProperty),
+            $pageUrlProperty,
             'foo'
         );
 
-        $comparisonAssertionWithInvalidComparison = new AssertableComparisonAssertion(
+        $comparisonAssertionWithInvalidComparison = new ComparisonAssertion(
             '$page.url foo $page.url',
-            new AssertableExaminedValue($pageUrlProperty),
+            $pageUrlProperty,
             'foo',
-            new AssertableExpectedValue($pageUrlProperty)
+            $pageUrlProperty
         );
 
         return [
