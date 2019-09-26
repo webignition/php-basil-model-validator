@@ -82,6 +82,16 @@ class InputActionValidatorTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
+    public function testValidateNotValidWrongObjectType()
+    {
+        $object = new \stdClass();
+
+        $this->assertEquals(
+            InvalidResult::createUnhandledModelResult($object),
+            $this->inputActionValidator->validate($object)
+        );
+    }
+
     /**
      * @dataProvider validateNotValidDataProvider
      */

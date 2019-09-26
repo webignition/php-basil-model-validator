@@ -5,8 +5,6 @@ namespace webignition\BasilModelValidator;
 use webignition\BasilModel\Action\InputActionInterface;
 use webignition\BasilModel\Assertion\ComparisonAssertionInterface;
 use webignition\BasilModel\Assertion\ExaminationAssertionInterface;
-use webignition\BasilModel\Exception\InvalidAssertionExaminedValueException;
-use webignition\BasilModel\Exception\InvalidAssertionExpectedValueException;
 use webignition\BasilModel\Step\StepInterface;
 use webignition\BasilModel\Value\ObjectValue;
 use webignition\BasilModel\Value\ObjectValueType;
@@ -60,9 +58,6 @@ class StepValidator implements ValidatorInterface
      * @param array|null $context
      *
      * @return ResultInterface
-     *
-     * @throws InvalidAssertionExaminedValueException
-     * @throws InvalidAssertionExpectedValueException
      */
     public function validate(object $model, ?array $context = []): ResultInterface
     {
@@ -103,7 +98,7 @@ class StepValidator implements ValidatorInterface
             }
 
             if ($assertion instanceof ExaminationAssertionInterface) {
-                $examinedValue = $assertion->getExaminedValue()->getExaminedValue();
+                $examinedValue = $assertion->getExaminedValue();
 
                 $examinedValueDataValueValidationResult = $this->validateDataValue($model, $examinedValue, $assertion);
                 if ($examinedValueDataValueValidationResult instanceof InvalidResultInterface) {
@@ -112,7 +107,7 @@ class StepValidator implements ValidatorInterface
             }
 
             if ($assertion instanceof ComparisonAssertionInterface) {
-                $expectedValue = $assertion->getExpectedValue()->getExpectedValue();
+                $expectedValue = $assertion->getExpectedValue();
 
                 if ($expectedValue instanceof ValueInterface) {
                     $expectedValueDataParameterValidationResult = $this->validateDataValue(
