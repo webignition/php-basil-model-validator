@@ -31,21 +31,6 @@ class IdentifierValidatorTest extends \PHPUnit\Framework\TestCase
         $this->validator = IdentifierValidator::create();
     }
 
-    public function testHandles()
-    {
-        $this->assertTrue($this->validator->handles(\Mockery::mock(IdentifierInterface::class)));
-        $this->assertFalse($this->validator->handles(new \stdClass()));
-    }
-
-    public function testValidateWrongModelTypeIsNotValid()
-    {
-        $model = new \stdClass();
-
-        $expectedResult = InvalidResult::createUnhandledModelResult($model);
-
-        $this->assertEquals($expectedResult, $this->validator->validate($model));
-    }
-
     /**
      * @dataProvider validateNotValidDataProvider
      */
