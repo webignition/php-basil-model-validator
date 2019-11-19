@@ -15,7 +15,7 @@ use webignition\BasilModelValidator\Result\ResultInterface;
 use webignition\BasilModelValidator\Result\TypeInterface;
 use webignition\BasilModelValidator\Result\ValidResult;
 
-class AssertionValidator implements ValidatorInterface
+class AssertionValidator
 {
     public const REASON_EXAMINED_VALUE_INVALID  = 'assertion-examined-value-invalid';
     public const REASON_EXPECTED_VALUE_INVALID  = 'assertion-expected-value-invalid';
@@ -38,55 +38,46 @@ class AssertionValidator implements ValidatorInterface
         );
     }
 
-    public function handles(object $model): bool
+    public function validate(AssertionInterface $assertion): ResultInterface
     {
-        return $model instanceof AssertionInterface;
-    }
-
-    public function validate(object $model, ?array $context = []): ResultInterface
-    {
-        if (!$model instanceof AssertionInterface) {
-            return InvalidResult::createUnhandledModelResult($model);
-        }
-
-        if ($model instanceof ExaminationAssertionInterface) {
-            $examinedValue = $model->getExaminedValue();
+        if ($assertion instanceof ExaminationAssertionInterface) {
+            $examinedValue = $assertion->getExaminedValue();
 
             $examinedValueValidationResult = $this->valueValidator->validate($examinedValue);
             if ($examinedValueValidationResult instanceof InvalidResultInterface) {
                 return $this->createInvalidResult(
-                    $model,
+                    $assertion,
                     self::REASON_EXAMINED_VALUE_INVALID,
                     $examinedValueValidationResult
                 );
             }
 
-            if (!$model instanceof ComparisonAssertionInterface) {
-                if (!in_array($model->getComparison(), AssertionComparison::EXAMINATION_COMPARISONS)) {
-                    return $this->createInvalidResult($model, self::REASON_COMPARISON_INVALID);
+            if (!$assertion instanceof ComparisonAssertionInterface) {
+                if (!in_array($assertion->getComparison(), AssertionComparison::EXAMINATION_COMPARISONS)) {
+                    return $this->createInvalidResult($assertion, self::REASON_COMPARISON_INVALID);
                 }
             }
         }
 
-        if ($model instanceof ComparisonAssertionInterface) {
-            $expectedValue = $model->getExpectedValue();
+        if ($assertion instanceof ComparisonAssertionInterface) {
+            $expectedValue = $assertion->getExpectedValue();
 
             $expectedValueValidationResult = $this->valueValidator->validate($expectedValue);
 
             if ($expectedValueValidationResult instanceof InvalidResultInterface) {
                 return $this->createInvalidResult(
-                    $model,
+                    $assertion,
                     self::REASON_EXPECTED_VALUE_INVALID,
                     $expectedValueValidationResult
                 );
             }
 
-            if (!in_array($model->getComparison(), AssertionComparison::COMPARISON_COMPARISONS)) {
-                return $this->createInvalidResult($model, self::REASON_COMPARISON_INVALID);
+            if (!in_array($assertion->getComparison(), AssertionComparison::COMPARISON_COMPARISONS)) {
+                return $this->createInvalidResult($assertion, self::REASON_COMPARISON_INVALID);
             }
         }
 
-        return new ValidResult($model);
+        return new ValidResult($assertion);
     }
 
     private function createInvalidResult(
