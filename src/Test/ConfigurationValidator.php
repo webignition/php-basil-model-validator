@@ -11,9 +11,8 @@ use webignition\BasilModelValidator\Result\InvalidResultInterface;
 use webignition\BasilModelValidator\Result\ResultInterface;
 use webignition\BasilModelValidator\Result\TypeInterface;
 use webignition\BasilModelValidator\Result\ValidResult;
-use webignition\BasilModelValidator\ValidatorInterface;
 
-class ConfigurationValidator implements ValidatorInterface
+class ConfigurationValidator
 {
     public const REASON_BROWSER_MISSING = 'test-configuration-browser-missing';
     public const REASON_URL_IS_PAGE_URL_REFERENCE = 'test-configuration-url-is-page-url-reference';
@@ -23,38 +22,29 @@ class ConfigurationValidator implements ValidatorInterface
         return new ConfigurationValidator();
     }
 
-    public function handles(object $model): bool
+    public function validate(ConfigurationInterface $configuration): ResultInterface
     {
-        return $model instanceof ConfigurationInterface;
-    }
-
-    public function validate(object $model, ?array $context = []): ResultInterface
-    {
-        if (!$model instanceof ConfigurationInterface) {
-            return InvalidResult::createUnhandledModelResult($model);
-        }
-
-        $browser = $model->getBrowser();
+        $browser = $configuration->getBrowser();
 
         if ('' === trim($browser)) {
-            return $this->createInvalidResult($model, self::REASON_BROWSER_MISSING);
+            return $this->createInvalidResult($configuration, self::REASON_BROWSER_MISSING);
         }
 
-        $url = $model->getUrl();
+        $url = $configuration->getUrl();
         $pageUrlReference = new PageUrlReference($url);
 
         if ($pageUrlReference->isValid()) {
-            return $this->createInvalidResult($model, self::REASON_URL_IS_PAGE_URL_REFERENCE);
+            return $this->createInvalidResult($configuration, self::REASON_URL_IS_PAGE_URL_REFERENCE);
         }
 
-        return new ValidResult($model);
+        return new ValidResult($configuration);
     }
 
     private function createInvalidResult(
-        object $model,
+        ConfigurationInterface $configuration,
         string $reason,
         ?InvalidResultInterface $invalidResult = null
     ): ResultInterface {
-        return new InvalidResult($model, TypeInterface::TEST_CONFIGURATION, $reason, $invalidResult);
+        return new InvalidResult($configuration, TypeInterface::TEST_CONFIGURATION, $reason, $invalidResult);
     }
 }

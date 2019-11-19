@@ -81,10 +81,10 @@ class AssertionValidator
     }
 
     private function createInvalidResult(
-        object $model,
+        AssertionInterface $assertion,
         string $reason,
         ?InvalidResultInterface $invalidResult = null
     ): ResultInterface {
-        return new InvalidResult($model, TypeInterface::ASSERTION, $reason, $invalidResult);
+        return new InvalidResult($assertion, TypeInterface::ASSERTION, $reason, $invalidResult);
     }
 }
