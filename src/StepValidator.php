@@ -26,6 +26,7 @@ class StepValidator
     public const REASON_DATA_SET_EMPTY = 'step-data-set-empty';
     public const REASON_NO_ASSERTIONS = 'no-assertions';
     public const CONTEXT_VALUE_CONTAINER = 'value-container';
+    public const CONTEXT_DATA_PARAMETER_NAME = 'data-parameter-name';
 
     private $actionValidator;
     private $assertionValidator;
@@ -128,18 +129,13 @@ class StepValidator
                     TypeInterface::STEP,
                     self::REASON_DATA_SET_EMPTY
                 ))->withContext([
-                    DataSetValidator::CONTEXT_DATA_PARAMETER_NAME => $parameterName,
+                    StepValidator::CONTEXT_DATA_PARAMETER_NAME => $parameterName,
                     StepValidator::CONTEXT_VALUE_CONTAINER => $valueContainer,
                 ]);
             }
 
             foreach ($dataSetCollection as $dataSet) {
-                $dataSetValidationResult = $this->dataSetValidator->validate(
-                    $dataSet,
-                    [
-                        DataSetValidator::CONTEXT_DATA_PARAMETER_NAME => $parameterName,
-                    ]
-                );
+                $dataSetValidationResult = $this->dataSetValidator->validate($dataSet, $parameterName);
 
                 if ($dataSetValidationResult instanceof InvalidResult) {
                     return new InvalidResult(
@@ -147,7 +143,7 @@ class StepValidator
                         TypeInterface::STEP,
                         self::REASON_DATA_SET_INCOMPLETE,
                         $dataSetValidationResult->withContext([
-                            DataSetValidator::CONTEXT_DATA_PARAMETER_NAME => $parameterName,
+                            StepValidator::CONTEXT_DATA_PARAMETER_NAME => $parameterName,
                             StepValidator::CONTEXT_VALUE_CONTAINER => $valueContainer,
                         ])
                     );

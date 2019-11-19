@@ -25,31 +25,17 @@ class DataSetValidatorTest extends \PHPUnit\Framework\TestCase
         $this->dataSetValidator = DataSetValidator::create();
     }
 
-    public function testHandles()
-    {
-        $this->assertTrue($this->dataSetValidator->handles(new DataSet('0', [])));
-        $this->assertFalse($this->dataSetValidator->handles(new \stdClass()));
-    }
-
-    public function testValidateWrongModelTypeIsNotValid()
-    {
-        $model = new \stdClass();
-        $expectedResult = InvalidResult::createUnhandledModelResult($model);
-
-        $this->assertEquals($expectedResult, $this->dataSetValidator->validate($model));
-    }
-
     /**
      * @dataProvider validateNotValidDataProvider
      */
     public function testValidateNotValid(
         DataSetInterface $dataSet,
-        array $context,
+        ?string $dataParameterName,
         string $expectedReason
     ) {
         $expectedResult = new InvalidResult($dataSet, TypeInterface::DATA_SET, $expectedReason);
 
-        $this->assertEquals($expectedResult, $this->dataSetValidator->validate($dataSet, $context));
+        $this->assertEquals($expectedResult, $this->dataSetValidator->validate($dataSet, $dataParameterName));
     }
 
     public function validateNotValidDataProvider(): array
@@ -57,18 +43,14 @@ class DataSetValidatorTest extends \PHPUnit\Framework\TestCase
         return [
             'empty, does not have data parameter name' => [
                 'dataSet' => new DataSet('0', []),
-                'context' => [
-                    DataSetValidator::CONTEXT_DATA_PARAMETER_NAME => 'username',
-                ],
+                'dataParameterName' => 'username',
                 'expectedReason' => DataSetValidator::REASON_DATA_SET_INCOMPLETE,
             ],
             'single data set, does not have data parameter name' => [
                 'dataSet' => new DataSet('0', [
                     'role' => 'user',
                 ]),
-                'context' => [
-                    DataSetValidator::CONTEXT_DATA_PARAMETER_NAME => 'username',
-                ],
+                'dataParameterName' => 'username',
                 'expectedReason' => DataSetValidator::REASON_DATA_SET_INCOMPLETE,
             ],
         ];
@@ -77,11 +59,11 @@ class DataSetValidatorTest extends \PHPUnit\Framework\TestCase
     /**
      * @dataProvider validateIsValidDataProvider
      */
-    public function testValidateIsValid(DataSetInterface $dataSet, array $context)
+    public function testValidateIsValid(DataSetInterface $dataSet, ?string $dataParameterName)
     {
         $expectedResult = new ValidResult($dataSet);
 
-        $this->assertEquals($expectedResult, $this->dataSetValidator->validate($dataSet, $context));
+        $this->assertEquals($expectedResult, $this->dataSetValidator->validate($dataSet, $dataParameterName));
     }
 
     public function validateIsValidDataProvider(): array
@@ -89,30 +71,26 @@ class DataSetValidatorTest extends \PHPUnit\Framework\TestCase
         return [
             'empty, no data parameter name' => [
                 'dataSet' => new DataSet('0', []),
-                'context' => [],
+                'dataParameterName' => null,
             ],
             'single data set, no data parameter name' => [
                 'dataSet' => new DataSet('0', [
                     'foo' => 'bar',
                 ]),
-                'context' => [],
+                'dataParameterName' => null,
             ],
             'single data set, has data parameter name' => [
                 'dataSet' => new DataSet('0', [
                     'username' => 'user1',
                 ]),
-                'context' => [
-                    DataSetValidator::CONTEXT_DATA_PARAMETER_NAME => 'username',
-                ],
+                'dataParameterName' => 'username',
             ],
             'single data set, has data parameter name and additional parameter names' => [
                 'dataSet' => new DataSet('0', [
                     'username' => 'user1',
                     'role' => 'user',
                 ]),
-                'context' => [
-                    DataSetValidator::CONTEXT_DATA_PARAMETER_NAME => 'username',
-                ],
+                'dataParameterName' => 'username',
             ],
         ];
     }
