@@ -12,7 +12,7 @@ use webignition\BasilModelValidator\Result\TypeInterface;
 use webignition\BasilModelValidator\Result\ValidResult;
 use webignition\BasilModelValidator\Test\TestValidator;
 
-class TestSuiteValidator implements ValidatorInterface
+class TestSuiteValidator
 {
     public const REASON_NO_TESTS = 'test-suite-no-tests';
     public const REASON_TEST_INVALID = 'test-suite-test-invalid';
@@ -31,38 +31,29 @@ class TestSuiteValidator implements ValidatorInterface
         );
     }
 
-    public function handles(object $model): bool
+    public function validate(TestSuiteInterface $testSuite): ResultInterface
     {
-        return $model instanceof TestSuiteInterface;
-    }
-
-    public function validate(object $model, ?array $context = []): ResultInterface
-    {
-        if (!$model instanceof TestSuiteInterface) {
-            return InvalidResult::createUnhandledModelResult($model);
-        }
-
-        $tests = $model->getTests();
+        $tests = $testSuite->getTests();
         if (0 === count($tests)) {
-            return $this->createInvalidResult($model, self::REASON_NO_TESTS);
+            return $this->createInvalidResult($testSuite, self::REASON_NO_TESTS);
         }
 
         foreach ($tests as $test) {
             $testValidationResult = $this->testValidator->validate($test);
 
             if ($testValidationResult instanceof InvalidResultInterface) {
-                return $this->createInvalidResult($model, self::REASON_TEST_INVALID, $testValidationResult);
+                return $this->createInvalidResult($testSuite, self::REASON_TEST_INVALID, $testValidationResult);
             }
         }
 
-        return new ValidResult($model);
+        return new ValidResult($testSuite);
     }
 
     private function createInvalidResult(
-        object $model,
+        TestSuiteInterface $testSuite,
         string $reason,
         ?InvalidResultInterface $invalidResult = null
     ): ResultInterface {
-        return new InvalidResult($model, TypeInterface::TEST_SUITE, $reason, $invalidResult);
+        return new InvalidResult($testSuite, TypeInterface::TEST_SUITE, $reason, $invalidResult);
     }
 }

@@ -31,20 +31,6 @@ class TestSuiteValidatorTest extends \PHPUnit\Framework\TestCase
         $this->testSuiteValidator = TestSuiteValidator::create();
     }
 
-    public function testHandles()
-    {
-        $this->assertTrue($this->testSuiteValidator->handles(\Mockery::mock(TestSuiteInterface::class)));
-        $this->assertFalse($this->testSuiteValidator->handles(new \stdClass()));
-    }
-
-    public function testValidateWrongModelTypeIsNotValid()
-    {
-        $model = new \stdClass();
-        $expectedResult = InvalidResult::createUnhandledModelResult($model);
-
-        $this->assertEquals($expectedResult, $this->testSuiteValidator->validate($model));
-    }
-
     /**
      * @dataProvider validateNotValidDataProvider
      */
