@@ -52,10 +52,6 @@ class StepValidator
 
     public function validate(StepInterface $step): ResultInterface
     {
-        if (!$step instanceof StepInterface) {
-            return InvalidResult::createUnhandledModelResult($step);
-        }
-
         foreach ($step->getActions() as $action) {
             $actionValidationResult = $this->actionValidator->validate($action);
 

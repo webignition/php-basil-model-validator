@@ -34,20 +34,6 @@ class PageValidatorTest extends \PHPUnit\Framework\TestCase
         $this->pageValidator = PageValidator::create();
     }
 
-    public function testHandles()
-    {
-        $this->assertTrue($this->pageValidator->handles(\Mockery::mock(PageInterface::class)));
-        $this->assertFalse($this->pageValidator->handles(new \stdClass()));
-    }
-
-    public function testValidateWrongModelTypeIsNotValid()
-    {
-        $model = new \stdClass();
-        $expectedResult = InvalidResult::createUnhandledModelResult($model);
-
-        $this->assertEquals($expectedResult, $this->pageValidator->validate($model));
-    }
-
     /**
      * @dataProvider validateNotValidDataProvider
      */
