@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace webignition\BasilModelValidator\Action;
 
 use webignition\BasilModel\Action\ActionInterface;
@@ -16,7 +18,7 @@ use webignition\BasilModelValidator\ValueValidator;
 
 class InputActionValidator implements ValidatorInterface
 {
-    const IDENTIFIER_KEYWORD = ' to ';
+    private const IDENTIFIER_KEYWORD = ' to ';
 
     private $identifierValidator;
     private $valueValidator;

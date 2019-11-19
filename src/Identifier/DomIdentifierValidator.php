@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace webignition\BasilModelValidator\Identifier;
 
 use webignition\BasilModel\Identifier\DomIdentifierInterface;

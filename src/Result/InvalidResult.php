@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace webignition\BasilModelValidator\Result;
 
 class InvalidResult extends AbstractResult implements InvalidResultInterface

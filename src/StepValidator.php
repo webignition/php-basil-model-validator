@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace webignition\BasilModelValidator;
 
 use webignition\BasilModel\Action\InputActionInterface;
@@ -18,12 +20,12 @@ use webignition\BasilModelValidator\Result\ValidResult;
 
 class StepValidator implements ValidatorInterface
 {
-    const REASON_ACTION_INVALID = 'step-action-invalid';
-    const REASON_ASSERTION_INVALID = 'step-assertion-invalid';
-    const REASON_DATA_SET_INCOMPLETE = 'step-data-set-incomplete';
-    const REASON_DATA_SET_EMPTY = 'step-data-set-empty';
-    const REASON_NO_ASSERTIONS = 'no-assertions';
-    const CONTEXT_VALUE_CONTAINER = 'value-container';
+    public const REASON_ACTION_INVALID = 'step-action-invalid';
+    public const REASON_ASSERTION_INVALID = 'step-assertion-invalid';
+    public const REASON_DATA_SET_INCOMPLETE = 'step-data-set-incomplete';
+    public const REASON_DATA_SET_EMPTY = 'step-data-set-empty';
+    public const REASON_NO_ASSERTIONS = 'no-assertions';
+    public const CONTEXT_VALUE_CONTAINER = 'value-container';
 
     private $actionValidator;
     private $assertionValidator;

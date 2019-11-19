@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace webignition\BasilModelValidator\Action;
 
 use webignition\BasilModel\Action\ActionInterface;
@@ -9,13 +11,13 @@ use webignition\BasilModelValidator\ValidatorInterface;
 
 class ActionValidator implements ValidatorInterface
 {
-    const REASON_INPUT_ACTION_TO_KEYWORD_MISSING = 'input-action-to-keyword-missing';
-    const REASON_INPUT_ACTION_UNACTIONABLE_VALUE = 'input-action-unactionable-value';
-    const REASON_WAIT_ACTION_DURATION_MISSING = 'wait-action-duration-missing';
-    const REASON_WAIT_ACTION_DURATION_UNACTIONABLE = 'wait-action-duration-unactionable';
-    const REASON_UNACTIONABLE_IDENTIFIER = 'action-unactionable-identifier';
-    const REASON_INVALID_IDENTIFIER = 'action-invalid-identifier';
-    const REASON_INVALID_VALUE = 'action-invalid-value';
+    public const REASON_INPUT_ACTION_TO_KEYWORD_MISSING = 'input-action-to-keyword-missing';
+    public const REASON_INPUT_ACTION_UNACTIONABLE_VALUE = 'input-action-unactionable-value';
+    public const REASON_WAIT_ACTION_DURATION_MISSING = 'wait-action-duration-missing';
+    public const REASON_WAIT_ACTION_DURATION_UNACTIONABLE = 'wait-action-duration-unactionable';
+    public const REASON_UNACTIONABLE_IDENTIFIER = 'action-unactionable-identifier';
+    public const REASON_INVALID_IDENTIFIER = 'action-invalid-identifier';
+    public const REASON_INVALID_VALUE = 'action-invalid-value';
 
     /**
      * @var ValidatorInterface[]

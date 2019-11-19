@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace webignition\BasilModelValidator;
 
 use webignition\BasilModel\DataSet\DataSetInterface;
@@ -10,8 +12,8 @@ use webignition\BasilModelValidator\Result\ValidResult;
 
 class DataSetValidator implements ValidatorInterface
 {
-    const CONTEXT_DATA_PARAMETER_NAME = 'data-parameter-name';
-    const REASON_DATA_SET_INCOMPLETE = 'data-set-incomplete';
+    public const CONTEXT_DATA_PARAMETER_NAME = 'data-parameter-name';
+    public const REASON_DATA_SET_INCOMPLETE = 'data-set-incomplete';
 
     public static function create(): DataSetValidator
     {

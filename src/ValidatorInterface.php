@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace webignition\BasilModelValidator;
 
 use webignition\BasilModelValidator\Result\ResultInterface;

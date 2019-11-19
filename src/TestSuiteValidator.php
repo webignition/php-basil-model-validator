@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace webignition\BasilModelValidator;
 
 use webignition\BasilModel\TestSuite\TestSuiteInterface;
@@ -12,8 +14,8 @@ use webignition\BasilModelValidator\Test\TestValidator;
 
 class TestSuiteValidator implements ValidatorInterface
 {
-    const REASON_NO_TESTS = 'test-suite-no-tests';
-    const REASON_TEST_INVALID = 'test-suite-test-invalid';
+    public const REASON_NO_TESTS = 'test-suite-no-tests';
+    public const REASON_TEST_INVALID = 'test-suite-test-invalid';
 
     private $testValidator;
 

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace webignition\BasilModelValidator;
 
 use webignition\BasilModel\Assertion\AssertionComparison;
@@ -15,9 +17,9 @@ use webignition\BasilModelValidator\Result\ValidResult;
 
 class AssertionValidator implements ValidatorInterface
 {
-    const REASON_EXAMINED_VALUE_INVALID  = 'assertion-examined-value-invalid';
-    const REASON_EXPECTED_VALUE_INVALID  = 'assertion-expected-value-invalid';
-    const REASON_COMPARISON_INVALID = 'assertion-comparison-invalid';
+    public const REASON_EXAMINED_VALUE_INVALID  = 'assertion-examined-value-invalid';
+    public const REASON_EXPECTED_VALUE_INVALID  = 'assertion-expected-value-invalid';
+    public const REASON_COMPARISON_INVALID = 'assertion-comparison-invalid';
 
     private $identifierValidator;
     private $valueValidator;

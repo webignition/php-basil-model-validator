@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace webignition\BasilModelValidator\Identifier;
 
 use webignition\BasilModel\Identifier\IdentifierInterface;
@@ -11,10 +13,10 @@ use webignition\BasilModelValidator\ValidatorInterface;
 
 class IdentifierValidator implements ValidatorInterface
 {
-    const REASON_TYPE_INVALID = 'identifier-type-invalid';
-    const REASON_ELEMENT_LOCATOR_MISSING = 'identifier-element-locator-missing';
-    const REASON_INVALID_PARENT_IDENTIFIER = 'identifier-invalid-parent-identifier';
-    const REASON_ATTRIBUTE_NAME_EMPTY = 'identifier-attribute-name-empty';
+    public const REASON_TYPE_INVALID = 'identifier-type-invalid';
+    public const REASON_ELEMENT_LOCATOR_MISSING = 'identifier-element-locator-missing';
+    public const REASON_INVALID_PARENT_IDENTIFIER = 'identifier-invalid-parent-identifier';
+    public const REASON_ATTRIBUTE_NAME_EMPTY = 'identifier-attribute-name-empty';
 
     /**
      * @var ValidatorInterface[]
