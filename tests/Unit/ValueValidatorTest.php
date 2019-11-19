@@ -27,20 +27,6 @@ class ValueValidatorTest extends \PHPUnit\Framework\TestCase
         $this->valueValidator = ValueValidator::create();
     }
 
-    public function testHandles()
-    {
-        $this->assertTrue($this->valueValidator->handles(\Mockery::mock(ValueInterface::class)));
-        $this->assertFalse($this->valueValidator->handles(new \stdClass()));
-    }
-
-    public function testValidateWrongModelTypeIsNotValid()
-    {
-        $model = new \stdClass();
-        $expectedResult = InvalidResult::createUnhandledModelResult($model);
-
-        $this->assertEquals($expectedResult, $this->valueValidator->validate($model));
-    }
-
     /**
      * @dataProvider validateNotValidDataProvider
      */
