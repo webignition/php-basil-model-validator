@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace webignition\BasilModelValidator\Test;
 
 use webignition\BasilModel\Test\TestInterface;
@@ -13,9 +15,9 @@ use webignition\BasilModelValidator\ValidatorInterface;
 
 class TestValidator implements ValidatorInterface
 {
-    const REASON_CONFIGURATION_INVALID = 'test-configuration-invalid';
-    const REASON_NO_STEPS = 'test-no-steps';
-    const REASON_STEP_INVALID = 'test-step-invalid';
+    public const REASON_CONFIGURATION_INVALID = 'test-configuration-invalid';
+    public const REASON_NO_STEPS = 'test-no-steps';
+    public const REASON_STEP_INVALID = 'test-step-invalid';
 
     private $configurationValidator;
     private $stepValidator;

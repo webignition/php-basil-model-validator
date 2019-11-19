@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace webignition\BasilModelValidator\Test;
 
 use webignition\BasilModel\PageUrlReference\PageUrlReference;
@@ -13,8 +15,8 @@ use webignition\BasilModelValidator\ValidatorInterface;
 
 class ConfigurationValidator implements ValidatorInterface
 {
-    const REASON_BROWSER_MISSING = 'test-configuration-browser-missing';
-    const REASON_URL_IS_PAGE_URL_REFERENCE = 'test-configuration-url-is-page-url-reference';
+    public const REASON_BROWSER_MISSING = 'test-configuration-browser-missing';
+    public const REASON_URL_IS_PAGE_URL_REFERENCE = 'test-configuration-url-is-page-url-reference';
 
     public static function create(): ConfigurationValidator
     {

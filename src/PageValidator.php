@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace webignition\BasilModelValidator;
 
 use webignition\BasilModel\Identifier\DomIdentifierInterface;
@@ -11,10 +13,10 @@ use webignition\BasilModelValidator\Result\ValidResult;
 
 class PageValidator implements ValidatorInterface
 {
-    const REASON_URL_MISSING = 'page-url-missing';
-    const REASON_INVALID_IDENTIFIER_TYPE = 'page-invalid-identifier-type';
+    public const REASON_URL_MISSING = 'page-url-missing';
+    public const REASON_INVALID_IDENTIFIER_TYPE = 'page-invalid-identifier-type';
 
-    const CONTEXT_IDENTIFIER_NAME = 'identifier';
+    public const CONTEXT_IDENTIFIER_NAME = 'identifier';
 
     public static function create(): PageValidator
     {
@@ -39,8 +41,10 @@ class PageValidator implements ValidatorInterface
         $identifierCollection = $model->getIdentifierCollection();
 
         foreach ($identifierCollection as $identifier) {
-            if (!$identifier instanceof DomIdentifierInterface ||
-                ($identifier instanceof DomIdentifierInterface && null !== $identifier->getAttributeName())) {
+            if (
+                !$identifier instanceof DomIdentifierInterface ||
+                ($identifier instanceof DomIdentifierInterface && null !== $identifier->getAttributeName())
+            ) {
                 $invalidResult = new InvalidResult($model, TypeInterface::PAGE, self::REASON_INVALID_IDENTIFIER_TYPE);
                 $invalidResult = $invalidResult->withContext([
                     self::CONTEXT_IDENTIFIER_NAME => $identifier,

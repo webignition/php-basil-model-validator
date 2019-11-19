@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace webignition\BasilModelValidator;
 
 use webignition\BasilModel\Value\ObjectValueInterface;
@@ -12,10 +14,10 @@ use webignition\BasilModelValidator\Result\ValidResult;
 
 class ValueValidator implements ValidatorInterface
 {
-    const REASON_PROPERTY_NAME_INVALID = 'value-property-name-invalid';
-    const REASON_UNACTIONABLE = 'value-unactionable';
+    public const REASON_PROPERTY_NAME_INVALID = 'value-property-name-invalid';
+    public const REASON_UNACTIONABLE = 'value-unactionable';
 
-    const OBJECT_PROPERTY_WHITELIST = [
+    private const OBJECT_PROPERTY_WHITELIST = [
         ObjectValueType::BROWSER_PROPERTY => [
             'size',
         ],

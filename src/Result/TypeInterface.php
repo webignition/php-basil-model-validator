@@ -1,19 +1,21 @@
 <?php
 
+declare(strict_types=1);
+
 namespace webignition\BasilModelValidator\Result;
 
 interface TypeInterface
 {
-    const NOT_APPLICABLE = 'not-applicable';
-    const UNHANDLED = 'unhandled';
-    const ACTION = 'action';
-    const IDENTIFIER = 'identifier';
-    const VALUE = 'value';
-    const ASSERTION = 'assertion';
-    const PAGE = 'page';
-    const DATA_SET = 'data-set';
-    const STEP = 'step';
-    const TEST_CONFIGURATION = 'test-configuration';
-    const TEST = 'test';
-    const TEST_SUITE = 'test-suite';
+    public const NOT_APPLICABLE = 'not-applicable';
+    public const UNHANDLED = 'unhandled';
+    public const ACTION = 'action';
+    public const IDENTIFIER = 'identifier';
+    public const VALUE = 'value';
+    public const ASSERTION = 'assertion';
+    public const PAGE = 'page';
+    public const DATA_SET = 'data-set';
+    public const STEP = 'step';
+    public const TEST_CONFIGURATION = 'test-configuration';
+    public const TEST = 'test';
+    public const TEST_SUITE = 'test-suite';
 }
