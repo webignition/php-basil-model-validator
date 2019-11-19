@@ -4,13 +4,8 @@ declare(strict_types=1);
 
 namespace webignition\BasilModelValidator\Tests\Unit\Action;
 
-use webignition\BasilModel\Action\ActionInterface;
-use webignition\BasilModel\Action\ActionTypes;
 use webignition\BasilModel\Action\InputAction;
-use webignition\BasilModel\Action\InteractionAction;
-use webignition\BasilModel\Action\NoArgumentsAction;
-use webignition\BasilModel\Action\UnrecognisedAction;
-use webignition\BasilModel\Action\WaitAction;
+use webignition\BasilModel\Action\InputActionInterface;
 use webignition\BasilModel\Identifier\DomIdentifier;
 use webignition\BasilModel\Value\LiteralValue;
 use webignition\BasilModelFactory\Action\ActionFactory;
@@ -39,63 +34,9 @@ class InputActionValidatorTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @dataProvider handlesDataProvider
-     */
-    public function testHandles(ActionInterface $action, bool $expectedHandles)
-    {
-        $this->assertSame($expectedHandles, $this->inputActionValidator->handles($action));
-    }
-
-    public function handlesDataProvider(): array
-    {
-        return [
-            'input action' => [
-                'action' => new InputAction(
-                    'set ".selector" to ""',
-                    new DomIdentifier('.selector'),
-                    new LiteralValue(''),
-                    ''
-                ),
-                'expectedHandles' => true,
-            ],
-            'interaction action' => [
-                'action' => new InteractionAction(
-                    'click ".selector"',
-                    ActionTypes::CLICK,
-                    new DomIdentifier('.selector'),
-                    '".selector"'
-                ),
-                'expectedHandles' => false,
-            ],
-            'no arguments action' => [
-                'action' => new NoArgumentsAction('reload', '', ''),
-                'expectedHandles' => false,
-            ],
-            'unrecognised action' => [
-                'action' => new UnrecognisedAction('foo', '', ''),
-                'expectedHandles' => false,
-            ],
-            'wait action' => [
-                'action' => new WaitAction('wait 20', new LiteralValue('20')),
-                'expectedHandles' => false,
-            ],
-        ];
-    }
-
-    public function testValidateNotValidWrongObjectType()
-    {
-        $object = new \stdClass();
-
-        $this->assertEquals(
-            InvalidResult::createUnhandledModelResult($object),
-            $this->inputActionValidator->validate($object)
-        );
-    }
-
-    /**
      * @dataProvider validateNotValidDataProvider
      */
-    public function testValidateNotValid(ActionInterface $action, ResultInterface $expectedResult)
+    public function testValidateNotValid(InputActionInterface $action, ResultInterface $expectedResult)
     {
         $this->assertEquals($expectedResult, $this->inputActionValidator->validate($action));
     }
@@ -218,9 +159,9 @@ class InputActionValidatorTest extends \PHPUnit\Framework\TestCase
     {
         $action = ActionFactory::createFactory()->createFromActionString($actionString);
 
-        $expectedResult = new ValidResult($action);
-
-        $this->assertEquals($expectedResult, $this->inputActionValidator->validate($action));
+        if ($action instanceof InputActionInterface) {
+            $this->assertEquals(new ValidResult($action), $this->inputActionValidator->validate($action));
+        }
     }
 
     public function validateIsValidDataProvider(): array

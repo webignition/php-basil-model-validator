@@ -4,15 +4,10 @@ declare(strict_types=1);
 
 namespace webignition\BasilModelValidator\Tests\Unit\Action;
 
-use webignition\BasilModel\Action\ActionInterface;
 use webignition\BasilModel\Action\ActionTypes;
-use webignition\BasilModel\Action\InputAction;
 use webignition\BasilModel\Action\InteractionAction;
-use webignition\BasilModel\Action\NoArgumentsAction;
-use webignition\BasilModel\Action\UnrecognisedAction;
-use webignition\BasilModel\Action\WaitAction;
+use webignition\BasilModel\Action\InteractionActionInterface;
 use webignition\BasilModel\Identifier\DomIdentifier;
-use webignition\BasilModel\Value\LiteralValue;
 use webignition\BasilModelFactory\Action\ActionFactory;
 use webignition\BasilModelValidator\Action\ActionValidator;
 use webignition\BasilModelValidator\Action\InteractionActionValidator;
@@ -37,81 +32,9 @@ class InteractionActionValidatorTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @dataProvider handlesDataProvider
-     */
-    public function testHandles(ActionInterface $action, bool $expectedHandles)
-    {
-        $this->assertSame($expectedHandles, $this->interactionActionValidator->handles($action));
-    }
-
-    public function handlesDataProvider(): array
-    {
-        return [
-            'input action' => [
-                'action' => new InputAction(
-                    'set ".selector" to ""',
-                    new DomIdentifier('.selector'),
-                    new LiteralValue(''),
-                    ''
-                ),
-                'expectedHandles' => false,
-            ],
-            'interaction action: click' => [
-                'action' => new InteractionAction(
-                    'click ".selector"',
-                    ActionTypes::CLICK,
-                    new DomIdentifier('.selector'),
-                    '".selector"'
-                ),
-                'expectedHandles' => true,
-            ],
-            'interaction action: submit' => [
-                'action' => new InteractionAction(
-                    'submit ".selector"',
-                    ActionTypes::SUBMIT,
-                    new DomIdentifier('.selector'),
-                    '".selector"'
-                ),
-                'expectedHandles' => true,
-            ],
-            'interaction action: wait-for' => [
-                'action' => new InteractionAction(
-                    'wait-for ".selector"',
-                    ActionTypes::WAIT_FOR,
-                    new DomIdentifier('.selector'),
-                    '".selector"'
-                ),
-                'expectedHandles' => true,
-            ],
-            'no arguments action' => [
-                'action' => new NoArgumentsAction('reload', '', ''),
-                'expectedHandles' => false,
-            ],
-            'unrecognised action' => [
-                'action' => new UnrecognisedAction('foo', '', ''),
-                'expectedHandles' => false,
-            ],
-            'wait action' => [
-                'action' => new WaitAction('wait 20', new LiteralValue('20')),
-                'expectedHandles' => false,
-            ],
-        ];
-    }
-
-    public function testValidateNotValidWrongObjectType()
-    {
-        $object = new \stdClass();
-
-        $this->assertEquals(
-            InvalidResult::createUnhandledModelResult($object),
-            $this->interactionActionValidator->validate($object)
-        );
-    }
-
-    /**
      * @dataProvider validateNotValidDataProvider
      */
-    public function testValidateNotValid(ActionInterface $action, ResultInterface $expectedResult)
+    public function testValidateNotValid(InteractionActionInterface $action, ResultInterface $expectedResult)
     {
         $this->assertEquals($expectedResult, $this->interactionActionValidator->validate($action));
     }
@@ -167,8 +90,8 @@ class InteractionActionValidatorTest extends \PHPUnit\Framework\TestCase
     {
         $action = ActionFactory::createFactory()->createFromActionString('click ".selector"');
 
-        $expectedResult = new ValidResult($action);
-
-        $this->assertEquals($expectedResult, $this->interactionActionValidator->validate($action));
+        if ($action instanceof InteractionActionInterface) {
+            $this->assertEquals(new ValidResult($action), $this->interactionActionValidator->validate($action));
+        }
     }
 }
