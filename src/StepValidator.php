@@ -18,7 +18,7 @@ use webignition\BasilModelValidator\Result\ResultInterface;
 use webignition\BasilModelValidator\Result\TypeInterface;
 use webignition\BasilModelValidator\Result\ValidResult;
 
-class StepValidator implements ValidatorInterface
+class StepValidator
 {
     public const REASON_ACTION_INVALID = 'step-action-invalid';
     public const REASON_ASSERTION_INVALID = 'step-assertion-invalid';
@@ -50,35 +50,24 @@ class StepValidator implements ValidatorInterface
         );
     }
 
-    public function handles(object $model): bool
+    public function validate(StepInterface $step): ResultInterface
     {
-        return $model instanceof StepInterface;
-    }
-
-    /**
-     * @param object $model
-     * @param array|null $context
-     *
-     * @return ResultInterface
-     */
-    public function validate(object $model, ?array $context = []): ResultInterface
-    {
-        if (!$model instanceof StepInterface) {
-            return InvalidResult::createUnhandledModelResult($model);
+        if (!$step instanceof StepInterface) {
+            return InvalidResult::createUnhandledModelResult($step);
         }
 
-        foreach ($model->getActions() as $action) {
+        foreach ($step->getActions() as $action) {
             $actionValidationResult = $this->actionValidator->validate($action);
 
             if ($actionValidationResult instanceof InvalidResultInterface) {
-                return $this->createInvalidResult($model, self::REASON_ACTION_INVALID, $actionValidationResult);
+                return $this->createInvalidResult($step, self::REASON_ACTION_INVALID, $actionValidationResult);
             }
 
             if ($action instanceof InputActionInterface) {
                 $actionValue = $action->getValue();
 
                 if ($actionValue instanceof ValueInterface) {
-                    $dataValueValidationResult = $this->validateDataValue($model, $actionValue, $action);
+                    $dataValueValidationResult = $this->validateDataValue($step, $actionValue, $action);
 
                     if ($dataValueValidationResult instanceof InvalidResultInterface) {
                         return $dataValueValidationResult;
@@ -87,22 +76,22 @@ class StepValidator implements ValidatorInterface
             }
         }
 
-        $assertions = $model->getAssertions();
+        $assertions = $step->getAssertions();
         if (0 === count($assertions)) {
-            return $this->createInvalidResult($model, self::REASON_NO_ASSERTIONS);
+            return $this->createInvalidResult($step, self::REASON_NO_ASSERTIONS);
         }
 
         foreach ($assertions as $assertion) {
             $assertionValidationResult = $this->assertionValidator->validate($assertion);
 
             if ($assertionValidationResult instanceof InvalidResultInterface) {
-                return $this->createInvalidResult($model, self::REASON_ASSERTION_INVALID, $assertionValidationResult);
+                return $this->createInvalidResult($step, self::REASON_ASSERTION_INVALID, $assertionValidationResult);
             }
 
             if ($assertion instanceof ExaminationAssertionInterface) {
                 $examinedValue = $assertion->getExaminedValue();
 
-                $examinedValueDataValueValidationResult = $this->validateDataValue($model, $examinedValue, $assertion);
+                $examinedValueDataValueValidationResult = $this->validateDataValue($step, $examinedValue, $assertion);
                 if ($examinedValueDataValueValidationResult instanceof InvalidResultInterface) {
                     return $examinedValueDataValueValidationResult;
                 }
@@ -113,7 +102,7 @@ class StepValidator implements ValidatorInterface
 
                 if ($expectedValue instanceof ValueInterface) {
                     $expectedValueDataParameterValidationResult = $this->validateDataValue(
-                        $model,
+                        $step,
                         $expectedValue,
                         $assertion
                     );
@@ -125,7 +114,7 @@ class StepValidator implements ValidatorInterface
             }
         }
 
-        return new ValidResult($model);
+        return new ValidResult($step);
     }
 
     private function validateDataValue(
@@ -174,10 +163,10 @@ class StepValidator implements ValidatorInterface
     }
 
     private function createInvalidResult(
-        object $model,
+        StepInterface $step,
         string $reason,
         ?InvalidResultInterface $previous = null
     ): InvalidResultInterface {
-        return new InvalidResult($model, TypeInterface::STEP, $reason, $previous);
+        return new InvalidResult($step, TypeInterface::STEP, $reason, $previous);
     }
 }

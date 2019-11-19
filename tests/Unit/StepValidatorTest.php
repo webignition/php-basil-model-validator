@@ -38,20 +38,6 @@ class StepValidatorTest extends \PHPUnit\Framework\TestCase
         $this->stepValidator = StepValidator::create();
     }
 
-    public function testHandles()
-    {
-        $this->assertTrue($this->stepValidator->handles(\Mockery::mock(StepInterface::class)));
-        $this->assertFalse($this->stepValidator->handles(new \stdClass()));
-    }
-
-    public function testValidateWrongModelTypeIsNotValid()
-    {
-        $model = new \stdClass();
-        $expectedResult = InvalidResult::createUnhandledModelResult($model);
-
-        $this->assertEquals($expectedResult, $this->stepValidator->validate($model));
-    }
-
     /**
      * @dataProvider validateNotValidDataProvider
      * @dataProvider validateNotValidInvalidDataSetCollectionDataProvider
