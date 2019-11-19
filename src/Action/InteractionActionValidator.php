@@ -31,10 +31,6 @@ class InteractionActionValidator
 
     public function validate(InteractionActionInterface $action): ResultInterface
     {
-        if (!$action instanceof InteractionActionInterface) {
-            return InvalidResult::createUnhandledModelResult($action);
-        }
-
         $identifier = $action->getIdentifier();
 
         if ($identifier instanceof DomIdentifierInterface && null !== $identifier->getAttributeName()) {

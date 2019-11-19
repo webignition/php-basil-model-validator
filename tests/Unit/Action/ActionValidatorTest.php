@@ -24,17 +24,38 @@ class ActionValidatorTest extends \PHPUnit\Framework\TestCase
         $this->actionValidator = ActionValidator::create();
     }
 
-    public function testValidateSuccess()
+    /**
+     * @dataProvider validateIsValidDataProvider
+     */
+    public function testValidateIsValid(string $actionString)
     {
-        $actionFactory = ActionFactory::createFactory();
+        $action = ActionFactory::createFactory()->createFromActionString($actionString);
 
-        $action = $actionFactory->createFromActionString('wait 30');
-        $expectedResult = new ValidResult($action);
+        $this->assertEquals(new ValidResult($action), $this->actionValidator->validate($action));
+    }
 
-        $actionValidator = new ActionValidator();
-        $returnedResult = $actionValidator->validate($action);
-
-        $this->assertEquals($expectedResult, $returnedResult);
+    public function validateIsValidDataProvider(): array
+    {
+        return [
+            'reload, no args' => [
+                'actionString' => 'reload',
+            ],
+            'back, no args' => [
+                'actionString' => 'back',
+            ],
+            'forward, no args' => [
+                'actionString' => 'forward',
+            ],
+            'reload, with args' => [
+                'actionString' => 'reload arg1 arg2',
+            ],
+            'back, with args' => [
+                'actionString' => 'back arg1 arg2',
+            ],
+            'forward, with args' => [
+                'actionString' => 'forward arg1 arg2',
+            ],
+        ];
     }
 
     public function testValidateNoActionTypeValidator()
