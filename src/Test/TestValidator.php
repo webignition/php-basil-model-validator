@@ -11,9 +11,8 @@ use webignition\BasilModelValidator\Result\ResultInterface;
 use webignition\BasilModelValidator\Result\TypeInterface;
 use webignition\BasilModelValidator\Result\ValidResult;
 use webignition\BasilModelValidator\StepValidator;
-use webignition\BasilModelValidator\ValidatorInterface;
 
-class TestValidator implements ValidatorInterface
+class TestValidator
 {
     public const REASON_CONFIGURATION_INVALID = 'test-configuration-invalid';
     public const REASON_NO_STEPS = 'test-no-steps';
@@ -36,29 +35,20 @@ class TestValidator implements ValidatorInterface
         );
     }
 
-    public function handles(object $model): bool
+    public function validate(TestInterface $test): ResultInterface
     {
-        return $model instanceof TestInterface;
-    }
-
-    public function validate(object $model, ?array $context = []): ResultInterface
-    {
-        if (!$model instanceof TestInterface) {
-            return InvalidResult::createUnhandledModelResult($model);
-        }
-
-        $configurationValidationResult = $this->configurationValidator->validate($model->getConfiguration());
+        $configurationValidationResult = $this->configurationValidator->validate($test->getConfiguration());
         if ($configurationValidationResult instanceof InvalidResultInterface) {
             return $this->createInvalidResult(
-                $model,
+                $test,
                 self::REASON_CONFIGURATION_INVALID,
                 $configurationValidationResult
             );
         }
 
-        $steps = $model->getSteps();
+        $steps = $test->getSteps();
         if (0 === count($steps)) {
-            return $this->createInvalidResult($model, self::REASON_NO_STEPS);
+            return $this->createInvalidResult($test, self::REASON_NO_STEPS);
         }
 
         foreach ($steps as $step) {
@@ -66,14 +56,14 @@ class TestValidator implements ValidatorInterface
 
             if ($stepValidationResult instanceof InvalidResultInterface) {
                 return $this->createInvalidResult(
-                    $model,
+                    $test,
                     self::REASON_STEP_INVALID,
                     $stepValidationResult
                 );
             }
         }
 
-        return new ValidResult($model);
+        return new ValidResult($test);
     }
 
     private function createInvalidResult(
