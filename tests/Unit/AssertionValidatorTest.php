@@ -32,20 +32,6 @@ class AssertionValidatorTest extends \PHPUnit\Framework\TestCase
         $this->assertionValidator = AssertionValidator::create();
     }
 
-    public function testHandles()
-    {
-        $this->assertTrue($this->assertionValidator->handles(\Mockery::mock(AssertionInterface::class)));
-        $this->assertFalse($this->assertionValidator->handles(new \stdClass()));
-    }
-
-    public function testValidateWrongModelTypeIsNotValid()
-    {
-        $model = new \stdClass();
-        $expectedResult = InvalidResult::createUnhandledModelResult($model);
-
-        $this->assertEquals($expectedResult, $this->assertionValidator->validate($model));
-    }
-
     /**
      * @dataProvider validateNotValidDataProvider
      */

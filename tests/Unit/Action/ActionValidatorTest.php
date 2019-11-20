@@ -24,31 +24,38 @@ class ActionValidatorTest extends \PHPUnit\Framework\TestCase
         $this->actionValidator = ActionValidator::create();
     }
 
-    public function testHandles()
+    /**
+     * @dataProvider validateIsValidDataProvider
+     */
+    public function testValidateIsValid(string $actionString)
     {
-        $this->assertTrue($this->actionValidator->handles(\Mockery::mock(ActionInterface::class)));
-        $this->assertFalse($this->actionValidator->handles(new \stdClass()));
+        $action = ActionFactory::createFactory()->createFromActionString($actionString);
+
+        $this->assertEquals(new ValidResult($action), $this->actionValidator->validate($action));
     }
 
-    public function testValidateSuccess()
+    public function validateIsValidDataProvider(): array
     {
-        $actionFactory = ActionFactory::createFactory();
-
-        $action = $actionFactory->createFromActionString('wait 30');
-        $expectedResult = new ValidResult($action);
-
-        $actionValidator = new ActionValidator();
-        $returnedResult = $actionValidator->validate($action);
-
-        $this->assertEquals($expectedResult, $returnedResult);
-    }
-
-    public function testValidateWrongObjectType()
-    {
-        $expectedResult = InvalidResult::createUnhandledModelResult(new \stdClass());
-        $returnedResult = $this->actionValidator->validate(new \stdClass());
-
-        $this->assertEquals($expectedResult, $returnedResult);
+        return [
+            'reload, no args' => [
+                'actionString' => 'reload',
+            ],
+            'back, no args' => [
+                'actionString' => 'back',
+            ],
+            'forward, no args' => [
+                'actionString' => 'forward',
+            ],
+            'reload, with args' => [
+                'actionString' => 'reload arg1 arg2',
+            ],
+            'back, with args' => [
+                'actionString' => 'back arg1 arg2',
+            ],
+            'forward, with args' => [
+                'actionString' => 'forward arg1 arg2',
+            ],
+        ];
     }
 
     public function testValidateNoActionTypeValidator()

@@ -38,20 +38,6 @@ class StepValidatorTest extends \PHPUnit\Framework\TestCase
         $this->stepValidator = StepValidator::create();
     }
 
-    public function testHandles()
-    {
-        $this->assertTrue($this->stepValidator->handles(\Mockery::mock(StepInterface::class)));
-        $this->assertFalse($this->stepValidator->handles(new \stdClass()));
-    }
-
-    public function testValidateWrongModelTypeIsNotValid()
-    {
-        $model = new \stdClass();
-        $expectedResult = InvalidResult::createUnhandledModelResult($model);
-
-        $this->assertEquals($expectedResult, $this->stepValidator->validate($model));
-    }
-
     /**
      * @dataProvider validateNotValidDataProvider
      * @dataProvider validateNotValidInvalidDataSetCollectionDataProvider
@@ -142,7 +128,7 @@ class StepValidatorTest extends \PHPUnit\Framework\TestCase
                     TypeInterface::STEP,
                     StepValidator::REASON_DATA_SET_EMPTY
                 ))->withContext([
-                    DataSetValidator::CONTEXT_DATA_PARAMETER_NAME => 'key',
+                    StepValidator::CONTEXT_DATA_PARAMETER_NAME => 'key',
                     StepValidator::CONTEXT_VALUE_CONTAINER => $inputActionWithDataParameterValue,
                 ]),
             ],
@@ -161,7 +147,7 @@ class StepValidatorTest extends \PHPUnit\Framework\TestCase
                         TypeInterface::DATA_SET,
                         DataSetValidator::REASON_DATA_SET_INCOMPLETE
                     ))->withContext([
-                        DataSetValidator::CONTEXT_DATA_PARAMETER_NAME => 'key',
+                        StepValidator::CONTEXT_DATA_PARAMETER_NAME => 'key',
                         StepValidator::CONTEXT_VALUE_CONTAINER => $inputActionWithDataParameterValue,
                     ])
                 ),
@@ -173,7 +159,7 @@ class StepValidatorTest extends \PHPUnit\Framework\TestCase
                     TypeInterface::STEP,
                     StepValidator::REASON_DATA_SET_EMPTY
                 ))->withContext([
-                    DataSetValidator::CONTEXT_DATA_PARAMETER_NAME => 'key',
+                    StepValidator::CONTEXT_DATA_PARAMETER_NAME => 'key',
                     StepValidator::CONTEXT_VALUE_CONTAINER => $assertionWithDataParameterExaminedValue,
                 ]),
             ],
@@ -192,7 +178,7 @@ class StepValidatorTest extends \PHPUnit\Framework\TestCase
                         TypeInterface::DATA_SET,
                         DataSetValidator::REASON_DATA_SET_INCOMPLETE
                     ))->withContext([
-                        DataSetValidator::CONTEXT_DATA_PARAMETER_NAME => 'key',
+                        StepValidator::CONTEXT_DATA_PARAMETER_NAME => 'key',
                         StepValidator::CONTEXT_VALUE_CONTAINER => $assertionWithDataParameterExaminedValue,
                     ])
                 ),
@@ -204,7 +190,7 @@ class StepValidatorTest extends \PHPUnit\Framework\TestCase
                     TypeInterface::STEP,
                     StepValidator::REASON_DATA_SET_EMPTY
                 ))->withContext([
-                    DataSetValidator::CONTEXT_DATA_PARAMETER_NAME => 'key',
+                    StepValidator::CONTEXT_DATA_PARAMETER_NAME => 'key',
                     StepValidator::CONTEXT_VALUE_CONTAINER => $assertionWithDataParameterExpectedValue,
                 ]),
             ],
@@ -223,7 +209,7 @@ class StepValidatorTest extends \PHPUnit\Framework\TestCase
                         TypeInterface::DATA_SET,
                         DataSetValidator::REASON_DATA_SET_INCOMPLETE
                     ))->withContext([
-                        DataSetValidator::CONTEXT_DATA_PARAMETER_NAME => 'key',
+                        StepValidator::CONTEXT_DATA_PARAMETER_NAME => 'key',
                         StepValidator::CONTEXT_VALUE_CONTAINER => $assertionWithDataParameterExpectedValue,
                     ])
                 ),

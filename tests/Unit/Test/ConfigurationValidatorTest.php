@@ -26,20 +26,6 @@ class ConfigurationValidatorTest extends \PHPUnit\Framework\TestCase
         $this->configurationValidator = ConfigurationValidator::create();
     }
 
-    public function testHandles()
-    {
-        $this->assertTrue($this->configurationValidator->handles(\Mockery::mock(ConfigurationInterface::class)));
-        $this->assertFalse($this->configurationValidator->handles(new \stdClass()));
-    }
-
-    public function testValidateWrongModelTypeIsNotValid()
-    {
-        $model = new \stdClass();
-        $expectedResult = InvalidResult::createUnhandledModelResult($model);
-
-        $this->assertEquals($expectedResult, $this->configurationValidator->validate($model));
-    }
-
     /**
      * @dataProvider validateNotValidDataProvider
      */

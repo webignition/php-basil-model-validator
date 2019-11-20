@@ -10,9 +10,8 @@ use webignition\BasilModelValidator\Result\ResultInterface;
 use webignition\BasilModelValidator\Result\TypeInterface;
 use webignition\BasilModelValidator\Result\ValidResult;
 
-class DataSetValidator implements ValidatorInterface
+class DataSetValidator
 {
-    public const CONTEXT_DATA_PARAMETER_NAME = 'data-parameter-name';
     public const REASON_DATA_SET_INCOMPLETE = 'data-set-incomplete';
 
     public static function create(): DataSetValidator
@@ -20,29 +19,18 @@ class DataSetValidator implements ValidatorInterface
         return new DataSetValidator();
     }
 
-    public function handles(object $model): bool
+    public function validate(DataSetInterface $dataSet, ?string $dataParameterName): ResultInterface
     {
-        return $model instanceof DataSetInterface;
-    }
-
-    public function validate(object $model, ?array $context = []): ResultInterface
-    {
-        if (!$model instanceof DataSetInterface) {
-            return InvalidResult::createUnhandledModelResult($model);
-        }
-
-        $dataParameterName = $context[self::CONTEXT_DATA_PARAMETER_NAME] ?? null;
-
         if (is_string($dataParameterName)) {
-            if (false === $model->hasParameterNames([$dataParameterName])) {
+            if (false === $dataSet->hasParameterNames([$dataParameterName])) {
                 return new InvalidResult(
-                    $model,
+                    $dataSet,
                     TypeInterface::DATA_SET,
                     self::REASON_DATA_SET_INCOMPLETE
                 );
             }
         }
 
-        return new ValidResult($model);
+        return new ValidResult($dataSet);
     }
 }

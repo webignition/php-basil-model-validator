@@ -11,57 +11,47 @@ use webignition\BasilModelValidator\Result\InvalidResultInterface;
 use webignition\BasilModelValidator\Result\ResultInterface;
 use webignition\BasilModelValidator\Result\TypeInterface;
 use webignition\BasilModelValidator\Result\ValidResult;
-use webignition\BasilModelValidator\ValidatorInterface;
 
-class DomIdentifierValidator implements ValidatorInterface
+class DomIdentifierValidator
 {
     public static function create(): DomIdentifierValidator
     {
         return new DomIdentifierValidator();
     }
 
-    public function handles(object $model): bool
+    public function validate(DomIdentifierInterface $identifier): ResultInterface
     {
-        return $model instanceof DomIdentifierInterface;
-    }
-
-    public function validate(object $model, ?array $context = []): ResultInterface
-    {
-        if (!$model instanceof DomIdentifierInterface) {
-            return InvalidResult::createUnhandledModelResult($model);
-        }
-
-        $locator = trim($model->getLocator());
+        $locator = trim($identifier->getLocator());
         if ('' === $locator) {
-            return $this->createInvalidResult($model, IdentifierValidator::REASON_ELEMENT_LOCATOR_MISSING);
+            return $this->createInvalidResult($identifier, IdentifierValidator::REASON_ELEMENT_LOCATOR_MISSING);
         }
 
-        if ('' === $model->getAttributeName()) {
-            return $this->createInvalidResult($model, IdentifierValidator::REASON_ATTRIBUTE_NAME_EMPTY);
+        if ('' === $identifier->getAttributeName()) {
+            return $this->createInvalidResult($identifier, IdentifierValidator::REASON_ATTRIBUTE_NAME_EMPTY);
         }
 
-        $parentIdentifier = $model->getParentIdentifier();
+        $parentIdentifier = $identifier->getParentIdentifier();
 
         if ($parentIdentifier instanceof IdentifierInterface) {
             $parentValidationResult = $this->validate($parentIdentifier);
 
             if ($parentValidationResult instanceof InvalidResultInterface) {
                 return $this->createInvalidResult(
-                    $model,
+                    $identifier,
                     IdentifierValidator::REASON_INVALID_PARENT_IDENTIFIER,
                     $parentValidationResult
                 );
             }
         }
 
-        return new ValidResult($model);
+        return new ValidResult($identifier);
     }
 
     private function createInvalidResult(
-        object $model,
+        DomIdentifierInterface $identifier,
         string $reason,
         ?InvalidResultInterface $previous = null
     ): InvalidResultInterface {
-        return new InvalidResult($model, TypeInterface::IDENTIFIER, $reason, $previous);
+        return new InvalidResult($identifier, TypeInterface::IDENTIFIER, $reason, $previous);
     }
 }
