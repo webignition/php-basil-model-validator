@@ -67,10 +67,10 @@ class TestValidator
     }
 
     private function createInvalidResult(
-        object $model,
+        TestInterface $test,
         string $reason,
         ?InvalidResultInterface $invalidResult = null
     ): ResultInterface {
-        return new InvalidResult($model, TypeInterface::TEST, $reason, $invalidResult);
+        return new InvalidResult($test, TypeInterface::TEST, $reason, $invalidResult);
     }
 }

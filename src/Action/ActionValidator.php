@@ -38,24 +38,24 @@ class ActionValidator
         return new ActionValidator();
     }
 
-    public function validate(ActionInterface $model): ResultInterface
+    public function validate(ActionInterface $action): ResultInterface
     {
-        if ($model instanceof InputActionInterface && ActionTypes::SET === $model->getType()) {
-            return $this->inputActionValidator->validate($model);
+        if ($action instanceof InputActionInterface && ActionTypes::SET === $action->getType()) {
+            return $this->inputActionValidator->validate($action);
         }
 
-        if (in_array($model->getType(), [ActionTypes::CLICK, ActionTypes::SUBMIT, ActionTypes::WAIT_FOR])) {
-            return $this->interactionActionValidator->validate($model);
+        if (in_array($action->getType(), [ActionTypes::CLICK, ActionTypes::SUBMIT, ActionTypes::WAIT_FOR])) {
+            return $this->interactionActionValidator->validate($action);
         }
 
-        if (in_array($model->getType(), [ActionTypes::RELOAD, ActionTypes::BACK, ActionTypes::FORWARD])) {
-            return new ValidResult($model);
+        if (in_array($action->getType(), [ActionTypes::RELOAD, ActionTypes::BACK, ActionTypes::FORWARD])) {
+            return new ValidResult($action);
         }
 
-        if ($model instanceof WaitActionInterface && ActionTypes::WAIT === $model->getType()) {
-            return $this->waitActionValidator->validate($model);
+        if ($action instanceof WaitActionInterface && ActionTypes::WAIT === $action->getType()) {
+            return $this->waitActionValidator->validate($action);
         }
 
-        return InvalidResult::createUnhandledModelResult($model);
+        return InvalidResult::createUnhandledModelResult($action);
     }
 }
