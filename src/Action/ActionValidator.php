@@ -8,9 +8,9 @@ use webignition\BasilModel\Action\ActionInterface;
 use webignition\BasilModel\Action\ActionTypes;
 use webignition\BasilModel\Action\InputActionInterface;
 use webignition\BasilModel\Action\WaitActionInterface;
-use webignition\BasilModelValidator\Result\InvalidResult;
-use webignition\BasilModelValidator\Result\ResultInterface;
-use webignition\BasilModelValidator\Result\ValidResult;
+use webignition\BasilValidationResult\InvalidResult;
+use webignition\BasilValidationResult\ResultInterface;
+use webignition\BasilValidationResult\ValidResult;
 
 class ActionValidator
 {

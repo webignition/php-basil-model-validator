@@ -7,11 +7,11 @@ namespace webignition\BasilModelValidator\Action;
 use webignition\BasilModel\Action\InteractionActionInterface;
 use webignition\BasilModel\Identifier\DomIdentifierInterface;
 use webignition\BasilModelValidator\Identifier\IdentifierValidator;
-use webignition\BasilModelValidator\Result\InvalidResult;
-use webignition\BasilModelValidator\Result\InvalidResultInterface;
-use webignition\BasilModelValidator\Result\ResultInterface;
-use webignition\BasilModelValidator\Result\TypeInterface;
-use webignition\BasilModelValidator\Result\ValidResult;
+use webignition\BasilModelValidator\TypeInterface;
+use webignition\BasilValidationResult\InvalidResult;
+use webignition\BasilValidationResult\InvalidResultInterface;
+use webignition\BasilValidationResult\ResultInterface;
+use webignition\BasilValidationResult\ValidResult;
 
 class InteractionActionValidator
 {

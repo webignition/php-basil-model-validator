@@ -10,13 +10,13 @@ use webignition\BasilModel\Test\Configuration;
 use webignition\BasilModel\Test\Test;
 use webignition\BasilModel\Test\TestInterface;
 use webignition\BasilModelFactory\StepFactory;
-use webignition\BasilModelValidator\Result\InvalidResult;
-use webignition\BasilModelValidator\Result\ResultInterface;
-use webignition\BasilModelValidator\Result\TypeInterface;
-use webignition\BasilModelValidator\Result\ValidResult;
+use webignition\BasilModelValidator\TypeInterface;
 use webignition\BasilModelValidator\StepValidator;
 use webignition\BasilModelValidator\Test\ConfigurationValidator;
 use webignition\BasilModelValidator\Test\TestValidator;
+use webignition\BasilValidationResult\InvalidResult;
+use webignition\BasilValidationResult\ResultInterface;
+use webignition\BasilValidationResult\ValidResult;
 
 class TestValidatorTest extends \PHPUnit\Framework\TestCase
 {

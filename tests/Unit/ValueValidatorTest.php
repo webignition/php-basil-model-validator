@@ -8,10 +8,10 @@ use webignition\BasilModel\Identifier\DomIdentifier;
 use webignition\BasilModel\Value\DomIdentifierValue;
 use webignition\BasilModel\Value\ValueInterface;
 use webignition\BasilModelFactory\ValueFactory;
-use webignition\BasilModelValidator\Result\InvalidResult;
-use webignition\BasilModelValidator\Result\TypeInterface;
-use webignition\BasilModelValidator\Result\ValidResult;
+use webignition\BasilModelValidator\TypeInterface;
 use webignition\BasilModelValidator\ValueValidator;
+use webignition\BasilValidationResult\InvalidResult;
+use webignition\BasilValidationResult\ValidResult;
 
 class ValueValidatorTest extends \PHPUnit\Framework\TestCase
 {

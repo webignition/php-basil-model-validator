@@ -6,11 +6,11 @@ namespace webignition\BasilModelValidator\Tests\Unit\Test;
 
 use webignition\BasilModel\Test\Configuration;
 use webignition\BasilModel\Test\ConfigurationInterface;
-use webignition\BasilModelValidator\Result\InvalidResult;
-use webignition\BasilModelValidator\Result\ResultInterface;
-use webignition\BasilModelValidator\Result\TypeInterface;
-use webignition\BasilModelValidator\Result\ValidResult;
+use webignition\BasilModelValidator\TypeInterface;
 use webignition\BasilModelValidator\Test\ConfigurationValidator;
+use webignition\BasilValidationResult\InvalidResult;
+use webignition\BasilValidationResult\ResultInterface;
+use webignition\BasilValidationResult\ValidResult;
 
 class ConfigurationValidatorTest extends \PHPUnit\Framework\TestCase
 {
