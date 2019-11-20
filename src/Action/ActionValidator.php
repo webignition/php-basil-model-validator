@@ -56,6 +56,6 @@ class ActionValidator
             return $this->waitActionValidator->validate($action);
         }
 
-        return InvalidResult::createUnhandledModelResult($action);
+        return InvalidResult::createUnhandledSubjectResult($action);
     }
 }

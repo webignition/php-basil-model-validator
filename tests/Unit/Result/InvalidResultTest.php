@@ -17,27 +17,27 @@ class InvalidResultTest extends \PHPUnit\Framework\TestCase
 {
     public function testCreate()
     {
-        $model = new DomIdentifier('.selector');
+        $subject = new DomIdentifier('.selector');
 
         $type = TypeInterface::IDENTIFIER;
         $reason = IdentifierValidator::REASON_ELEMENT_LOCATOR_MISSING;
 
-        $result = new InvalidResult($model, $type, $reason);
+        $result = new InvalidResult($subject, $type, $reason);
 
         $this->assertFalse($result->getIsValid());
-        $this->assertSame($model, $result->getModel());
+        $this->assertSame($subject, $result->getSubject());
         $this->assertEquals($type, $result->getType());
         $this->assertEquals($reason, $result->getReason());
     }
 
     public function testCreateUnhandledModelResult()
     {
-        $model = new \stdClass();
+        $subject = new \stdClass();
 
-        $result = InvalidResult::createUnhandledModelResult($model);
+        $result = InvalidResult::createUnhandledSubjectResult($subject);
 
         $this->assertFalse($result->getIsValid());
-        $this->assertSame($model, $result->getModel());
+        $this->assertSame($subject, $result->getSubject());
         $this->assertSame(TypeInterface::UNHANDLED, $result->getType());
         $this->assertSame('', $result->getReason());
     }

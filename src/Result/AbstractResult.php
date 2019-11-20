@@ -7,12 +7,12 @@ namespace webignition\BasilModelValidator\Result;
 abstract class AbstractResult implements ResultInterface
 {
     private $isValid;
-    private $model;
+    private $subject;
 
-    public function __construct(bool $isValid, object $model)
+    public function __construct(bool $isValid, $subject)
     {
         $this->isValid = $isValid;
-        $this->model = $model;
+        $this->subject = $subject;
     }
 
     public function getIsValid(): bool
@@ -20,8 +20,8 @@ abstract class AbstractResult implements ResultInterface
         return $this->isValid;
     }
 
-    public function getModel(): object
+    public function getSubject()
     {
-        return $this->model;
+        return $this->subject;
     }
 }

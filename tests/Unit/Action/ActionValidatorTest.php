@@ -64,7 +64,7 @@ class ActionValidatorTest extends \PHPUnit\Framework\TestCase
         $action
             ->shouldReceive('getType')
             ->andReturn('foo');
-        $expectedResult = InvalidResult::createUnhandledModelResult($action);
+        $expectedResult = InvalidResult::createUnhandledSubjectResult($action);
         $returnedResult = $this->actionValidator->validate($action);
 
         $this->assertEquals($expectedResult, $returnedResult);

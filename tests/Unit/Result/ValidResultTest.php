@@ -11,11 +11,11 @@ class ValidResultTest extends \PHPUnit\Framework\TestCase
 {
     public function testCreate()
     {
-        $model = \Mockery::mock(ActionInterface::class);
+        $subject = \Mockery::mock(ActionInterface::class);
 
-        $result = new ValidResult($model);
+        $result = new ValidResult($subject);
 
         $this->assertTrue($result->getIsValid());
-        $this->assertSame($model, $result->getModel());
+        $this->assertSame($subject, $result->getSubject());
     }
 }
