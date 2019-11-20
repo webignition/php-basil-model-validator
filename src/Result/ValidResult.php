@@ -6,8 +6,8 @@ namespace webignition\BasilModelValidator\Result;
 
 class ValidResult extends AbstractResult
 {
-    public function __construct(object $model)
+    public function __construct($subject)
     {
-        parent::__construct(true, $model);
+        parent::__construct(true, $subject);
     }
 }

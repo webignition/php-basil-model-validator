@@ -11,18 +11,18 @@ class InvalidResult extends AbstractResult implements InvalidResultInterface
     private $previous;
     private $context = [];
 
-    public function __construct(object $model, string $type, string $reason, ?InvalidResultInterface $previous = null)
+    public function __construct($subject, string $type, string $reason, ?InvalidResultInterface $previous = null)
     {
-        parent::__construct(false, $model);
+        parent::__construct(false, $subject);
 
         $this->type = $type;
         $this->reason = $reason;
         $this->previous = $previous;
     }
 
-    public static function createUnhandledModelResult(object $model): InvalidResultInterface
+    public static function createUnhandledSubjectResult($subject): InvalidResultInterface
     {
-        return new InvalidResult($model, TypeInterface::UNHANDLED, '');
+        return new InvalidResult($subject, TypeInterface::UNHANDLED, '');
     }
 
     public function getType(): string
