@@ -7,8 +7,8 @@ namespace webignition\BasilModelValidator\Tests\Unit\Action;
 use webignition\BasilModel\Action\ActionInterface;
 use webignition\BasilModelFactory\Action\ActionFactory;
 use webignition\BasilModelValidator\Action\ActionValidator;
-use webignition\BasilModelValidator\Result\InvalidResult;
-use webignition\BasilModelValidator\Result\ValidResult;
+use webignition\BasilValidationResult\InvalidResult;
+use webignition\BasilValidationResult\ValidResult;
 
 class ActionValidatorTest extends \PHPUnit\Framework\TestCase
 {

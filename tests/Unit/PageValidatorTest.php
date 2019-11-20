@@ -14,11 +14,11 @@ use webignition\BasilModel\Value\DomIdentifierReference;
 use webignition\BasilModel\Value\DomIdentifierReferenceType;
 use webignition\BasilModel\Value\PageElementReference;
 use webignition\BasilModelValidator\PageValidator;
-use webignition\BasilModelValidator\Result\InvalidResult;
-use webignition\BasilModelValidator\Result\InvalidResultInterface;
-use webignition\BasilModelValidator\Result\TypeInterface;
-use webignition\BasilModelValidator\Result\ValidResult;
+use webignition\BasilModelValidator\TypeInterface;
 use webignition\BasilTestIdentifierFactory\TestIdentifierFactory;
+use webignition\BasilValidationResult\InvalidResult;
+use webignition\BasilValidationResult\InvalidResultInterface;
+use webignition\BasilValidationResult\ValidResult;
 
 class PageValidatorTest extends \PHPUnit\Framework\TestCase
 {

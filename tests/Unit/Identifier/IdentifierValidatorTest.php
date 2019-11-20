@@ -11,11 +11,11 @@ use webignition\BasilModel\Value\DomIdentifierReference;
 use webignition\BasilModel\Value\DomIdentifierReferenceType;
 use webignition\BasilModelFactory\Identifier\IdentifierFactory;
 use webignition\BasilModelValidator\Identifier\IdentifierValidator;
-use webignition\BasilModelValidator\Result\InvalidResult;
-use webignition\BasilModelValidator\Result\ResultInterface;
-use webignition\BasilModelValidator\Result\TypeInterface;
-use webignition\BasilModelValidator\Result\ValidResult;
+use webignition\BasilModelValidator\TypeInterface;
 use webignition\BasilTestIdentifierFactory\TestIdentifierFactory;
+use webignition\BasilValidationResult\InvalidResult;
+use webignition\BasilValidationResult\ResultInterface;
+use webignition\BasilValidationResult\ValidResult;
 
 class IdentifierValidatorTest extends \PHPUnit\Framework\TestCase
 {

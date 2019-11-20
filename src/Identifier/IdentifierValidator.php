@@ -6,9 +6,9 @@ namespace webignition\BasilModelValidator\Identifier;
 
 use webignition\BasilModel\Identifier\DomIdentifierInterface;
 use webignition\BasilModel\Identifier\IdentifierInterface;
-use webignition\BasilModelValidator\Result\InvalidResult;
-use webignition\BasilModelValidator\Result\ResultInterface;
-use webignition\BasilModelValidator\Result\TypeInterface;
+use webignition\BasilModelValidator\TypeInterface;
+use webignition\BasilValidationResult\InvalidResult;
+use webignition\BasilValidationResult\ResultInterface;
 
 class IdentifierValidator
 {

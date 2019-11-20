@@ -2,12 +2,11 @@
 
 declare(strict_types=1);
 
-namespace webignition\BasilModelValidator\Result;
+namespace webignition\BasilModelValidator;
 
 interface TypeInterface
 {
     public const NOT_APPLICABLE = 'not-applicable';
-    public const UNHANDLED = 'unhandled';
     public const ACTION = 'action';
     public const IDENTIFIER = 'identifier';
     public const VALUE = 'value';

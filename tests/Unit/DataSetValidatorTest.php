@@ -7,9 +7,9 @@ namespace webignition\BasilModelValidator\Tests\Unit;
 use webignition\BasilModel\DataSet\DataSet;
 use webignition\BasilModel\DataSet\DataSetInterface;
 use webignition\BasilModelValidator\DataSetValidator;
-use webignition\BasilModelValidator\Result\InvalidResult;
-use webignition\BasilModelValidator\Result\TypeInterface;
-use webignition\BasilModelValidator\Result\ValidResult;
+use webignition\BasilModelValidator\TypeInterface;
+use webignition\BasilValidationResult\InvalidResult;
+use webignition\BasilValidationResult\ValidResult;
 
 class DataSetValidatorTest extends \PHPUnit\Framework\TestCase
 {
