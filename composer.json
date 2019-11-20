@@ -34,7 +34,8 @@
     "require": {
         "php": ">=7.2",
         "ext-mbstring": "*",
-        "webignition/php-basil-models": ">=0.88,<1"
+        "webignition/php-basil-models": ">=0.88,<1",
+        "webignition/basil-validation-result": ">=0.1,<1"
     },
     "require-dev": {
         "phpunit/phpunit": "~8.0",
